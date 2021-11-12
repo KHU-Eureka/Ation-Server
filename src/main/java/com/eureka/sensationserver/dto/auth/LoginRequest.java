@@ -10,7 +10,6 @@ import javax.validation.constraints.Size;
 @AllArgsConstructor
 public class LoginRequest {
 
-    @Email
     private String email;
 
     @Size(min = 3, max = 20)
