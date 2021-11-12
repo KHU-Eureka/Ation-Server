@@ -1,7 +1,8 @@
 package com.eureka.sensationserver.service;
 
+import com.eureka.sensationserver.advice.exception.DuplicateException;
+import com.eureka.sensationserver.advice.exception.NotAuthenticatedException;
 import com.eureka.sensationserver.config.security.details.UserDetailsImpl;
-import com.eureka.sensationserver.config.security.details.UserDetailsServiceImpl;
 import com.eureka.sensationserver.config.security.jwt.JwtUtils;
 import com.eureka.sensationserver.domain.User;
 import com.eureka.sensationserver.dto.auth.JwtResponse;
@@ -9,11 +10,11 @@ import com.eureka.sensationserver.dto.auth.LoginRequest;
 import com.eureka.sensationserver.dto.auth.SignupRequest;
 import com.eureka.sensationserver.dto.user.UserResponse;
 import com.eureka.sensationserver.repository.UserRepository;
+import javassist.bytecode.DuplicateMemberException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -31,7 +32,7 @@ public class AuthService {
     @Transactional
     public void register(SignupRequest signupRequest){
         userRepository.findByEmail(signupRequest.getEmail()).ifPresent(m ->{
-            throw new IllegalStateException("Email Already Exists");
+            throw new DuplicateException();
         });
         User user = User.builder()
                 .email(signupRequest.getEmail())
@@ -59,7 +60,7 @@ public class AuthService {
         Object principal = authentication.getPrincipal();
 
         if(principal == "anonymousUser"){
-            throw new IllegalStateException("Not Logged IN");
+            throw new NotAuthenticatedException();
         }
         UserDetails userDetails = (UserDetails) principal;
         User user = userRepository.findByEmail(userDetails.getUsername()).get();

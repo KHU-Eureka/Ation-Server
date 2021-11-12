@@ -1,4 +1,4 @@
-package com.eureka.sensationserver.dto;
+package com.eureka.sensationserver.dto.common;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
