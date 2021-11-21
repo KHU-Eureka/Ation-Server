@@ -11,6 +11,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -75,9 +76,12 @@ public class PersonaService {
 
     public PersonaResponse find(User user, Long personaId){
         Persona persona = personaRepository.getById(personaId);
+        List<String> charmList = new ArrayList<>();
+        personaCharmRepository.findByPersona_Id(personaId).stream().forEach(x -> charmList.add(x.getName()));
+
         List<SenseResponse> senseResponseList = personaSenseReposotiry.findByPersona_Id(personaId).stream().map(SenseResponse::new).collect(Collectors.toList());
 
-        return new PersonaResponse(persona, senseResponseList);
+        return new PersonaResponse(persona, senseResponseList, charmList);
 
     }
 
