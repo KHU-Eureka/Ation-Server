@@ -8,6 +8,8 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface PersonaInterestRepository extends JpaRepository<PersonaInterest, Long> {
-    List<PersonaInterest> findByPersona_Id(@Param(value="persona_id")Long personaId);
+    List<PersonaInterest> findByPersona_Id(@Param(value="personaId")Long personaId);
+    List<PersonaInterest> deleteByPersona_Id(@Param(value="personaId")Long personaId);
+
 
 }

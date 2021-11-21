@@ -21,23 +21,21 @@ public class PersonaResponse {
 
     private List<String> charmList;
 
-    private List<PersonaInterest> personaInterestList;
+    private List<InterestResponse> interestList;
 
-    private List<PersonaJob> personaJobList;
+    private List<JobResponse> jobList;
 
     private List<SenseResponse> senseList;
 
-    public PersonaResponse(Persona persona, List<SenseResponse> senseResponseList, List<String> charmList){
+    public PersonaResponse(Persona persona, List<String> charmList, List<SenseResponse> senseResponseList, List<JobResponse> jobResponseList, List<InterestResponse> interestResponseList){
         this.name = persona.getName();
         this.age = persona.getAge();
         this.mbti = persona.getMbti();
         this.gender = persona.getGender();
-        this.senseList = senseResponseList;
         this.charmList = charmList;
-//        this.personaCharmList = persona.getPersonaCharmList();
-//        this.personaInterestList = persona.getPersonaInterestList();
-//        this.personaJobList = persona.getPersonaJobList();
-//        this.personaSenseList = persona.getPersonaSenseList();
+        this.senseList = senseResponseList;
+        this.jobList = jobResponseList;
+        this.interestList = interestResponseList;
 
     }
 

@@ -5,12 +5,10 @@ import com.eureka.sensationserver.dto.persona.PersonaRequest;
 import lombok.*;
 
 import javax.persistence.*;
-import java.util.ArrayList;
 import java.util.List;
 
 @Entity
-@Getter
-@Setter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -54,21 +52,5 @@ public class Persona {
         this.gender = personaRequest.getGender();
         this.mbti = personaRequest.getMbti();
         return this;
-    }
-
-    @Override
-    public String toString() {
-        return "Persona{" +
-                "id=" + id +
-                ", user=" + user +
-                ", name='" + name + '\'' +
-                ", age=" + age +
-                ", gender='" + gender + '\'' +
-                ", mbti='" + mbti + '\'' +
-                ", personaSenseList=" + personaSenseList +
-                ", personaCharmList=" + personaCharmList +
-                ", personaJobList=" + personaJobList +
-                ", personaInterestList=" + personaInterestList +
-                '}';
     }
 }

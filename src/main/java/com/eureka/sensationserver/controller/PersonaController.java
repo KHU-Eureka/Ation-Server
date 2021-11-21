@@ -23,13 +23,12 @@ public class PersonaController {
     private final UserRepository userRepository;
 
     @GetMapping("/persona/{personaId}")
-    public ResponseEntity currentPersona(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long personaId){
-        User user = userRepository.findByEmail(userDetails.getUsername()).get();
+    public ResponseEntity currentPersona( @PathVariable Long personaId){
         if(personaId == null){
-            return new ResponseEntity(personaService.findAll(user), null, HttpStatus.OK);
+            return new ResponseEntity(personaService.findAll(), null, HttpStatus.OK);
 
         }else{
-            return new ResponseEntity(personaService.find(user, personaId), null, HttpStatus.OK);
+            return new ResponseEntity(personaService.find(personaId), null, HttpStatus.OK);
 
         }
 
@@ -48,5 +47,13 @@ public class PersonaController {
         return new ResponseEntity(personaService.update(user, personaId, personaRequest), null, HttpStatus.OK);
 
     }
+
+    @DeleteMapping("/persona/{personaId}")
+    public ResponseEntity delete(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long personaId){
+        User user = userRepository.findByEmail(userDetails.getUsername()).get();
+        return new ResponseEntity(personaService.delete(user, personaId), null, HttpStatus.OK);
+
+    }
+
 
 }

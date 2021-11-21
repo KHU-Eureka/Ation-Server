@@ -18,7 +18,7 @@ public class PersonaJob {
     @JoinColumn(name="persona_id")
     private Persona persona;
 
-    @ManyToOne(targetEntity = Sense.class, fetch = FetchType.LAZY)
+    @ManyToOne(targetEntity = Job.class, fetch = FetchType.LAZY)
     @JoinColumn(name="job_id")
     private Job job;
 }

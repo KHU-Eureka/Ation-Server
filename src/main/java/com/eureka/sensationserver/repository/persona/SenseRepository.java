@@ -8,4 +8,5 @@ import java.util.List;
 
 public interface SenseRepository extends JpaRepository<Sense,Long> {
     List<Sense> findAllByIdIn(List<Long> id);
+
 }

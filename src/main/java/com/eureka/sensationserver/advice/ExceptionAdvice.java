@@ -11,6 +11,8 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
+import javax.persistence.EntityNotFoundException;
+
 @RestControllerAdvice
 public class ExceptionAdvice {
     @ExceptionHandler(Exception.class)
@@ -31,6 +33,10 @@ public class ExceptionAdvice {
     @ExceptionHandler(BadCredentialsException.class)
     public ResponseEntity badCredentialsException(BadCredentialsException e){
         return new ResponseEntity(new MessageResponse(Msg.BADCREDENTIALS), null, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(EntityNotFoundException.class)
+    public ResponseEntity entityNotFoundException(EntityNotFoundException e){
+        return new ResponseEntity(new MessageResponse(Msg.DATANOTFOUND), null, HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(ForbiddenException.class)
