@@ -1,9 +1,15 @@
 package com.eureka.sensationserver.dto.persona;
 
-import com.eureka.sensationserver.domain.persona.Persona;
+import com.eureka.sensationserver.domain.persona.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.List;
 
+@Getter
+@AllArgsConstructor
+@NoArgsConstructor
 public class PersonaResponse {
     private String name;
 
@@ -13,24 +19,24 @@ public class PersonaResponse {
 
     private String mbti;
 
-    private List<String> charmList;
+    private List<PersonaCharm> personaCharmList;
 
-    private List<Long> senseIdList;
-    private List<String> senseList;
+    private List<PersonaInterest> personaInterestList;
 
+    private List<PersonaJob> personaJobList;
 
-    private List<Long> interestIdList;
-    private List<String> interestList;
+    private List<SenseResponse> senseList;
 
-
-    private List<Long> jobIdList;
-    private List<String> jobList;
-
-    public PersonaResponse(Persona persona){
+    public PersonaResponse(Persona persona, List<SenseResponse> senseResponseList){
         this.name = persona.getName();
         this.age = persona.getAge();
         this.mbti = persona.getMbti();
         this.gender = persona.getGender();
+        this.senseList = senseResponseList;
+//        this.personaCharmList = persona.getPersonaCharmList();
+//        this.personaInterestList = persona.getPersonaInterestList();
+//        this.personaJobList = persona.getPersonaJobList();
+//        this.personaSenseList = persona.getPersonaSenseList();
 
     }
 

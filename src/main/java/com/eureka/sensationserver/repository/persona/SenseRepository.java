@@ -1,4 +1,4 @@
-package com.eureka.sensationserver.repository;
+package com.eureka.sensationserver.repository.persona;
 
 import com.eureka.sensationserver.domain.persona.Sense;
 import org.springframework.data.jpa.repository.JpaRepository;

@@ -1,10 +1,8 @@
 package com.eureka.sensationserver.domain.persona;
 
 import com.eureka.sensationserver.domain.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.eureka.sensationserver.dto.persona.PersonaRequest;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -12,6 +10,7 @@ import java.util.List;
 
 @Entity
 @Getter
+@Setter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -46,5 +45,30 @@ public class Persona {
     @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL)
     private List<PersonaJob> personaJobList;
 
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL)
+    private List<PersonaInterest> personaInterestList;
 
+    public Persona update(PersonaRequest personaRequest){
+        this.name = personaRequest.getName();
+        this.age = personaRequest.getAge();
+        this.gender = personaRequest.getGender();
+        this.mbti = personaRequest.getMbti();
+        return this;
+    }
+
+    @Override
+    public String toString() {
+        return "Persona{" +
+                "id=" + id +
+                ", user=" + user +
+                ", name='" + name + '\'' +
+                ", age=" + age +
+                ", gender='" + gender + '\'' +
+                ", mbti='" + mbti + '\'' +
+                ", personaSenseList=" + personaSenseList +
+                ", personaCharmList=" + personaCharmList +
+                ", personaJobList=" + personaJobList +
+                ", personaInterestList=" + personaInterestList +
+                '}';
+    }
 }

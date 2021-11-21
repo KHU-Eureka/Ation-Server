@@ -1,4 +1,4 @@
-package com.eureka.sensationserver.repository;
+package com.eureka.sensationserver.repository.persona;
 
 import com.eureka.sensationserver.domain.persona.Job;
 import com.eureka.sensationserver.domain.persona.Sense;
