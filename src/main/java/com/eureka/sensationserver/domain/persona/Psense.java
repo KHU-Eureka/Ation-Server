@@ -1,28 +1,25 @@
-package com.eureka.sensationserver.domain;
+package com.eureka.sensationserver.domain.persona;
 
-import com.eureka.sensationserver.domain.persona.Persona;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
 @Getter
-@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class User {
+public class Psense {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Column(nullable = false, unique = true)
-    private String email;
-
-    @Column(nullable = false)
-    private String password;
 
     @ManyToOne(targetEntity = Persona.class, fetch = FetchType.LAZY)
     @JoinColumn(name="persona_id")
     private Persona persona;
 
+    @ManyToOne(targetEntity = Sense.class, fetch = FetchType.LAZY)
+    @JoinColumn(name="sense_id")
+    private Sense sense;
 }
