@@ -1,7 +1,7 @@
 package com.eureka.sensationserver.service;
 
 import com.eureka.sensationserver.advice.exception.DuplicateException;
-import com.eureka.sensationserver.advice.exception.NotAuthenticatedException;
+import com.eureka.sensationserver.advice.exception.UnAuthorizedException;
 import com.eureka.sensationserver.config.security.details.UserDetailsImpl;
 import com.eureka.sensationserver.config.security.jwt.JwtUtils;
 import com.eureka.sensationserver.domain.User;
@@ -10,7 +10,6 @@ import com.eureka.sensationserver.dto.auth.LoginRequest;
 import com.eureka.sensationserver.dto.auth.SignupRequest;
 import com.eureka.sensationserver.dto.user.UserResponse;
 import com.eureka.sensationserver.repository.UserRepository;
-import javassist.bytecode.DuplicateMemberException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -43,7 +42,7 @@ public class AuthService {
     }
 
     @Transactional
-    public JwtResponse authenticateUser(LoginRequest loginRequest){
+    public JwtResponse login(LoginRequest loginRequest){
         Authentication authentication = authenticationManager.authenticate(new UsernamePasswordAuthenticationToken(loginRequest.getEmail(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
@@ -60,7 +59,7 @@ public class AuthService {
         Object principal = authentication.getPrincipal();
 
         if(principal == "anonymousUser"){
-            throw new NotAuthenticatedException();
+            throw new UnAuthorizedException();
         }
         UserDetails userDetails = (UserDetails) principal;
         User user = userRepository.findByEmail(userDetails.getUsername()).get();

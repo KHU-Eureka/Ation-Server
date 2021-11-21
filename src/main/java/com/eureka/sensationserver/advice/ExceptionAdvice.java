@@ -1,7 +1,7 @@
 package com.eureka.sensationserver.advice;
 
 import com.eureka.sensationserver.advice.exception.DuplicateException;
-import com.eureka.sensationserver.advice.exception.NotAuthenticatedException;
+import com.eureka.sensationserver.advice.exception.UnAuthorizedException;
 import com.eureka.sensationserver.dto.common.MessageResponse;
 import com.eureka.sensationserver.dto.common.Msg;
 import org.springframework.http.HttpStatus;
@@ -17,9 +17,9 @@ public class ExceptionAdvice {
         return new ResponseEntity<>(new MessageResponse("Bad Request"), null, HttpStatus.BAD_REQUEST);
     }
 
-    @ExceptionHandler(NotAuthenticatedException.class)
-    public ResponseEntity notAuthenticatedException(NotAuthenticatedException e){
-        return new ResponseEntity(new MessageResponse(Msg.NOTAUTHENTICATED), null, HttpStatus.FORBIDDEN);
+    @ExceptionHandler(UnAuthorizedException.class)
+    public ResponseEntity UnAuthorizedException(UnAuthorizedException e){
+        return new ResponseEntity(new MessageResponse(Msg.NOTAUTHENTICATED), null, HttpStatus.UNAUTHORIZED);
     }
 
     @ExceptionHandler(DuplicateException.class)

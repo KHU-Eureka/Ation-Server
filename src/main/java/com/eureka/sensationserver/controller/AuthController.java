@@ -28,10 +28,10 @@ public class AuthController {
 
     @PostMapping("/auth/login")
     public ResponseEntity logIn(@Valid @RequestBody LoginRequest loginRequest){
-        return new ResponseEntity(authService.authenticateUser(loginRequest), null, HttpStatus.OK);
+        return new ResponseEntity(authService.login(loginRequest), null, HttpStatus.OK);
     }
 
-    @GetMapping("/auth/login")
+    @GetMapping("/auth")
     public ResponseEntity<?> loggedIn(){
         return new ResponseEntity(authService.checkAuthState(), null, HttpStatus.OK);
     }
