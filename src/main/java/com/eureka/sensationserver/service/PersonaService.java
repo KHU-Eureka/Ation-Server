@@ -81,6 +81,7 @@ public class PersonaService {
 
         List<SenseResponse> senseResponseList = personaSenseReposotiry.findByPersona_Id(personaId).stream().map(SenseResponse::new).collect(Collectors.toList());
 
+
         return new PersonaResponse(persona, senseResponseList, charmList);
 
     }

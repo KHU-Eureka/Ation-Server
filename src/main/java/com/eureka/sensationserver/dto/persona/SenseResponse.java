@@ -1,6 +1,7 @@
 package com.eureka.sensationserver.dto.persona;
 
 import com.eureka.sensationserver.domain.persona.PersonaSense;
+import com.eureka.sensationserver.domain.persona.Sense;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -15,5 +16,10 @@ public class SenseResponse {
     public SenseResponse(PersonaSense personaSense){
         senseId = personaSense.getSense().getId();
         name = personaSense.getSense().getName();
+    }
+
+    public SenseResponse(Sense sense){
+        senseId = sense.getId();
+        name = sense.getName();
     }
 }
