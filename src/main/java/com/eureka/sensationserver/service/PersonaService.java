@@ -25,6 +25,7 @@ public class PersonaService {
     private final PersonaCharmRepository personaCharmRepository;
     private final PersonaJobRepository personaJobRepository;
 
+
     @Transactional
     public Long save(User user, PersonaRequest personaRequest){
         Persona persona = personaRepository.save(personaRequest.toEntity(user));
@@ -72,6 +73,8 @@ public class PersonaService {
         return persona.getId();
     }
 
+
+    @Transactional(readOnly = true)
     public PersonaResponse find(Long personaId){
         Persona persona = personaRepository.getById(personaId);
         List<String> charmList = new ArrayList<>();
@@ -85,12 +88,26 @@ public class PersonaService {
         return new PersonaResponse(persona, charmList, senseResponseList, jobResponseList, interestResponseList);
 
     }
+    public List<PersonaResponse> findAll(User user){
+        List<Persona> personaList = personaRepository.findByUserId(user.getId());
+        List<PersonaResponse> personaResponseList = new ArrayList<>();
+        for (Persona persona : personaList){
+            List<String> charmList = new ArrayList<>();
+            personaCharmRepository.findByPersona_Id(persona.getId()).stream().forEach(x -> charmList.add(x.getName()));
 
-    @Transactional(readOnly = true)
-    public List<PersonaResponse> findAll(){
+            List<SenseResponse> senseResponseList = personaSenseReposotiry.findByPersona_Id(persona.getId()).stream().map(SenseResponse::new).collect(Collectors.toList());
 
-        return null;
+            List<JobResponse> jobResponseList = personaJobRepository.findByPersona_Id(persona.getId()).stream().map(JobResponse::new).collect(Collectors.toList());
+            List<InterestResponse> interestResponseList = personaInterestRepository.findByPersona_Id(persona.getId()).stream().map(InterestResponse::new).collect(Collectors.toList());
+
+            personaResponseList.add(new PersonaResponse(persona, charmList, senseResponseList, jobResponseList, interestResponseList));
+        }
+        return personaResponseList;
+
+
     }
+
+
 
     @Transactional
     public Long update(User user, Long personaId, PersonaRequest personaRequest){
@@ -144,6 +161,7 @@ public class PersonaService {
         }
     }
 
+    @Transactional
     public Long delete(User user, Long personaId){
         Persona persona = personaRepository.getById(personaId);
         if(user.getId() != persona.getUser().getId()){
@@ -151,6 +169,24 @@ public class PersonaService {
         } else {
             personaRepository.deleteById(personaId);
             return personaId;
+        }
+    }
+
+    @Transactional
+    public Long setCurrentPersona(User user, Long personaId){
+        Persona persona = personaRepository.getById(personaId);
+        user.setPersona(persona);
+        return personaId;
+    }
+
+    @Transactional(readOnly = true)
+    public Long getCurrPersona(User user){
+        Persona persona = user.getPersona();
+        if(persona == null){
+            return null;
+        }else{
+            return user.getPersona().getId();
+
         }
     }
 }

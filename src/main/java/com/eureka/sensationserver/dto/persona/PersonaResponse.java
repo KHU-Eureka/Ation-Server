@@ -11,6 +11,9 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 public class PersonaResponse {
+
+    private Long id;
+
     private String name;
 
     private Integer age;
@@ -28,6 +31,7 @@ public class PersonaResponse {
     private List<SenseResponse> senseList;
 
     public PersonaResponse(Persona persona, List<String> charmList, List<SenseResponse> senseResponseList, List<JobResponse> jobResponseList, List<InterestResponse> interestResponseList){
+        this.id = persona.getId();
         this.name = persona.getName();
         this.age = persona.getAge();
         this.mbti = persona.getMbti();

@@ -25,4 +25,7 @@ public class User {
     @JoinColumn(name="persona_id")
     private Persona persona;
 
+    public void setPersona(Persona persona) {
+        this.persona = persona;
+    }
 }

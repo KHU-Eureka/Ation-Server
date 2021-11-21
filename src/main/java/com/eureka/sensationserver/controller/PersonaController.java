@@ -22,15 +22,31 @@ public class PersonaController {
 
     private final UserRepository userRepository;
 
+    @PostMapping("/persona/user/{personaId}")
+    public ResponseEntity setCurrentPersona(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long personaId){
+        User user = userRepository.findByEmail(userDetails.getUsername()).get();
+        return new ResponseEntity(personaService.setCurrentPersona(user, personaId), null, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/persona/user")
+    public ResponseEntity getCurrentPersona(@AuthenticationPrincipal UserDetails userDetails){
+        User user = userRepository.findByEmail(userDetails.getUsername()).get();
+        return new ResponseEntity(personaService.getCurrPersona(user), null, HttpStatus.OK);
+
+    }
+
+    @GetMapping("/persona")
+    public ResponseEntity findAll(@AuthenticationPrincipal UserDetails userDetails){
+        User user = userRepository.findByEmail(userDetails.getUsername()).get();
+
+        return new ResponseEntity(personaService.findAll(user), null, HttpStatus.OK);
+
+    }
     @GetMapping("/persona/{personaId}")
-    public ResponseEntity currentPersona( @PathVariable Long personaId){
-        if(personaId == null){
-            return new ResponseEntity(personaService.findAll(), null, HttpStatus.OK);
+    public ResponseEntity find( @PathVariable Long personaId){
 
-        }else{
-            return new ResponseEntity(personaService.find(personaId), null, HttpStatus.OK);
-
-        }
+        return new ResponseEntity(personaService.find(personaId), null, HttpStatus.OK);
 
     }
 
