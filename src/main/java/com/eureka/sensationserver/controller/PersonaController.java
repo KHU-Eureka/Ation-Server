@@ -5,6 +5,7 @@ import com.eureka.sensationserver.dto.persona.PersonaRequest;
 import com.eureka.sensationserver.repository.UserRepository;
 import com.eureka.sensationserver.service.PersonaService;
 import io.swagger.annotations.Api;
+import io.swagger.annotations.ApiOperation;
 import io.swagger.models.Response;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -23,6 +24,7 @@ public class PersonaController {
     private final UserRepository userRepository;
 
     @PostMapping("/persona/user/{personaId}")
+    @ApiOperation(value="활동 페르소나 조회")
     public ResponseEntity setCurrentPersona(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long personaId){
         User user = userRepository.findByEmail(userDetails.getUsername()).get();
         return new ResponseEntity(personaService.setCurrentPersona(user, personaId), null, HttpStatus.OK);
@@ -30,6 +32,7 @@ public class PersonaController {
     }
 
     @GetMapping("/persona/user")
+    @ApiOperation(value="활동 페르소나 설정")
     public ResponseEntity getCurrentPersona(@AuthenticationPrincipal UserDetails userDetails){
         User user = userRepository.findByEmail(userDetails.getUsername()).get();
         return new ResponseEntity(personaService.getCurrPersona(user), null, HttpStatus.OK);
@@ -37,6 +40,7 @@ public class PersonaController {
     }
 
     @GetMapping("/persona")
+    @ApiOperation(value="유저의 전체 페르소나 조회")
     public ResponseEntity findAll(@AuthenticationPrincipal UserDetails userDetails){
         User user = userRepository.findByEmail(userDetails.getUsername()).get();
 
@@ -44,6 +48,7 @@ public class PersonaController {
 
     }
     @GetMapping("/persona/{personaId}")
+    @ApiOperation(value="특정 페르소나 조회")
     public ResponseEntity find( @PathVariable Long personaId){
 
         return new ResponseEntity(personaService.find(personaId), null, HttpStatus.OK);
@@ -52,12 +57,14 @@ public class PersonaController {
 
 
     @PostMapping("/persona")
+    @ApiOperation(value="페르소나 생성")
     public ResponseEntity save(@AuthenticationPrincipal UserDetails userDetails, @RequestBody PersonaRequest personaRequest){
         User user = userRepository.findByEmail(userDetails.getUsername()).get();
         return new ResponseEntity(personaService.save(user, personaRequest),null, HttpStatus.CREATED);
     }
 
     @PutMapping("/persona/{personaId}")
+    @ApiOperation(value="페르소나 수정")
     public ResponseEntity update(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long personaId,@RequestBody PersonaRequest personaRequest){
         User user = userRepository.findByEmail(userDetails.getUsername()).get();
         return new ResponseEntity(personaService.update(user, personaId, personaRequest), null, HttpStatus.OK);
@@ -65,6 +72,7 @@ public class PersonaController {
     }
 
     @DeleteMapping("/persona/{personaId}")
+    @ApiOperation(value="페르소나 삭제")
     public ResponseEntity delete(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long personaId){
         User user = userRepository.findByEmail(userDetails.getUsername()).get();
         return new ResponseEntity(personaService.delete(user, personaId), null, HttpStatus.OK);
