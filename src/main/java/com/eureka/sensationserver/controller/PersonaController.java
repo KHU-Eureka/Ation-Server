@@ -1,19 +1,35 @@
 package com.eureka.sensationserver.controller;
 
+import com.eureka.sensationserver.domain.User;
+import com.eureka.sensationserver.dto.persona.PersonaRequest;
+import com.eureka.sensationserver.repository.UserRepository;
+import com.eureka.sensationserver.service.PersonaService;
 import io.swagger.annotations.Api;
+import io.swagger.models.Response;
 import lombok.RequiredArgsConstructor;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api")
 @Api(tags = {"Persona"})
 @RequiredArgsConstructor
 public class PersonaController {
+    private final PersonaService personaService;
+
+    private final UserRepository userRepository;
 
     @GetMapping("/persona")
-    public String test(){
-        return "ss";
+    public String currentPersona(@AuthenticationPrincipal UserDetails userDetails){
+        return userDetails.getUsername();
+    }
+
+    @PostMapping("/persona")
+    public ResponseEntity createPersona(@AuthenticationPrincipal UserDetails userDetails, @RequestBody PersonaRequest personaRequest){
+        User user = userRepository.findByEmail(userDetails.getUsername()).get();
+        return new ResponseEntity(personaService.createPersona(user, personaRequest),null, HttpStatus.CREATED);
     }
 }

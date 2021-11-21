@@ -1,6 +1,7 @@
 package com.eureka.sensationserver.domain.persona;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
@@ -9,10 +10,10 @@ import java.util.List;
 
 @Entity
 @Getter
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Sense {
-
+public class Job {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -20,7 +21,7 @@ public class Sense {
     @Column
     private String name;
 
-    @OneToMany(mappedBy = "sense")
-    private List<PersonaSense> personaSenseList;
-
+    @OneToMany(mappedBy = "job")
+    private List<PersonaJob> personaJobList;
 }
+

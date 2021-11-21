@@ -5,22 +5,21 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Sense {
-
+public class PersonaCharm {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @ManyToOne(targetEntity = Persona.class, fetch = FetchType.LAZY)
+    @JoinColumn(name="persona_id")
+    private Persona persona;
+
     @Column
     private String name;
-
-    @OneToMany(mappedBy = "sense")
-    private List<PersonaSense> personaSenseList;
-
 }
+

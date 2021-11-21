@@ -10,7 +10,7 @@ import javax.persistence.*;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Psense {
+public class PersonaInterest {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -19,7 +19,10 @@ public class Psense {
     @JoinColumn(name="persona_id")
     private Persona persona;
 
-    @ManyToOne(targetEntity = Sense.class, fetch = FetchType.LAZY)
-    @JoinColumn(name="sense_id")
-    private Sense sense;
+    @ManyToOne(targetEntity = Interest.class, fetch = FetchType.LAZY)
+    @JoinColumn(name="interest_id")
+    private Interest interest;
 }
+
+
+

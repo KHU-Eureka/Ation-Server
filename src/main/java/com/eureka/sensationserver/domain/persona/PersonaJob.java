@@ -5,22 +5,23 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
-import java.util.List;
 
 @Entity
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class Sense {
-
+public class PersonaJob {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private String name;
+    @ManyToOne(targetEntity = Persona.class, fetch = FetchType.LAZY)
+    @JoinColumn(name="persona_id")
+    private Persona persona;
 
-    @OneToMany(mappedBy = "sense")
-    private List<PersonaSense> personaSenseList;
-
+    @ManyToOne(targetEntity = Sense.class, fetch = FetchType.LAZY)
+    @JoinColumn(name="job_id")
+    private Job job;
 }
+
+
