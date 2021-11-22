@@ -1,4 +1,4 @@
-package com.eureka.sensationserver.config.swagger;
+package com.eureka.sensationserver.config;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
