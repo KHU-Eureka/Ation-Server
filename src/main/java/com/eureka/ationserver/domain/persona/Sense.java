@@ -1,0 +1,25 @@
+package com.eureka.ationserver.domain.persona;
+
+import lombok.*;
+
+import javax.persistence.*;
+import java.util.List;
+
+@Entity
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
+public class Sense {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
+
+    @Column
+    private String name;
+
+    @OneToMany(mappedBy = "sense")
+    private List<PersonaSense> personaSenseList;
+
+}
