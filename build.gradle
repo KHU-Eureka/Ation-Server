@@ -41,6 +41,13 @@ dependencies {
     implementation group: 'io.springfox', name: 'springfox-swagger-ui', version: '2.9.2'
     implementation group: 'io.springfox', name: 'springfox-swagger2', version: '2.9.2'
 
+    // Jsoup
+    implementation 'org.jsoup:jsoup:1.7.3'
+
+    // Apache Commons IO for image
+    implementation group: 'commons-io', name: 'commons-io', version: '2.4'
+
+
 }
 
 test {

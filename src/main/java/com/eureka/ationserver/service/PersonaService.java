@@ -1,0 +1,246 @@
+package com.eureka.ationserver.service;
+
+import com.eureka.ationserver.advice.exception.ForbiddenException;
+import com.eureka.ationserver.domain.user.User;
+import com.eureka.ationserver.domain.persona.*;
+import com.eureka.ationserver.dto.persona.*;
+import com.eureka.ationserver.repository.persona.*;
+import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
+
+import java.io.File;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+
+@Service
+@RequiredArgsConstructor
+public class PersonaService {
+    private final PersonaRepository personaRepository;
+    private final SenseRepository senseRepository;
+    private final PersonaSenseReposotiry personaSenseReposotiry;
+    private final InterestRepository interestRepository;
+    private final PersonaInterestRepository personaInterestRepository;
+    private final PersonaCharmRepository personaCharmRepository;
+
+
+    @Transactional
+    public Long save(User user, PersonaRequest personaRequest){
+        String defaultPath = getPersonaImageDefaultPath();
+
+        Persona persona = personaRepository.save(personaRequest.toEntity(user, defaultPath));
+
+        // sense
+        List<Sense> senseList = senseRepository.findAllByIdIn(personaRequest.getSenseIdList());
+        for(Sense sense : senseList){
+            PersonaSense personaSense = PersonaSense.builder()
+                                            .persona(persona)
+                                            .sense(sense)
+                                            .build();
+            personaSenseReposotiry.save(personaSense);
+        }
+
+
+        // interest
+        List<Interest> interestList = interestRepository.findAllByIdIn(personaRequest.getInterestIdList());
+        for(Interest interest : interestList){
+            PersonaInterest personaInterest = PersonaInterest.builder()
+                                                .persona(persona)
+                                                .interest(interest)
+                                                .build();
+            personaInterestRepository.save(personaInterest);
+        }
+
+        // charm
+        for(String charm : personaRequest.getCharmList()){
+            PersonaCharm personaCharm = PersonaCharm.builder()
+                                            .persona(persona)
+                                            .name(charm)
+                                            .build();
+            personaCharmRepository.save(personaCharm);
+        }
+
+
+        return persona.getId();
+    }
+
+    public Boolean duplicate(String nickname){
+        Optional<Persona> persona = personaRepository.findByNickname(nickname);
+        if(persona.isPresent()) {
+            return true;
+        }else{
+            return false;
+        }
+    }
+
+    @Value("${server.address}")
+    private String HOST;
+
+    @Value("${server.port}")
+    private String PORT;
+
+    @Value("${eureka.app.personaImagePath}")
+    private String PERSONAIMAGEPATH;
+
+    private String getPersonaImageDefaultPath(){
+        // set file name
+        //String absolutePath = new File("").getAbsolutePath() + "/persona/";
+        List<String> pathList = new ArrayList<>();
+
+        String fileName = "persona.png";
+        String url = "http://"+HOST+":"+PORT+"/api/image?path=";
+        String apiPath = url + PERSONAIMAGEPATH + fileName;
+        return apiPath;
+    }
+
+    private List<String> getPersonaImagePath(Long personaId){
+        // set file name
+
+        List<String> pathList = new ArrayList<>();
+
+        String fileName = "persona-"+personaId+".png";
+        String url = "http://"+HOST+":"+PORT+"/api/image?path=";
+        String apiPath = url + PERSONAIMAGEPATH + fileName;
+
+        String path = PERSONAIMAGEPATH + fileName;
+        pathList.add(apiPath);
+        pathList.add(path);
+        return pathList;
+    }
+
+    @Transactional
+    public Long saveImg(User user, Long personaId, MultipartFile profileImg) throws IOException {
+        Persona persona = personaRepository.getById(personaId);
+        if(user.getId() != persona.getUser().getId()){
+            throw new ForbiddenException();
+        } else {
+            List<String> pathList = getPersonaImagePath(personaId);
+            File file = new File(pathList.get(1));
+            profileImg.transferTo(file);
+            persona.setProfileImgPath(pathList.get(0));
+            return personaId;
+        }
+    }
+
+
+    @Transactional(readOnly = true)
+    public PersonaResponse find(Long personaId){
+        Persona persona = personaRepository.getById(personaId);
+        List<String> charmList = new ArrayList<>();
+        personaCharmRepository.findByPersona_Id(personaId).stream().forEach(x -> charmList.add(x.getName()));
+
+        List<SenseResponse> senseResponseList = personaSenseReposotiry.findByPersona_Id(personaId).stream().map(SenseResponse::new).collect(Collectors.toList());
+
+        List<InterestResponse> interestResponseList = personaInterestRepository.findByPersona_Id(personaId).stream().map(InterestResponse::new).collect(Collectors.toList());
+
+        return new PersonaResponse(persona, charmList, senseResponseList, interestResponseList);
+
+    }
+    public List<PersonaResponse> findAll(User user){
+        List<Persona> personaList = personaRepository.findByUserId(user.getId());
+        List<PersonaResponse> personaResponseList = new ArrayList<>();
+        for (Persona persona : personaList){
+            List<String> charmList = new ArrayList<>();
+
+            personaCharmRepository.findByPersona_Id(persona.getId()).stream().forEach(x -> charmList.add(x.getName()));
+
+            List<SenseResponse> senseResponseList = personaSenseReposotiry.findByPersona_Id(persona.getId()).stream().map(SenseResponse::new).collect(Collectors.toList());
+
+            List<InterestResponse> interestResponseList = personaInterestRepository.findByPersona_Id(persona.getId()).stream().map(InterestResponse::new).collect(Collectors.toList());
+
+            personaResponseList.add(new PersonaResponse(persona, charmList, senseResponseList, interestResponseList));
+        }
+        return personaResponseList;
+
+
+    }
+
+
+
+    @Transactional
+    public Long update(User user, Long personaId, PersonaRequest personaRequest){
+        Persona persona = personaRepository.getById(personaId);
+        if(user.getId() != persona.getUser().getId()){
+            throw new ForbiddenException();
+        } else {
+            persona.update(personaRequest);
+
+
+            personaSenseReposotiry.deleteByPersona_Id(personaId);
+            List<Sense> senseList = senseRepository.findAllByIdIn(personaRequest.getSenseIdList());
+            for (Sense sense : senseList) {
+                PersonaSense personaSense = PersonaSense.builder()
+                        .persona(persona)
+                        .sense(sense)
+                        .build();
+                personaSenseReposotiry.save(personaSense);
+            }
+
+
+            personaInterestRepository.deleteByPersona_Id(personaId);
+            List<Interest> interestList = interestRepository.findAllByIdIn(personaRequest.getInterestIdList());
+            for (Interest interest : interestList) {
+                PersonaInterest personaInterest = PersonaInterest.builder()
+                        .persona(persona)
+                        .interest(interest)
+                        .build();
+                personaInterestRepository.save(personaInterest);
+            }
+
+            personaCharmRepository.deleteByPersona_Id(personaId);
+            for (String charm : personaRequest.getCharmList()) {
+                PersonaCharm personaCharm = PersonaCharm.builder()
+                        .persona(persona)
+                        .name(charm)
+                        .build();
+                personaCharmRepository.save(personaCharm);
+            }
+
+            return personaId;
+        }
+    }
+
+    @Transactional
+    public Long delete(User user, Long personaId){
+        Persona persona = personaRepository.getById(personaId);
+        if(user.getId() != persona.getUser().getId()){
+            throw new ForbiddenException();
+        } else {
+            personaRepository.deleteById(personaId);
+            return personaId;
+        }
+    }
+
+    @Transactional
+    public Long setCurrentPersona(User user, Long personaId){
+        Persona persona = personaRepository.getById(personaId);
+        if(user.getId() != persona.getUser().getId()){
+            throw new ForbiddenException();
+        } else {
+            user.setPersona(persona);
+            return personaId;
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public PersonaResponse getCurrentPersona(User user){
+        Persona persona = user.getPersona();
+        if(persona == null){
+            return null;
+        }else{
+            List<String> charmList = new ArrayList<>();
+            personaCharmRepository.findByPersona_Id(persona.getId()).stream().forEach(x -> charmList.add(x.getName()));
+
+            List<SenseResponse> senseResponseList = personaSenseReposotiry.findByPersona_Id(persona.getId()).stream().map(SenseResponse::new).collect(Collectors.toList());
+
+            List<InterestResponse> interestResponseList = personaInterestRepository.findByPersona_Id(persona.getId()).stream().map(InterestResponse::new).collect(Collectors.toList());
+
+            return new PersonaResponse(persona, charmList, senseResponseList, interestResponseList);
+        }
+    }
+}
