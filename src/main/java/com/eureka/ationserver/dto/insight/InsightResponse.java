@@ -17,20 +17,21 @@ public class InsightResponse {
 
     private String title;
 
-    private String imageUrl;
+    private String imgPath;
 
     private String description;
 
-    private String sightName;
+    private String siteName;
 
     private LocalDateTime createdAt;
 
     public InsightResponse(Insight insight){
         id = insight.getId();
         url = insight.getUrl();
-        title = insight.getImageUrl();
+        title = insight.getTitle();
+        imgPath = insight.getImgPath();
         description = insight.getDescription();
-        sightName = insight.getSightName();
+        siteName = insight.getSiteName();
         createdAt = insight.getCreatedAt();
     }
 }

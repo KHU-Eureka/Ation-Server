@@ -28,6 +28,7 @@ public class AuthController {
         return new ResponseEntity(new MessageResponse("SignUp Success"), null, HttpStatus.CREATED);
     }
 
+
     @PostMapping("/auth/login")
     @ApiOperation(value="로그인")
     public ResponseEntity logIn(@Valid @RequestBody LoginRequest loginRequest){

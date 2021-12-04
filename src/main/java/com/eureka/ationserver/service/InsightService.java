@@ -56,8 +56,8 @@ public class InsightService {
                 .url(insightRequest.getUrl())
                 .title(title)
                 .description(description)
-                .imageUrl(imageUrl)
-                .sightName(siteName)
+                .imgPath(imageUrl)
+                .siteName(siteName)
                 .insightMainCategory(insightMainCategory)
                 .insightSubCategory(insightSubCategory)
                 .build();

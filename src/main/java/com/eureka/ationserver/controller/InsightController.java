@@ -20,7 +20,7 @@ public class InsightController {
 
     private final InsightService insightService;
 
-    @PostMapping("/insight")
+    @PostMapping("/insight/public")
     public ResponseEntity save(@RequestBody InsightRequest insightRequest) throws IOException {
         return new ResponseEntity(insightService.save(insightRequest),null, HttpStatus.CREATED);
     }

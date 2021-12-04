@@ -33,13 +33,17 @@ public class Insight {
     private String title;
 
     @Column
-    private String imageUrl;
+    private String imgPath;
 
     @Column
     private String description;
 
     @Column
-    private String sightName;
+    private String siteName;
+
+    @Column
+    private boolean open;
+
 
     @Column
     private LocalDateTime createdAt;

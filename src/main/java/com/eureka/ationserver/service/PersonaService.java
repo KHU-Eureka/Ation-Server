@@ -84,8 +84,8 @@ public class PersonaService {
     @Value("${server.port}")
     private String PORT;
 
-    @Value("${eureka.app.personaImagePath}")
-    private String PERSONAIMAGEPATH;
+    @Value("${eureka.app.imagePath}")
+    private String IMAGEPATH;
 
     private String getPersonaImageDefaultPath(){
         // set file name
@@ -94,7 +94,7 @@ public class PersonaService {
 
         String fileName = "persona.png";
         String url = "http://"+HOST+":"+PORT+"/api/image?path=";
-        String apiPath = url + PERSONAIMAGEPATH + fileName;
+        String apiPath = url + IMAGEPATH+"persona/" + fileName;
         return apiPath;
     }
 
@@ -105,9 +105,9 @@ public class PersonaService {
 
         String fileName = "persona-"+personaId+".png";
         String url = "http://"+HOST+":"+PORT+"/api/image?path=";
-        String apiPath = url + PERSONAIMAGEPATH + fileName;
+        String apiPath = url + IMAGEPATH+ "persona/" + fileName;
 
-        String path = PERSONAIMAGEPATH + fileName;
+        String path = IMAGEPATH+ "persona/" + fileName;
         pathList.add(apiPath);
         pathList.add(path);
         return pathList;
