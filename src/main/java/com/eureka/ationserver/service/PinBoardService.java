@@ -7,11 +7,9 @@ import com.eureka.ationserver.domain.persona.Persona;
 import com.eureka.ationserver.domain.user.User;
 import com.eureka.ationserver.dto.insight.PinBoardRequest;
 import com.eureka.ationserver.dto.insight.PinBoardResponse;
-import com.eureka.ationserver.dto.persona.PersonaResponse;
 import com.eureka.ationserver.dto.persona.PersonaSimpleResponse;
 import com.eureka.ationserver.repository.insight.PinBoardRepository;
 import com.eureka.ationserver.repository.persona.PersonaRepository;
-import com.eureka.ationserver.repository.persona.PersonaSenseReposotiry;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -32,11 +30,14 @@ public class PinBoardService {
     @Transactional
     public PinBoardResponse save(User user, PinBoardRequest pinBoardRequest){
         Persona persona = personaRepository.findById(pinBoardRequest.getPersonaId()).get();
-        String defaultPath = getPinBoardImageDefaultPath();
-        PinBoard pinBoard = pinBoardRequest.toEntity(user, persona, defaultPath);
-        PinBoard saved = pinBoardRepository.save(pinBoard);
-        return new PinBoardResponse(saved , new PersonaSimpleResponse(persona));
-
+        if(user.getId() != persona.getUser().getId()){
+            throw new ForbiddenException();
+        }else{
+            String defaultPath = getPinBoardImageDefaultPath();
+            PinBoard pinBoard = pinBoardRequest.toEntity(user, persona, defaultPath);
+            PinBoard saved = pinBoardRepository.save(pinBoard);
+            return new PinBoardResponse(saved , new PersonaSimpleResponse(persona));
+        }
     }
 
     @Value("${server.address}")
@@ -60,7 +61,6 @@ public class PinBoardService {
 
     private List<String> getPinBoardImagePath(Long pinBoardId){
         // set file name
-
         List<String> pathList = new ArrayList<>();
 
         String fileName = "persona-"+ pinBoardId +".png";
@@ -87,5 +87,46 @@ public class PinBoardService {
         }
     }
 
+    @Transactional(readOnly = true)
+    public List<PinBoardResponse> findAll(User user, Long personaId){
+        Persona persona = personaRepository.findById(personaId).get();
+        if(user.getId() != persona.getUser().getId()){
+            throw new ForbiddenException();
+        }else{
+            PersonaSimpleResponse personaSimpleResponse = new PersonaSimpleResponse(persona);
+            List<PinBoardResponse> pinBoardResponseList = new ArrayList<>();
+            pinBoardRepository.findByPersona_Id(personaId).stream().forEach(x-> pinBoardResponseList.add(new PinBoardResponse(x, personaSimpleResponse)));
+            return pinBoardResponseList;
+        }
+    }
+
+    @Transactional
+    public Long update(User user, Long pinBoardId, PinBoardRequest pinBoardRequest){
+        PinBoard pinBoard = pinBoardRepository.getById(pinBoardId);
+        if(user.getId() != pinBoard.getUser().getId()) {
+            throw new ForbiddenException();
+        }else {
+            Persona persona = personaRepository.getById(pinBoardRequest.getPersonaId());
+            if(user.getId() != persona.getUser().getId()){
+                throw new ForbiddenException();
+
+            }else{
+                pinBoard.update(persona, pinBoardRequest.getName());
+                return pinBoardId;
+            }
+        }
+    }
+
+    @Transactional
+    public Long delete(User user, Long pinBoardId){
+        PinBoard pinBoard = pinBoardRepository.getById(pinBoardId);
+        if(user.getId() != pinBoard.getUser().getId()) {
+            throw new ForbiddenException();
+        }else {
+            pinBoardRepository.deleteById(pinBoardId);
+            return pinBoardId;
+        }
+
+    }
 
 }

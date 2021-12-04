@@ -37,4 +37,9 @@ public class PinBoard {
     public void setImgPath(String imgPath) {
         this.imgPath = imgPath;
     }
+
+    public void update(Persona persona, String name) {
+        this.persona = persona;
+        this.name = name;
+    }
 }

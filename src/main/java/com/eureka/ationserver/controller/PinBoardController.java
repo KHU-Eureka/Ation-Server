@@ -33,10 +33,34 @@ public class PinBoardController {
 
     }
 
-    @PostMapping("/pin-board/image")
+    @PostMapping("/pin-board/image/{pinBoardId}")
     @ApiOperation(value="핀보드 이미지 설정")
     public ResponseEntity saveImg(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long pinBoardId, @RequestParam(value = "pinBoardImg", required = true) MultipartFile pinBoardImg) throws IOException {
         User user = userRepository.findByEmail(userDetails.getUsername()).get();
         return new ResponseEntity(pinBoardService.saveImg(user, pinBoardId, pinBoardImg), null, HttpStatus.OK);
+    }
+
+    @GetMapping("/pin-board/user")
+    @ApiOperation(value="유저의 페르소나별 핀보드 조회")
+    public ResponseEntity findAll(@AuthenticationPrincipal UserDetails userDetails, @RequestParam(value="personaId") Long personaId){
+        User user = userRepository.findByEmail(userDetails.getUsername()).get();
+        return new ResponseEntity(pinBoardService.findAll(user, personaId), null, HttpStatus.OK);
+
+    }
+
+    @PutMapping("/pin-board/{pinBoardId}")
+    @ApiOperation(value="핀보드 수정")
+    public ResponseEntity update(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long pinBoardId, @RequestBody PinBoardRequest pinBoardRequest){
+        User user = userRepository.findByEmail(userDetails.getUsername()).get();
+        return new ResponseEntity(pinBoardService.update(user, pinBoardId, pinBoardRequest), null, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/pin-board/{pinBoardId}")
+    @ApiOperation(value="핀보드 삭제")
+    public ResponseEntity delete(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long pinBoardId){
+        User user = userRepository.findByEmail(userDetails.getUsername()).get();
+        return new ResponseEntity(pinBoardService.delete(user, pinBoardId), null, HttpStatus.OK);
+
+
     }
 }
