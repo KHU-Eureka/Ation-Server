@@ -1,11 +1,11 @@
 package com.eureka.ationserver.service;
 
 import com.eureka.ationserver.domain.insight.*;
+import com.eureka.ationserver.dto.insight.InsightMainCategoryResponse;
 import com.eureka.ationserver.dto.insight.InsightRequest;
 import com.eureka.ationserver.dto.insight.InsightResponse;
-import com.eureka.ationserver.repository.insight.InsightMainCategoryRepository;
-import com.eureka.ationserver.repository.insight.InsightRepository;
-import com.eureka.ationserver.repository.insight.InsightSubCategoryRepository;
+import com.eureka.ationserver.dto.insight.InsightSubCategoryResponse;
+import com.eureka.ationserver.repository.insight.*;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,16 +24,27 @@ public class InsightService {
     private final InsightRepository insightRepository;
     private final InsightMainCategoryRepository insightMainCategoryRepository;
     private final InsightSubCategoryRepository insightSubCategoryRepository;
+    private final InsightTagRepository insightTagRepository;
+    private final PinBoardRepository pinBoardRepository;
 
     @Transactional
-    public Long save(InsightRequest insightRequest) throws IOException {
+    public Long savePublic(InsightRequest insightRequest) throws IOException {
 
         String crawlingUrl = insightRequest.getUrl();
         Document document = Jsoup.connect(crawlingUrl).get();
 
 
         String title = document.select("meta[property=og:title]").first().attr("content");
-        String description = document.select("meta[property=og:description]").get(0).attr("content");
+
+
+        String description;
+        try {
+            description = document.select("meta[property=og:description]").get(0).attr("content");
+
+        } catch (Exception e) {
+            description = null;
+        }
+
         String imageUrl;
         try {
             imageUrl = document.select("meta[property=og:image]").get(0).attr("content");
@@ -49,6 +61,7 @@ public class InsightService {
             siteName = "-";
         }
 
+        // public
         InsightMainCategory insightMainCategory = insightMainCategoryRepository.findById(insightRequest.getInsightMainCategoryId()).get();
         InsightSubCategory insightSubCategory= insightSubCategoryRepository.findById(insightRequest.getInsightSubCategoryId()).get();
 
@@ -60,29 +73,38 @@ public class InsightService {
                 .siteName(siteName)
                 .insightMainCategory(insightMainCategory)
                 .insightSubCategory(insightSubCategory)
+                .open(true)
                 .build();
         Insight saved = insightRepository.save(insight);
 
+        for(String tag : insightRequest.getTagList()){
+            InsightTag insightTag = InsightTag.builder()
+                                        .insight(insight)
+                                        .name(tag)
+                                        .build();
+            insightTagRepository.save(insightTag);
+        }
+
         return saved.getId();
+
+
+
     }
 
     @Transactional(readOnly = true)
-    public List<InsightResponse> findAll(){
-        List<InsightResponse> insightResponseList = insightRepository.findAll().stream().map(InsightResponse::new).collect(Collectors.toList());
+    public List<InsightResponse> findPublicAll(){
+        List<Insight> insightList = insightRepository.findByOpen(true);
+        List<InsightResponse> insightResponseList = new ArrayList<>();
+        for(Insight insight : insightList){
+            InsightMainCategoryResponse insightMainCategoryResponse = new InsightMainCategoryResponse(insight.getInsightMainCategory());
+            InsightSubCategoryResponse insightSubCategoryResponse = new InsightSubCategoryResponse(insight.getInsightSubCategory());
+            List<String> tagList = new ArrayList<>();
+            insight.getInsightTagList().stream().forEach(x-> tagList.add(x.getName()));
+            insightResponseList.add(new InsightResponse(insight, insightMainCategoryResponse, insightSubCategoryResponse, tagList));
+        }
         return insightResponseList;
     }
 
-    @Transactional
-    public List<InsightMainCategoryResponse> findAllMainCategory(){
-        List<InsightMainCategoryResponse> insightMainCategoryResponseList = insightMainCategoryRepository.findAll().stream().map(InsightMainCategoryResponse::new).collect(Collectors.toList());
-        return insightMainCategoryResponseList;
-    }
-
-    @Transactional(readOnly = true)
-    public List<InsightSubCategoryResponse> findSubCategory(Long insightMainCategoryId){
-        List<InsightSubCategoryResponse> insightSubCategoryResponseList = insightSubCategoryRepository.findByInsightMainCategory_Id(insightMainCategoryId).stream().map(InsightSubCategoryResponse::new).collect(Collectors.toList());
-        return insightSubCategoryResponseList;
-    }
 
 }
 

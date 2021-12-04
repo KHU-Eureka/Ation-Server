@@ -18,6 +18,7 @@ public class PinBoardResponse {
     private String imgPath;
 
 
+
     public PinBoardResponse(PinBoard pinBoard, PersonaSimpleResponse personaSimpleResponse){
         this.persona = personaSimpleResponse;
         this.name = pinBoard.getName();

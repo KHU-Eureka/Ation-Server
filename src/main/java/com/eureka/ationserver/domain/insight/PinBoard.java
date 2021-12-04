@@ -20,10 +20,6 @@ public class PinBoard {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
-    @JoinColumn(name="user_id")
-    private User user;
-
     @ManyToOne(targetEntity = Persona.class, fetch = FetchType.LAZY)
     @JoinColumn(name="persona_id")
     private Persona persona;

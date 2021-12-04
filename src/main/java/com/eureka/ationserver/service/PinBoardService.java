@@ -34,7 +34,7 @@ public class PinBoardService {
             throw new ForbiddenException();
         }else{
             String defaultPath = getPinBoardImageDefaultPath();
-            PinBoard pinBoard = pinBoardRequest.toEntity(user, persona, defaultPath);
+            PinBoard pinBoard = pinBoardRequest.toEntity(persona, defaultPath);
             PinBoard saved = pinBoardRepository.save(pinBoard);
             return new PinBoardResponse(saved , new PersonaSimpleResponse(persona));
         }
@@ -76,7 +76,7 @@ public class PinBoardService {
     @Transactional
     public PinBoardResponse saveImg(User user, Long pinBoardId, MultipartFile pinBoardImg) throws IOException{
         PinBoard pinBoard = pinBoardRepository.getById(pinBoardId);
-        if(user.getId() != pinBoard.getUser().getId()) {
+        if(user.getId() != pinBoard.getPersona().getUser().getId()) {
             throw new ForbiddenException();
         }else{
             List<String> pathList = getPinBoardImagePath(pinBoardId);
@@ -103,7 +103,7 @@ public class PinBoardService {
     @Transactional
     public Long update(User user, Long pinBoardId, PinBoardRequest pinBoardRequest){
         PinBoard pinBoard = pinBoardRepository.getById(pinBoardId);
-        if(user.getId() != pinBoard.getUser().getId()) {
+        if(user.getId() != pinBoard.getPersona().getUser().getId()) {
             throw new ForbiddenException();
         }else {
             Persona persona = personaRepository.getById(pinBoardRequest.getPersonaId());
@@ -120,7 +120,7 @@ public class PinBoardService {
     @Transactional
     public Long delete(User user, Long pinBoardId){
         PinBoard pinBoard = pinBoardRepository.getById(pinBoardId);
-        if(user.getId() != pinBoard.getUser().getId()) {
+        if(user.getId() != pinBoard.getPersona().getUser().getId()) {
             throw new ForbiddenException();
         }else {
             pinBoardRepository.deleteById(pinBoardId);

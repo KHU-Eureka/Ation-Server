@@ -1,5 +1,6 @@
 package com.eureka.ationserver.domain.insight;
 
+import com.eureka.ationserver.domain.persona.PersonaCharm;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -25,6 +27,10 @@ public class Insight {
     @ManyToOne(targetEntity = InsightSubCategory.class, fetch = FetchType.LAZY)
     @JoinColumn(name="insightsubcategory_id")
     private InsightSubCategory insightSubCategory;
+
+
+    @OneToMany(mappedBy = "insight", cascade = CascadeType.ALL)
+    private List<InsightTag> insightTagList;
 
     @Column
     private String url;
@@ -47,7 +53,6 @@ public class Insight {
 
     @Column
     private LocalDateTime createdAt;
-
 
 
     @PrePersist

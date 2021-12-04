@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -25,13 +26,23 @@ public class InsightResponse {
 
     private LocalDateTime createdAt;
 
-    public InsightResponse(Insight insight){
-        id = insight.getId();
-        url = insight.getUrl();
-        title = insight.getTitle();
-        imgPath = insight.getImgPath();
-        description = insight.getDescription();
-        siteName = insight.getSiteName();
-        createdAt = insight.getCreatedAt();
+    private InsightMainCategoryResponse insightMainCategoryResponse;
+
+    private InsightSubCategoryResponse insightSubCategoryResponse;
+
+    private List<String> tagList;
+
+
+    public InsightResponse(Insight insight, InsightMainCategoryResponse insightMainCategoryResponse, InsightSubCategoryResponse insightSubCategoryResponse, List<String> tagList){
+        this.id = insight.getId();
+        this.url = insight.getUrl();
+        this.title = insight.getTitle();
+        this.imgPath = insight.getImgPath();
+        this.description = insight.getDescription();
+        this.siteName = insight.getSiteName();
+        this.createdAt = insight.getCreatedAt();
+        this.insightMainCategoryResponse = insightMainCategoryResponse;
+        this.insightSubCategoryResponse = insightSubCategoryResponse;
+        this.tagList = tagList;
     }
 }

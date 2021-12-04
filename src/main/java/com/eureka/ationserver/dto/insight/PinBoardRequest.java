@@ -20,9 +20,8 @@ public class PinBoardRequest {
     @NotEmpty
     private String name;
 
-    public PinBoard toEntity(User user, Persona persona, String imgPath){
+    public PinBoard toEntity(Persona persona, String imgPath){
         return PinBoard.builder()
-                        .user(user)
                         .persona(persona)
                         .imgPath(imgPath)
                         .name(name)

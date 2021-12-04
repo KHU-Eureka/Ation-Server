@@ -30,7 +30,6 @@ public class PersonaResponse {
 
     private List<InterestResponse> interestList;
 
-
     private List<SenseResponse> senseList;
 
     public PersonaResponse(Persona persona, List<String> charmList, List<SenseResponse> senseResponseList, List<InterestResponse> interestResponseList){
