@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class PinBoardResponse {
 
-    private PersonaSimpleResponse personaSimpleResponse;
+    private PersonaSimpleResponse persona;
 
     private String name;
 
@@ -19,7 +19,7 @@ public class PinBoardResponse {
 
 
     public PinBoardResponse(PinBoard pinBoard, PersonaSimpleResponse personaSimpleResponse){
-        this.personaSimpleResponse = personaSimpleResponse;
+        this.persona = personaSimpleResponse;
         this.name = pinBoard.getName();
         this.imgPath = pinBoard.getImgPath();
     }
