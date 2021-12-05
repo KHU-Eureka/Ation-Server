@@ -9,7 +9,7 @@ import com.eureka.ationserver.dto.auth.JwtResponse;
 import com.eureka.ationserver.dto.auth.LoginRequest;
 import com.eureka.ationserver.dto.auth.SignupRequest;
 import com.eureka.ationserver.dto.user.UserResponse;
-import com.eureka.ationserver.repository.UserRepository;
+import com.eureka.ationserver.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

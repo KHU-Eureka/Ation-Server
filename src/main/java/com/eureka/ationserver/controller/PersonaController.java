@@ -2,7 +2,7 @@ package com.eureka.ationserver.controller;
 
 import com.eureka.ationserver.domain.user.User;
 import com.eureka.ationserver.dto.persona.PersonaRequest;
-import com.eureka.ationserver.repository.UserRepository;
+import com.eureka.ationserver.repository.user.UserRepository;
 import com.eureka.ationserver.service.PersonaService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;

@@ -6,6 +6,8 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Getter
 @NoArgsConstructor
@@ -17,20 +19,38 @@ public class InsightResponse {
 
     private String title;
 
-    private String imageUrl;
+    private String imgPath;
 
     private String description;
 
-    private String sightName;
+    private String siteName;
 
     private LocalDateTime createdAt;
 
+    private InsightMainCategoryResponse insightMainCategory;
+
+    private InsightSubCategoryResponse insightSubCategory;
+
+    private List<String> tagList;
+
+
     public InsightResponse(Insight insight){
-        id = insight.getId();
-        url = insight.getUrl();
-        title = insight.getImageUrl();
-        description = insight.getDescription();
-        sightName = insight.getSightName();
-        createdAt = insight.getCreatedAt();
+
+        InsightMainCategoryResponse insightMainCategoryResponse = new InsightMainCategoryResponse(insight.getInsightMainCategory());
+        InsightSubCategoryResponse insightSubCategoryResponse = new InsightSubCategoryResponse(insight.getInsightSubCategory());
+        List<String> tagList = new ArrayList<>();
+        insight.getInsightTagList().stream().forEach(x-> tagList.add(x.getName()));
+
+        this.id = insight.getId();
+        this.url = insight.getUrl();
+        this.title = insight.getTitle();
+        this.imgPath = insight.getImgPath();
+        this.description = insight.getDescription();
+        this.siteName = insight.getSiteName();
+        this.createdAt = insight.getCreatedAt();
+        this.insightMainCategory = insightMainCategoryResponse;
+        this.insightSubCategory = insightSubCategoryResponse;
+        this.tagList = tagList;
     }
+
 }

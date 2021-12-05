@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -84,8 +83,8 @@ public class PersonaService {
     @Value("${server.port}")
     private String PORT;
 
-    @Value("${eureka.app.personaImagePath}")
-    private String PERSONAIMAGEPATH;
+    @Value("${eureka.app.imagePath}")
+    private String IMAGEPATH;
 
     private String getPersonaImageDefaultPath(){
         // set file name
@@ -94,7 +93,7 @@ public class PersonaService {
 
         String fileName = "persona.png";
         String url = "http://"+HOST+":"+PORT+"/api/image?path=";
-        String apiPath = url + PERSONAIMAGEPATH + fileName;
+        String apiPath = url + IMAGEPATH+"persona/" + fileName;
         return apiPath;
     }
 
@@ -105,9 +104,9 @@ public class PersonaService {
 
         String fileName = "persona-"+personaId+".png";
         String url = "http://"+HOST+":"+PORT+"/api/image?path=";
-        String apiPath = url + PERSONAIMAGEPATH + fileName;
+        String apiPath = url + IMAGEPATH+ "persona/" + fileName;
 
-        String path = PERSONAIMAGEPATH + fileName;
+        String path = IMAGEPATH+ "persona/" + fileName;
         pathList.add(apiPath);
         pathList.add(path);
         return pathList;
@@ -131,29 +130,14 @@ public class PersonaService {
     @Transactional(readOnly = true)
     public PersonaResponse find(Long personaId){
         Persona persona = personaRepository.getById(personaId);
-        List<String> charmList = new ArrayList<>();
-        personaCharmRepository.findByPersona_Id(personaId).stream().forEach(x -> charmList.add(x.getName()));
-
-        List<SenseResponse> senseResponseList = personaSenseReposotiry.findByPersona_Id(personaId).stream().map(SenseResponse::new).collect(Collectors.toList());
-
-        List<InterestResponse> interestResponseList = personaInterestRepository.findByPersona_Id(personaId).stream().map(InterestResponse::new).collect(Collectors.toList());
-
-        return new PersonaResponse(persona, charmList, senseResponseList, interestResponseList);
+         return new PersonaResponse(persona);
 
     }
     public List<PersonaResponse> findAll(User user){
         List<Persona> personaList = personaRepository.findByUserId(user.getId());
         List<PersonaResponse> personaResponseList = new ArrayList<>();
         for (Persona persona : personaList){
-            List<String> charmList = new ArrayList<>();
-
-            personaCharmRepository.findByPersona_Id(persona.getId()).stream().forEach(x -> charmList.add(x.getName()));
-
-            List<SenseResponse> senseResponseList = personaSenseReposotiry.findByPersona_Id(persona.getId()).stream().map(SenseResponse::new).collect(Collectors.toList());
-
-            List<InterestResponse> interestResponseList = personaInterestRepository.findByPersona_Id(persona.getId()).stream().map(InterestResponse::new).collect(Collectors.toList());
-
-            personaResponseList.add(new PersonaResponse(persona, charmList, senseResponseList, interestResponseList));
+            personaResponseList.add(new PersonaResponse(persona));
         }
         return personaResponseList;
 
@@ -218,6 +202,7 @@ public class PersonaService {
 
     @Transactional
     public Long setCurrentPersona(User user, Long personaId){
+        System.out.println(personaId);
         Persona persona = personaRepository.getById(personaId);
         if(user.getId() != persona.getUser().getId()){
             throw new ForbiddenException();
@@ -233,14 +218,7 @@ public class PersonaService {
         if(persona == null){
             return null;
         }else{
-            List<String> charmList = new ArrayList<>();
-            personaCharmRepository.findByPersona_Id(persona.getId()).stream().forEach(x -> charmList.add(x.getName()));
-
-            List<SenseResponse> senseResponseList = personaSenseReposotiry.findByPersona_Id(persona.getId()).stream().map(SenseResponse::new).collect(Collectors.toList());
-
-            List<InterestResponse> interestResponseList = personaInterestRepository.findByPersona_Id(persona.getId()).stream().map(InterestResponse::new).collect(Collectors.toList());
-
-            return new PersonaResponse(persona, charmList, senseResponseList, interestResponseList);
+            return new PersonaResponse(persona);
         }
     }
 }

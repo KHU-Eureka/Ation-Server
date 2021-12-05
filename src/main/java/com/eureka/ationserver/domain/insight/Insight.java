@@ -1,5 +1,6 @@
 package com.eureka.ationserver.domain.insight;
 
+import com.eureka.ationserver.domain.persona.PersonaCharm;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -7,6 +8,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -19,12 +21,16 @@ public class Insight {
     private Long id;
 
     @ManyToOne(targetEntity = InsightMainCategory.class, fetch = FetchType.LAZY)
-    @JoinColumn(name="insightmaincategory_id")
+    @JoinColumn(name="insightmaincategory_id",nullable = true)
     private InsightMainCategory insightMainCategory;
 
     @ManyToOne(targetEntity = InsightSubCategory.class, fetch = FetchType.LAZY)
-    @JoinColumn(name="insightsubcategory_id")
+    @JoinColumn(name="insightsubcategory_id", nullable = true)
     private InsightSubCategory insightSubCategory;
+
+
+    @OneToMany(mappedBy = "insight", cascade = CascadeType.ALL)
+    private List<InsightTag> insightTagList;
 
     @Column
     private String url;
@@ -33,17 +39,20 @@ public class Insight {
     private String title;
 
     @Column
-    private String imageUrl;
+    private String imgPath;
 
     @Column
     private String description;
 
     @Column
-    private String sightName;
+    private String siteName;
+
+    @Column
+    private boolean open;
+
 
     @Column
     private LocalDateTime createdAt;
-
 
 
     @PrePersist
@@ -51,5 +60,7 @@ public class Insight {
         this.createdAt = LocalDateTime.now();
     }
 
-
+    public void setImgPath(String imgPath) {
+        this.imgPath = imgPath;
+    }
 }
