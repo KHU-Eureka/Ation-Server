@@ -19,17 +19,16 @@ public class PinResponse {
 
     private PinBoardResponse pinBoard;
 
-    private InsightResponse insight;
+    private InsightPinResponse insight;
 
     private List<String> tagList;
 
     public PinResponse(Pin pin){
-        System.out.println(pin.toString());
+        this.id = pin.getId();
         this.pinBoard = new PinBoardResponse(pin.getPinBoard());
-        this.insight = new InsightResponse(pin.getInsight());
+        this.insight = new InsightPinResponse(pin.getInsight());
         List<String> tagList = new ArrayList<>();
         pin.getPinTagList().stream().forEach(x-> tagList.add(x.getName()));
-        System.out.println(tagList);
         this.tagList = tagList;
     }
 }

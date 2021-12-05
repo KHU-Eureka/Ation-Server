@@ -7,7 +7,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface PersonaCharmRepository extends JpaRepository<PersonaCharm, Long> {
- List<PersonaCharm> findByPersona_Id(@Param(value="personaId")Long personaId);
  List<PersonaCharm> deleteByPersona_Id(@Param(value="personaId")Long personaId);
 
 }

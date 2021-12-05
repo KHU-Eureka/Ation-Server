@@ -52,4 +52,5 @@ public class InsightResponse {
         this.insightSubCategory = insightSubCategoryResponse;
         this.tagList = tagList;
     }
+
 }

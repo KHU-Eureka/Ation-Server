@@ -51,9 +51,9 @@ public class InsightController {
     }
 
     @GetMapping("/insight/search")
-    @ApiOperation(value="인사이트 조회")
+    @ApiOperation(value="인사이트 검색")
     public ResponseEntity search(@RequestParam String keyword){
-        return new ResponseEntity(insightService.search(keyword),null, HttpStatus.CREATED);
+        return new ResponseEntity(insightService.search(keyword),null, HttpStatus.OK);
     }
 
 

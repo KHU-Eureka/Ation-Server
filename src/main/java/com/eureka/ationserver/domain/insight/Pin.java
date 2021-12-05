@@ -9,7 +9,7 @@ import java.util.List;
 
 
 @Entity
-@Data
+@Getter
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -29,13 +29,7 @@ public class Pin {
     @OneToMany(mappedBy = "pin", cascade = CascadeType.ALL)
     private List<PinTag> pinTagList;
 
-    @Override
-    public String toString() {
-        return "Pin{" +
-                "id=" + id +
-                ", pinBoard=" + pinBoard +
-                ", insight=" + insight +
-                ", pinTagList=" + pinTagList +
-                '}';
+    public void setPinBoard(PinBoard pinBoard) {
+        this.pinBoard = pinBoard;
     }
 }
