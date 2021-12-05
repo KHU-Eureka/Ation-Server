@@ -19,8 +19,8 @@ public class PinBoardResponse {
 
 
 
-    public PinBoardResponse(PinBoard pinBoard, PersonaSimpleResponse personaSimpleResponse){
-        this.persona = personaSimpleResponse;
+    public PinBoardResponse(PinBoard pinBoard){
+        this.persona = new PersonaSimpleResponse(pinBoard.getPersona());
         this.name = pinBoard.getName();
         this.imgPath = pinBoard.getImgPath();
     }
