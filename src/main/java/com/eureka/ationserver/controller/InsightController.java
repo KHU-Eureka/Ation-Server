@@ -1,17 +1,13 @@
 package com.eureka.ationserver.controller;
 
 
-import com.eureka.ationserver.domain.user.User;
 import com.eureka.ationserver.dto.insight.InsightRequest;
-import com.eureka.ationserver.repository.UserRepository;
 import com.eureka.ationserver.service.InsightService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 

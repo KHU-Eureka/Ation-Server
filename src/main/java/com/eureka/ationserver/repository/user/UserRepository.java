@@ -1,4 +1,4 @@
-package com.eureka.ationserver.repository;
+package com.eureka.ationserver.repository.user;
 
 import com.eureka.ationserver.domain.user.User;
 import org.springframework.data.jpa.repository.JpaRepository;

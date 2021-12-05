@@ -1,7 +1,7 @@
 package com.eureka.ationserver.config.security.details;
 
 import com.eureka.ationserver.domain.user.User;
-import com.eureka.ationserver.repository.UserRepository;
+import com.eureka.ationserver.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;

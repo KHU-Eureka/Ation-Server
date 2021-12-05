@@ -3,9 +3,8 @@ package com.eureka.ationserver.controller;
 import com.eureka.ationserver.domain.user.User;
 import com.eureka.ationserver.dto.pin.InsightPinRequest;
 import com.eureka.ationserver.dto.pin.PinRequest;
-import com.eureka.ationserver.dto.insight.InsightRequest;
 import com.eureka.ationserver.dto.pin.PinUpdateRequest;
-import com.eureka.ationserver.repository.UserRepository;
+import com.eureka.ationserver.repository.user.UserRepository;
 import com.eureka.ationserver.service.PinService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -40,6 +39,7 @@ public class PinController {
         User user = userRepository.findByEmail(userDetails.getUsername()).get();
         return new ResponseEntity(pinService.pinUp(user, pinRequest),null, HttpStatus.CREATED);
     }
+
 
     @PutMapping("/pin/{pinId}")
     @ApiOperation(value="핀 수정")
