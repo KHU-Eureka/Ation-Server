@@ -16,7 +16,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -131,29 +130,14 @@ public class PersonaService {
     @Transactional(readOnly = true)
     public PersonaResponse find(Long personaId){
         Persona persona = personaRepository.getById(personaId);
-        List<String> charmList = new ArrayList<>();
-        persona.getPersonaCharmList().forEach(x -> charmList.add(x.getName()));
-
-        List<SenseResponse> senseResponseList = persona.getPersonaSenseList().stream().map(SenseResponse::new).collect(Collectors.toList());
-
-        List<InterestResponse> interestResponseList = persona.getPersonaInterestList().stream().map(InterestResponse::new).collect(Collectors.toList());
-
-        return new PersonaResponse(persona, charmList, senseResponseList, interestResponseList);
+         return new PersonaResponse(persona);
 
     }
     public List<PersonaResponse> findAll(User user){
         List<Persona> personaList = personaRepository.findByUserId(user.getId());
         List<PersonaResponse> personaResponseList = new ArrayList<>();
         for (Persona persona : personaList){
-            List<String> charmList = new ArrayList<>();
-
-            persona.getPersonaCharmList().forEach(x -> charmList.add(x.getName()));
-
-            List<SenseResponse> senseResponseList = persona.getPersonaSenseList().stream().map(SenseResponse::new).collect(Collectors.toList());
-
-            List<InterestResponse> interestResponseList = persona.getPersonaInterestList().stream().map(InterestResponse::new).collect(Collectors.toList());
-
-            personaResponseList.add(new PersonaResponse(persona, charmList, senseResponseList, interestResponseList));
+            personaResponseList.add(new PersonaResponse(persona));
         }
         return personaResponseList;
 
@@ -234,14 +218,7 @@ public class PersonaService {
         if(persona == null){
             return null;
         }else{
-            List<String> charmList = new ArrayList<>();
-            persona.getPersonaCharmList().stream().forEach(x -> charmList.add(x.getName()));
-
-            List<SenseResponse> senseResponseList = persona.getPersonaSenseList().stream().map(SenseResponse::new).collect(Collectors.toList());
-
-            List<InterestResponse> interestResponseList = persona.getPersonaInterestList().stream().map(InterestResponse::new).collect(Collectors.toList());
-
-            return new PersonaResponse(persona, charmList, senseResponseList, interestResponseList);
+            return new PersonaResponse(persona);
         }
     }
 }

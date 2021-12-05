@@ -1,17 +1,20 @@
 package com.eureka.ationserver.service;
 
+import com.eureka.ationserver.advice.exception.ForbiddenException;
 import com.eureka.ationserver.domain.insight.*;
-import com.eureka.ationserver.dto.insight.InsightMainCategoryResponse;
-import com.eureka.ationserver.dto.insight.InsightRequest;
-import com.eureka.ationserver.dto.insight.InsightResponse;
-import com.eureka.ationserver.dto.insight.InsightSubCategoryResponse;
+import com.eureka.ationserver.domain.user.User;
+import com.eureka.ationserver.dto.insight.*;
+import com.eureka.ationserver.dto.persona.PersonaSimpleResponse;
 import com.eureka.ationserver.repository.insight.*;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -50,7 +53,7 @@ public class InsightService {
             imageUrl = document.select("meta[property=og:image]").get(0).attr("content");
 
         } catch (Exception e) {
-            imageUrl = null;
+            imageUrl = getInsightImageDefaultPath();
         }
 
         String siteName;
@@ -88,7 +91,39 @@ public class InsightService {
         return saved.getId();
 
 
+    }
 
+    @Value("${server.address}")
+    private String HOST;
+
+    @Value("${server.port}")
+    private String PORT;
+
+    @Value("${eureka.app.imagePath}")
+    private String IMAGEPATH;
+
+    public String getInsightImageDefaultPath(){
+        // set file name
+        List<String> pathList = new ArrayList<>();
+
+        String fileName = "insight.png";
+        String url = "http://"+HOST+":"+PORT+"/api/image?path=";
+        String apiPath = url + IMAGEPATH+"insight/" + fileName;
+        return apiPath;
+    }
+
+    public List<String> getInsightImagePath(Long insightId){
+        // set file name
+        List<String> pathList = new ArrayList<>();
+
+        String fileName = "insight-"+ insightId +".png";
+        String url = "http://"+HOST+":"+PORT+"/api/image?path=";
+        String apiPath = url +IMAGEPATH+"insight/"+ fileName;
+
+        String path = IMAGEPATH + "insight/"+ fileName;
+        pathList.add(apiPath);
+        pathList.add(path);
+        return pathList;
     }
 
     @Transactional(readOnly = true)
@@ -96,12 +131,34 @@ public class InsightService {
         List<Insight> insightList = insightRepository.findByOpen(true);
         List<InsightResponse> insightResponseList = new ArrayList<>();
         for(Insight insight : insightList){
-            InsightMainCategoryResponse insightMainCategoryResponse = new InsightMainCategoryResponse(insight.getInsightMainCategory());
-            InsightSubCategoryResponse insightSubCategoryResponse = new InsightSubCategoryResponse(insight.getInsightSubCategory());
-            List<String> tagList = new ArrayList<>();
-            insight.getInsightTagList().stream().forEach(x-> tagList.add(x.getName()));
-            insightResponseList.add(new InsightResponse(insight, insightMainCategoryResponse, insightSubCategoryResponse, tagList));
+            insightResponseList.add(new InsightResponse(insight));
         }
+        return insightResponseList;
+    }
+
+    @Transactional
+    public InsightResponse saveImg(Long insightId, MultipartFile insightImg) throws IOException{
+        Insight insight = insightRepository.getById(insightId);
+
+        List<String> pathList = getInsightImagePath(insightId);
+        File file = new File(pathList.get(1));
+        insightImg.transferTo(file);
+        insight.setImgPath(pathList.get(0));
+
+
+       return new InsightResponse(insight);
+    }
+
+    @Transactional(readOnly = true)
+    public InsightResponse findPublic(Long insightId){
+        Insight insight = insightRepository.getById(insightId);
+        return new InsightResponse(insight);
+    }
+
+    @Transactional(readOnly = true)
+    public List<InsightResponse> search(String keyword){
+        List<InsightResponse> insightResponseList = new ArrayList<>();
+        insightRepository.findByOpenAndTitleContaining(true, keyword).stream().forEach(x -> insightResponseList.add(new InsightResponse(x)));
         return insightResponseList;
     }
 

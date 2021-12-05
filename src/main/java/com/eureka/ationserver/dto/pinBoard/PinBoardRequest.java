@@ -1,4 +1,4 @@
-package com.eureka.ationserver.dto.insight;
+package com.eureka.ationserver.dto.pinBoard;
 
 import com.eureka.ationserver.domain.insight.PinBoard;
 import com.eureka.ationserver.domain.persona.Persona;

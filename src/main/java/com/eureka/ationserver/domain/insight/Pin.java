@@ -2,21 +2,18 @@ package com.eureka.ationserver.domain.insight;
 
 import com.eureka.ationserver.domain.persona.PersonaCharm;
 import com.eureka.ationserver.domain.user.User;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.List;
 
 
 @Entity
-@Getter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InsightPin {
+public class Pin {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -29,9 +26,16 @@ public class InsightPin {
     @JoinColumn(name="insight_id")
     private Insight insight;
 
-    @OneToMany(mappedBy = "insightPin", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "pin", cascade = CascadeType.ALL)
     private List<PinTag> pinTagList;
 
-
-
+    @Override
+    public String toString() {
+        return "Pin{" +
+                "id=" + id +
+                ", pinBoard=" + pinBoard +
+                ", insight=" + insight +
+                ", pinTagList=" + pinTagList +
+                '}';
+    }
 }

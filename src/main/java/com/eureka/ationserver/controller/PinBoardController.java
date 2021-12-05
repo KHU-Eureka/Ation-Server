@@ -1,7 +1,7 @@
 package com.eureka.ationserver.controller;
 
 import com.eureka.ationserver.domain.user.User;
-import com.eureka.ationserver.dto.insight.PinBoardRequest;
+import com.eureka.ationserver.dto.pinBoard.PinBoardRequest;
 import com.eureka.ationserver.repository.UserRepository;
 import com.eureka.ationserver.service.PinBoardService;
 import io.swagger.annotations.Api;

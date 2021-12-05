@@ -18,9 +18,9 @@ public class PinTag {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(targetEntity = InsightPin.class, fetch = FetchType.LAZY)
-    @JoinColumn(name="insightpin_id")
-    private InsightPin insightPin;
+    @ManyToOne(targetEntity = Pin.class, fetch = FetchType.LAZY)
+    @JoinColumn(name="pin_id")
+    private Pin pin;
 
     @Column
     private String name;

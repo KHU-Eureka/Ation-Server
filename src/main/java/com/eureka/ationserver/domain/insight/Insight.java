@@ -21,11 +21,11 @@ public class Insight {
     private Long id;
 
     @ManyToOne(targetEntity = InsightMainCategory.class, fetch = FetchType.LAZY)
-    @JoinColumn(name="insightmaincategory_id")
+    @JoinColumn(name="insightmaincategory_id",nullable = true)
     private InsightMainCategory insightMainCategory;
 
     @ManyToOne(targetEntity = InsightSubCategory.class, fetch = FetchType.LAZY)
-    @JoinColumn(name="insightsubcategory_id")
+    @JoinColumn(name="insightsubcategory_id", nullable = true)
     private InsightSubCategory insightSubCategory;
 
 
@@ -60,5 +60,7 @@ public class Insight {
         this.createdAt = LocalDateTime.now();
     }
 
-
+    public void setImgPath(String imgPath) {
+        this.imgPath = imgPath;
+    }
 }

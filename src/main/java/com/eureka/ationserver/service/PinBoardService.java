@@ -5,9 +5,8 @@ import com.eureka.ationserver.advice.exception.ForbiddenException;
 import com.eureka.ationserver.domain.insight.PinBoard;
 import com.eureka.ationserver.domain.persona.Persona;
 import com.eureka.ationserver.domain.user.User;
-import com.eureka.ationserver.dto.insight.PinBoardRequest;
-import com.eureka.ationserver.dto.insight.PinBoardResponse;
-import com.eureka.ationserver.dto.persona.PersonaSimpleResponse;
+import com.eureka.ationserver.dto.pinBoard.PinBoardRequest;
+import com.eureka.ationserver.dto.pinBoard.PinBoardResponse;
 import com.eureka.ationserver.repository.insight.PinBoardRepository;
 import com.eureka.ationserver.repository.persona.PersonaRepository;
 import lombok.RequiredArgsConstructor;
@@ -36,7 +35,7 @@ public class PinBoardService {
             String defaultPath = getPinBoardImageDefaultPath();
             PinBoard pinBoard = pinBoardRequest.toEntity(persona, defaultPath);
             PinBoard saved = pinBoardRepository.save(pinBoard);
-            return new PinBoardResponse(saved , new PersonaSimpleResponse(persona));
+            return new PinBoardResponse(saved);
         }
     }
 
@@ -53,7 +52,7 @@ public class PinBoardService {
         // set file name
                 List<String> pathList = new ArrayList<>();
 
-        String fileName = "pinboard.png";
+        String fileName = "pinBoard.png";
         String url = "http://"+HOST+":"+PORT+"/api/image?path=";
         String apiPath = url + IMAGEPATH+"pinboard/" + fileName;
         return apiPath;
@@ -63,7 +62,7 @@ public class PinBoardService {
         // set file name
         List<String> pathList = new ArrayList<>();
 
-        String fileName = "persona-"+ pinBoardId +".png";
+        String fileName = "pinBoard-"+ pinBoardId +".png";
         String url = "http://"+HOST+":"+PORT+"/api/image?path=";
         String apiPath = url +IMAGEPATH+"pinboard/"+ fileName;
 
@@ -83,7 +82,7 @@ public class PinBoardService {
             File file = new File(pathList.get(1));
             pinBoardImg.transferTo(file);
             pinBoard.setImgPath(pathList.get(0));
-            return new PinBoardResponse(pinBoard, new PersonaSimpleResponse(pinBoard.getPersona()));
+            return new PinBoardResponse(pinBoard);
         }
     }
 
@@ -93,9 +92,8 @@ public class PinBoardService {
         if(user.getId() != persona.getUser().getId()){
             throw new ForbiddenException();
         }else{
-            PersonaSimpleResponse personaSimpleResponse = new PersonaSimpleResponse(persona);
             List<PinBoardResponse> pinBoardResponseList = new ArrayList<>();
-            pinBoardRepository.findByPersona_Id(personaId).stream().forEach(x-> pinBoardResponseList.add(new PinBoardResponse(x, personaSimpleResponse)));
+            pinBoardRepository.findByPersona_Id(personaId).stream().forEach(x-> pinBoardResponseList.add(new PinBoardResponse(x)));
             return pinBoardResponseList;
         }
     }

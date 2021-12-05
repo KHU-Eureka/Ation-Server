@@ -8,5 +8,6 @@ import org.springframework.data.repository.query.Param;
 import java.util.List;
 
 public interface InsightRepository extends JpaRepository<Insight, Long> {
-    List<Insight> findByOpen(@Param(value="open")Boolean open);
+    List<Insight> findByOpen(Boolean open);
+    List<Insight> findByOpenAndTitleContaining(boolean open, String keyword);
 }

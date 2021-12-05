@@ -6,6 +6,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 @Getter
@@ -26,14 +27,20 @@ public class InsightResponse {
 
     private LocalDateTime createdAt;
 
-    private InsightMainCategoryResponse insightMainCategoryResponse;
+    private InsightMainCategoryResponse insightMainCategory;
 
-    private InsightSubCategoryResponse insightSubCategoryResponse;
+    private InsightSubCategoryResponse insightSubCategory;
 
     private List<String> tagList;
 
 
-    public InsightResponse(Insight insight, InsightMainCategoryResponse insightMainCategoryResponse, InsightSubCategoryResponse insightSubCategoryResponse, List<String> tagList){
+    public InsightResponse(Insight insight){
+
+        InsightMainCategoryResponse insightMainCategoryResponse = new InsightMainCategoryResponse(insight.getInsightMainCategory());
+        InsightSubCategoryResponse insightSubCategoryResponse = new InsightSubCategoryResponse(insight.getInsightSubCategory());
+        List<String> tagList = new ArrayList<>();
+        insight.getInsightTagList().stream().forEach(x-> tagList.add(x.getName()));
+
         this.id = insight.getId();
         this.url = insight.getUrl();
         this.title = insight.getTitle();
@@ -41,8 +48,8 @@ public class InsightResponse {
         this.description = insight.getDescription();
         this.siteName = insight.getSiteName();
         this.createdAt = insight.getCreatedAt();
-        this.insightMainCategoryResponse = insightMainCategoryResponse;
-        this.insightSubCategoryResponse = insightSubCategoryResponse;
+        this.insightMainCategory = insightMainCategoryResponse;
+        this.insightSubCategory = insightSubCategoryResponse;
         this.tagList = tagList;
     }
 }
