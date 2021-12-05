@@ -18,6 +18,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -156,9 +157,8 @@ public class InsightService {
     }
 
     @Transactional(readOnly = true)
-    public List<InsightResponse> search(String keyword){
-        List<InsightResponse> insightResponseList = new ArrayList<>();
-        insightRepository.findByOpenAndTitleContaining(true, keyword).stream().forEach(x -> insightResponseList.add(new InsightResponse(x)));
+    public Set<InsightResponse> search(String keyword){
+        Set<InsightResponse> insightResponseList = insightRepository.findByOpenAndTitleContainingOrInsightTagList_NameContaining(true, keyword, keyword).stream().map(InsightResponse::new).collect(Collectors.toSet());
         return insightResponseList;
     }
 

@@ -90,6 +90,7 @@ public class PinService {
                     .open(false)
                     .build();
             insightRepository.save(insight);
+            pinBoard.setImgPath(insight.getImgPath());
 
 
             // save InsightPin
@@ -130,7 +131,7 @@ public class PinService {
                         .build();
                 pinTagRepository.save(pinTag);
             }
-
+            pinBoard.setImgPath(insight.getImgPath());
             return saved.getId();
         }
 
@@ -192,7 +193,6 @@ public class PinService {
 
     @Transactional(readOnly = true)
     public List<PinResponse> findByPinBoard(Long pinBoardId){
-        System.out.println(pinBoardId);
         PinBoard pinBoard = pinBoardRepository.getById(pinBoardId);
         List<PinResponse> pinResponseList = pinRepository.findByPinBoard(pinBoard).stream().map(PinResponse::new).collect(Collectors.toList());
         return pinResponseList;
