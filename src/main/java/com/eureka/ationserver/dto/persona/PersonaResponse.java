@@ -30,18 +30,19 @@ public class PersonaResponse {
 
     private List<String> charmList;
 
-    private List<InterestResponse> interestList;
+    private List<Long> interestIdList;
 
-    private List<SenseResponse> senseList;
+    private List<Long> senseIdList;
 
     public PersonaResponse(Persona persona){
 
         List<String> charmList = new ArrayList<>();
         persona.getPersonaCharmList().stream().forEach(x -> charmList.add(x.getName()));
 
-        List<SenseResponse> senseResponseList = persona.getPersonaSenseList().stream().map(SenseResponse::new).collect(Collectors.toList());
-
-        List<InterestResponse> interestResponseList = persona.getPersonaInterestList().stream().map(InterestResponse::new).collect(Collectors.toList());
+        List<Long> interestIdList = new ArrayList<>();
+        List<Long> senseIdList = new ArrayList<>();
+        persona.getPersonaSenseList().stream().forEach(x->senseIdList.add(x.getId()));
+        persona.getPersonaInterestList().stream().forEach(x->interestIdList.add(x.getId()));
 
         this.id = persona.getId();
         this.nickname = persona.getNickname();
@@ -51,8 +52,8 @@ public class PersonaResponse {
         this.job = persona.getJob();
         this.profileImgPath = persona.getProfileImgPath();
         this.charmList = charmList;
-        this.senseList = senseResponseList;
-        this.interestList = interestResponseList;
+        this.senseIdList = senseIdList;
+        this.interestIdList = interestIdList;
 
     }
 
