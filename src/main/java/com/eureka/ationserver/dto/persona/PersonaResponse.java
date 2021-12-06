@@ -41,8 +41,8 @@ public class PersonaResponse {
 
         List<Long> interestIdList = new ArrayList<>();
         List<Long> senseIdList = new ArrayList<>();
-        persona.getPersonaSenseList().stream().forEach(x->senseIdList.add(x.getId()));
-        persona.getPersonaInterestList().stream().forEach(x->interestIdList.add(x.getId()));
+        persona.getPersonaSenseList().stream().forEach(x->senseIdList.add(x.getSense().getId()));
+        persona.getPersonaInterestList().stream().forEach(x->interestIdList.add(x.getInterest().getId()));
 
         this.id = persona.getId();
         this.nickname = persona.getNickname();
