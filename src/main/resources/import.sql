@@ -22,6 +22,7 @@ INSERT INTO insight_main_category(name) values("마케팅");
 INSERT INTO insight_main_category(name) values("뮤직 인사이트");
 INSERT INTO insight_main_category(name) values("비즈니스 경험담");
 INSERT INTO insight_main_category(name) values("Your View");
+INSERT INTO insight_main_category(name) values("기타");
 
 INSERT INTO insight_sub_category(name, insightmaincategory_id) values("UI", 1);
 INSERT INTO insight_sub_category(name, insightmaincategory_id) values("UX", 1);
