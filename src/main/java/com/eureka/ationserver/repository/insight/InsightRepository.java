@@ -9,6 +9,6 @@ import java.util.List;
 import java.util.Set;
 
 public interface InsightRepository extends JpaRepository<Insight, Long> {
-    List<Insight> findByOpen(Boolean open);
-    Set<Insight> findByOpenAndTitleContainingOrInsightTagList_NameContaining(boolean open, String keyword1, String keyword2);
+    List<Insight> findByOpenOrderByCreatedAtDesc(Boolean open);
+    Set<Insight> findByOpenAndTitleContainingOrInsightTagList_NameContainingOrderByCreatedAtDesc(boolean open, String keyword1, String keyword2);
 }

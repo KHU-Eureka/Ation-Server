@@ -5,6 +5,7 @@ import com.eureka.ationserver.advice.exception.ForbiddenException;
 import com.eureka.ationserver.domain.insight.PinBoard;
 import com.eureka.ationserver.domain.persona.Persona;
 import com.eureka.ationserver.domain.user.User;
+import com.eureka.ationserver.dto.pin.PinResponse;
 import com.eureka.ationserver.dto.pinBoard.PinBoardRequest;
 import com.eureka.ationserver.dto.pinBoard.PinBoardResponse;
 import com.eureka.ationserver.repository.insight.PinBoardRepository;
@@ -19,6 +20,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -92,8 +94,7 @@ public class PinBoardService {
         if(user.getId() != persona.getUser().getId()){
             throw new ForbiddenException();
         }else{
-            List<PinBoardResponse> pinBoardResponseList = new ArrayList<>();
-            pinBoardRepository.findByPersona_Id(personaId).stream().forEach(x-> pinBoardResponseList.add(new PinBoardResponse(x)));
+            List<PinBoardResponse> pinBoardResponseList = pinBoardRepository.findByPersona_Id(personaId).stream().map(PinBoardResponse::new).collect(Collectors.toList());
             return pinBoardResponseList;
         }
     }

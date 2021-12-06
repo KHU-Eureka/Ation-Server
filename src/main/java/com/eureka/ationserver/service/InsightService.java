@@ -129,7 +129,7 @@ public class InsightService {
 
     @Transactional(readOnly = true)
     public List<InsightResponse> findPublicAll(){
-        List<Insight> insightList = insightRepository.findByOpen(true);
+        List<Insight> insightList = insightRepository.findByOpenOrderByCreatedAtDesc(true);
         List<InsightResponse> insightResponseList = new ArrayList<>();
         for(Insight insight : insightList){
             insightResponseList.add(new InsightResponse(insight));
@@ -158,7 +158,7 @@ public class InsightService {
 
     @Transactional(readOnly = true)
     public Set<InsightResponse> search(String keyword){
-        Set<InsightResponse> insightResponseList = insightRepository.findByOpenAndTitleContainingOrInsightTagList_NameContaining(true, keyword, keyword).stream().map(InsightResponse::new).collect(Collectors.toSet());
+        Set<InsightResponse> insightResponseList = insightRepository.findByOpenAndTitleContainingOrInsightTagList_NameContainingOrderByCreatedAtDesc(true, keyword, keyword).stream().map(InsightResponse::new).collect(Collectors.toSet());
         return insightResponseList;
     }
 

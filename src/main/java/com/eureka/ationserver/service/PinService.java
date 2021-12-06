@@ -25,7 +25,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 @Service
@@ -185,9 +187,20 @@ public class PinService {
     }
 
     @Transactional(readOnly = true)
-    public List<PinResponse> search(Long personaId, String keyword){
+    public Set<PinResponse> search(Long personaId, String keyword){
         Persona persona = personaRepository.getById(personaId);
-        List<PinResponse> pinResponseList = pinRepository.findByPinBoard_PersonaAndInsight_TitleContaining(persona, keyword).stream().map(PinResponse::new).collect(Collectors.toList());
+        Set<Pin> pins1 = pinRepository.findByPinBoard_PersonaAndInsight_TitleContainingOrderByCreatedAtDesc(persona, keyword);
+        Set<Pin> pins2 = pinRepository.findByPinTagList_NameContainingOrderByCreatedAtDesc(keyword);
+        for(Pin pin : pins2){
+            if(pin.getPinBoard().getPersona().getId() == personaId){
+                pins1.add(pin);
+            }
+        }
+        Set<PinResponse> pinResponseList = new HashSet<>();
+        for(Pin pin : pins1){
+            pinResponseList.add(new PinResponse(pin));
+        }
+
         return pinResponseList;
     }
 
