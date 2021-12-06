@@ -7,9 +7,11 @@ import com.eureka.ationserver.domain.persona.Persona;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Set;
 
 public interface PinRepository extends JpaRepository<Pin, Long> {
-    List<Pin> findByPinBoard_PersonaAndInsight_TitleContaining(Persona persona, String keyword);
+    Set<Pin> findByPinBoard_PersonaAndInsight_TitleContainingOrderByCreatedAtDesc(Persona persona, String keyword);
+    Set<Pin> findByPinTagList_NameContainingOrderByCreatedAtDesc(String keyword);
     List<Pin> findByPinBoard(PinBoard pinBoard);
 
 }

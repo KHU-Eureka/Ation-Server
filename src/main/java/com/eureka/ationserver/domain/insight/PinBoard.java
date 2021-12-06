@@ -8,6 +8,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 @Getter
@@ -37,5 +38,13 @@ public class PinBoard {
     public void update(Persona persona, String name) {
         this.persona = persona;
         this.name = name;
+    }
+    @Column
+    private LocalDateTime createdAt;
+
+
+    @PrePersist
+    public void createdAt(){
+        this.createdAt = LocalDateTime.now();
     }
 }

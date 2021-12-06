@@ -5,6 +5,7 @@ import com.eureka.ationserver.domain.user.User;
 import lombok.*;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 import java.util.List;
 
 
@@ -28,6 +29,15 @@ public class Pin {
 
     @OneToMany(mappedBy = "pin", cascade = CascadeType.ALL)
     private List<PinTag> pinTagList;
+
+    @Column
+    private LocalDateTime createdAt;
+
+
+    @PrePersist
+    public void createdAt(){
+        this.createdAt = LocalDateTime.now();
+    }
 
     public void setPinBoard(PinBoard pinBoard) {
         this.pinBoard = pinBoard;
