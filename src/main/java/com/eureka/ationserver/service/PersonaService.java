@@ -121,6 +121,7 @@ public class PersonaService {
             List<String> pathList = getPersonaImagePath(personaId);
             File file = new File(pathList.get(1));
             profileImg.transferTo(file);
+
             persona.setProfileImgPath(pathList.get(0));
             return personaId;
         }

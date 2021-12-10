@@ -55,12 +55,21 @@ public class PinController {
         return new ResponseEntity(pinService.delete(user, pinId), null, HttpStatus.OK);
     }
 
+
+    @GetMapping("/pin")
+    @ApiOperation(value="페르소나별 핀 전체 조회")
+    public ResponseEntity findAll(@AuthenticationPrincipal UserDetails userDetails,@RequestParam Long personaId){
+        User user = userRepository.findByEmail(userDetails.getUsername()).get();
+        return new ResponseEntity(pinService.findAll(user, personaId), null, HttpStatus.OK);
+    }
+
     @GetMapping("/pin/{pinId}")
     @ApiOperation(value="핀 조회")
     public ResponseEntity find(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long pinId){
         User user = userRepository.findByEmail(userDetails.getUsername()).get();
         return new ResponseEntity(pinService.find(user, pinId), null, HttpStatus.OK);
     }
+
     @GetMapping("/pin/search")
     @ApiOperation(value="핀 검색")
     public ResponseEntity search(@RequestParam Long personaId, @RequestParam String keyword){

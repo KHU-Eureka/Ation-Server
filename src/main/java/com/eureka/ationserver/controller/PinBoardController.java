@@ -40,7 +40,7 @@ public class PinBoardController {
         return new ResponseEntity(pinBoardService.saveImg(user, pinBoardId, pinBoardImg), null, HttpStatus.OK);
     }
 
-    @GetMapping("/pin-board/user")
+    @GetMapping("/pin-board")
     @ApiOperation(value="유저의 페르소나별 핀보드 조회")
     public ResponseEntity findAll(@AuthenticationPrincipal UserDetails userDetails, @RequestParam(value="personaId") Long personaId){
         User user = userRepository.findByEmail(userDetails.getUsername()).get();
