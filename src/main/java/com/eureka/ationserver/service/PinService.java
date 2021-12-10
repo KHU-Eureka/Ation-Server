@@ -177,6 +177,18 @@ public class PinService {
     }
 
     @Transactional(readOnly = true)
+    public List<PinResponse> findAll(User user, Long personaId){
+        Persona persona = personaRepository.getById(personaId);
+        if(persona.getUser().getId() != user.getId()){
+            throw new ForbiddenException();
+        }else{
+            List<PinResponse> pinResponseList = pinRepository.findByPinBoard_Persona(persona).stream().map(PinResponse::new).collect(Collectors.toList());
+            return pinResponseList;
+        }
+
+    }
+
+    @Transactional(readOnly = true)
     public PinResponse find(User user, Long pinId){
         Pin pin = pinRepository.getById(pinId);
         if(user.getId() != pin.getPinBoard().getPersona().getUser().getId()){
