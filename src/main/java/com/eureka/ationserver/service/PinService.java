@@ -15,11 +15,8 @@ import com.eureka.ationserver.repository.insight.PinBoardRepository;
 import com.eureka.ationserver.repository.insight.PinTagRepository;
 import com.eureka.ationserver.repository.persona.PersonaRepository;
 import lombok.RequiredArgsConstructor;
-import org.apache.coyote.Response;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 

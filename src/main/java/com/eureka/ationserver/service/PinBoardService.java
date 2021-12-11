@@ -9,6 +9,7 @@ import com.eureka.ationserver.dto.pin.PinResponse;
 import com.eureka.ationserver.dto.pinBoard.PinBoardRequest;
 import com.eureka.ationserver.dto.pinBoard.PinBoardResponse;
 import com.eureka.ationserver.repository.insight.PinBoardRepository;
+import com.eureka.ationserver.repository.insight.PinRepository;
 import com.eureka.ationserver.repository.persona.PersonaRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
@@ -28,8 +29,10 @@ public class PinBoardService {
 
     private final PinBoardRepository pinBoardRepository;
     private final PersonaRepository personaRepository;
+    private final PinRepository pinRepository;
+
     @Transactional
-    public PinBoardResponse save(User user, PinBoardRequest pinBoardRequest){
+    public Long save(User user, PinBoardRequest pinBoardRequest){
         Persona persona = personaRepository.findById(pinBoardRequest.getPersonaId()).get();
         if(user.getId() != persona.getUser().getId()){
             throw new ForbiddenException();
@@ -37,7 +40,7 @@ public class PinBoardService {
             String defaultPath = getPinBoardImageDefaultPath();
             PinBoard pinBoard = pinBoardRequest.toEntity(persona, defaultPath);
             PinBoard saved = pinBoardRepository.save(pinBoard);
-            return new PinBoardResponse(saved);
+            return saved.getId();
         }
     }
 
@@ -84,7 +87,7 @@ public class PinBoardService {
             File file = new File(pathList.get(1));
             pinBoardImg.transferTo(file);
             pinBoard.setImgPath(pathList.get(0));
-            return new PinBoardResponse(pinBoard);
+            return new PinBoardResponse(pinBoard, getCountOfPin(pinBoard));
         }
     }
 
@@ -94,7 +97,12 @@ public class PinBoardService {
         if(user.getId() != persona.getUser().getId()){
             throw new ForbiddenException();
         }else{
-            List<PinBoardResponse> pinBoardResponseList = pinBoardRepository.findByPersona_Id(personaId).stream().map(PinBoardResponse::new).collect(Collectors.toList());
+            List<PinBoard> pinBoardList = pinBoardRepository.findByPersona_Id(personaId);
+            List<PinBoardResponse> pinBoardResponseList = new ArrayList<>();
+            for(PinBoard pinBoard : pinBoardList){
+                pinBoardResponseList.add(new PinBoardResponse(pinBoard, getCountOfPin(pinBoard)));
+
+            }
             return pinBoardResponseList;
         }
     }
@@ -126,6 +134,10 @@ public class PinBoardService {
             return pinBoardId;
         }
 
+    }
+
+    public Long getCountOfPin(PinBoard pinBoard){
+        return pinRepository.countByPinBoard(pinBoard);
     }
 
 }
