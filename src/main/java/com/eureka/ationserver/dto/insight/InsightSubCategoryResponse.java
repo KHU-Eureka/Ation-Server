@@ -1,5 +1,6 @@
 package com.eureka.ationserver.dto.insight;
 
+import com.eureka.ationserver.domain.insight.InsightCategory;
 import com.eureka.ationserver.domain.insight.InsightSubCategory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -16,4 +17,10 @@ public class InsightSubCategoryResponse {
         id = insightSubCategory.getId();
         name = insightSubCategory.getName();
     }
+
+    public InsightSubCategoryResponse(InsightCategory insightCategory){
+        id = insightCategory.getInsightSubCategory().getId();
+        name = insightCategory.getInsightSubCategory().getName();
+    }
 }
+

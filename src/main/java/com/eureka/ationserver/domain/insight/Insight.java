@@ -1,17 +1,15 @@
 package com.eureka.ationserver.domain.insight;
 
 import com.eureka.ationserver.domain.persona.PersonaCharm;
-import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
+import com.eureka.ationserver.domain.persona.PersonaInterest;
+import lombok.*;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
 @Entity
-@Getter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -24,13 +22,14 @@ public class Insight {
     @JoinColumn(name="insightmaincategory_id",nullable = true)
     private InsightMainCategory insightMainCategory;
 
-    @ManyToOne(targetEntity = InsightSubCategory.class, fetch = FetchType.LAZY)
-    @JoinColumn(name="insightsubcategory_id", nullable = true)
-    private InsightSubCategory insightSubCategory;
+    @OneToMany(mappedBy = "insight", cascade = CascadeType.ALL)
+    private List<InsightCategory> insightSubCategoryList;
 
 
     @OneToMany(mappedBy = "insight", cascade = CascadeType.ALL)
     private List<InsightTag> insightTagList;
+
+
 
     @Column
     private String url;

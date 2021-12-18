@@ -8,4 +8,6 @@ import java.util.List;
 
 public interface InsightSubCategoryRepository extends JpaRepository<InsightSubCategory, Long> {
     List<InsightSubCategory> findByInsightMainCategory_Id(@Param(value="insightMainCategoryId") Long insightMainCategoryId);
+    List<InsightSubCategory> findAllByIdIn(List<Long> id);
+
 }

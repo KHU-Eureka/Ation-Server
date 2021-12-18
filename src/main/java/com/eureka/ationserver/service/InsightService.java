@@ -2,6 +2,8 @@ package com.eureka.ationserver.service;
 
 import com.eureka.ationserver.advice.exception.ForbiddenException;
 import com.eureka.ationserver.domain.insight.*;
+import com.eureka.ationserver.domain.persona.Interest;
+import com.eureka.ationserver.domain.persona.PersonaInterest;
 import com.eureka.ationserver.domain.user.User;
 import com.eureka.ationserver.dto.insight.*;
 import com.eureka.ationserver.dto.persona.PersonaSimpleResponse;
@@ -29,7 +31,7 @@ public class InsightService {
     private final InsightMainCategoryRepository insightMainCategoryRepository;
     private final InsightSubCategoryRepository insightSubCategoryRepository;
     private final InsightTagRepository insightTagRepository;
-    private final PinBoardRepository pinBoardRepository;
+    private final InsightCategoryRepository insightCategoryRepository;
 
     @Transactional
     public Long savePublic(InsightRequest insightRequest) throws IOException {
@@ -67,7 +69,8 @@ public class InsightService {
 
         // public
         InsightMainCategory insightMainCategory = insightMainCategoryRepository.findById(insightRequest.getInsightMainCategoryId()).get();
-        InsightSubCategory insightSubCategory= insightSubCategoryRepository.findById(insightRequest.getInsightSubCategoryId()).get();
+        List<InsightSubCategory> insightSubCategoryList= insightSubCategoryRepository.findAllByIdIn(insightRequest.getInsightSubCategoryIdList());
+
 
         Insight insight = Insight.builder()
                 .url(insightRequest.getUrl())
@@ -76,10 +79,18 @@ public class InsightService {
                 .imgPath(imageUrl)
                 .siteName(siteName)
                 .insightMainCategory(insightMainCategory)
-                .insightSubCategory(insightSubCategory)
                 .open(true)
                 .build();
         Insight saved = insightRepository.save(insight);
+
+        for(InsightSubCategory insightSubCategory : insightSubCategoryList){
+            InsightCategory insightCategory = InsightCategory.builder()
+                    .insight(insight)
+                    .insightSubCategory(insightSubCategory)
+                    .build();
+            insightCategoryRepository.save(insightCategory);
+        }
+
 
         for(String tag : insightRequest.getTagList()){
             InsightTag insightTag = InsightTag.builder()

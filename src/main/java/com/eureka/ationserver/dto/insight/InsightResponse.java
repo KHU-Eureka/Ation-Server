@@ -29,7 +29,7 @@ public class InsightResponse {
 
     private InsightMainCategoryResponse insightMainCategory;
 
-    private InsightSubCategoryResponse insightSubCategory;
+    private List<InsightSubCategoryResponse> insightSubCategoryList;
 
     private List<String> tagList;
 
@@ -37,7 +37,8 @@ public class InsightResponse {
     public InsightResponse(Insight insight){
 
         InsightMainCategoryResponse insightMainCategoryResponse = new InsightMainCategoryResponse(insight.getInsightMainCategory());
-        InsightSubCategoryResponse insightSubCategoryResponse = new InsightSubCategoryResponse(insight.getInsightSubCategory());
+        List<InsightSubCategoryResponse> insightSubCategoryResponseList = new ArrayList<>();
+        insight.getInsightSubCategoryList().stream().forEach(x->insightSubCategoryResponseList.add(new InsightSubCategoryResponse(x)));
         List<String> tagList = new ArrayList<>();
         insight.getInsightTagList().stream().forEach(x-> tagList.add(x.getName()));
 
@@ -49,7 +50,7 @@ public class InsightResponse {
         this.siteName = insight.getSiteName();
         this.createdAt = insight.getCreatedAt();
         this.insightMainCategory = insightMainCategoryResponse;
-        this.insightSubCategory = insightSubCategoryResponse;
+        this.insightSubCategoryList = insightSubCategoryResponseList;
         this.tagList = tagList;
     }
 
