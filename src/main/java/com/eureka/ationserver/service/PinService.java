@@ -85,7 +85,7 @@ public class PinService {
                     .imgPath(imageUrl)
                     .siteName(siteName)
                     .insightMainCategory(null)
-                    .insightSubCategory(null)
+                    .insightSubCategoryList(null)
                     .open(false)
                     .build();
             insightRepository.save(insight);

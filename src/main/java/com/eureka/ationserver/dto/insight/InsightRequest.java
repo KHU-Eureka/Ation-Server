@@ -21,7 +21,7 @@ public class InsightRequest {
 
     private Long insightMainCategoryId;
 
-    private Long insightSubCategoryId;
+    private List<Long> insightSubCategoryIdList;
 
     private List<String> tagList;
 
