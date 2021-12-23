@@ -21,7 +21,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -123,12 +122,18 @@ public class PinService {
             Pin pin = pinRequest.toEnitity(pinBoard, insight);
             Pin saved = pinRepository.save(pin);
             // Copy Tags
-            for(InsightTag insightTag : insight.getInsightTagList()){
-                PinTag pinTag = PinTag.builder()
+            PinTag pinTag = PinTag.builder()
+                    .pin(pin)
+                    .name(insight.getInsightMainCategory().getName())
+                    .build();
+            pinTagRepository.save(pinTag);
+            for( InsightCategory insightSubCategory : insight.getInsightSubCategoryList()){
+                PinTag tag = PinTag.builder()
                         .pin(pin)
-                        .name(insightTag.getName())
+                        .name(insightSubCategory.getInsightSubCategory().getName())
                         .build();
-                pinTagRepository.save(pinTag);
+                pinTagRepository.save(tag);
+
             }
             pinBoard.setImgPath(insight.getImgPath());
             return saved.getId();

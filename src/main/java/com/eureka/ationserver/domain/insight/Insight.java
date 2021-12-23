@@ -30,7 +30,6 @@ public class Insight {
     private List<InsightTag> insightTagList;
 
 
-
     @Column
     private String url;
 
