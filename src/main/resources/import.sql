@@ -38,6 +38,8 @@ INSERT INTO insight_sub_category(name, insightmaincategory_id) values("모바일
 INSERT INTO insight_sub_category(name, insightmaincategory_id) values("AI", 2);
 INSERT INTO insight_sub_category(name, insightmaincategory_id) values("알고리즘", 2);
 INSERT INTO insight_sub_category(name, insightmaincategory_id) values("데이터분석", 2);
+INSERT INTO insight_sub_category(name, insightmaincategory_id) values("IoT", 2);
+
 
 
 

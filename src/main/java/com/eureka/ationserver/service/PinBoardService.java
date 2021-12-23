@@ -8,6 +8,7 @@ import com.eureka.ationserver.domain.user.User;
 import com.eureka.ationserver.dto.pin.PinResponse;
 import com.eureka.ationserver.dto.pinBoard.PinBoardRequest;
 import com.eureka.ationserver.dto.pinBoard.PinBoardResponse;
+import com.eureka.ationserver.dto.pinBoard.PinBoardUpdateRequest;
 import com.eureka.ationserver.repository.insight.PinBoardRepository;
 import com.eureka.ationserver.repository.insight.PinRepository;
 import com.eureka.ationserver.repository.persona.PersonaRepository;
@@ -108,19 +109,14 @@ public class PinBoardService {
     }
 
     @Transactional
-    public Long update(User user, Long pinBoardId, PinBoardRequest pinBoardRequest){
+    public Long update(User user, Long pinBoardId, PinBoardUpdateRequest pinBoardRequest){
         PinBoard pinBoard = pinBoardRepository.getById(pinBoardId);
         if(user.getId() != pinBoard.getPersona().getUser().getId()) {
             throw new ForbiddenException();
         }else {
-            Persona persona = personaRepository.getById(pinBoardRequest.getPersonaId());
-            if(user.getId() != persona.getUser().getId()){
-                throw new ForbiddenException();
 
-            }else{
-                pinBoard.update(persona, pinBoardRequest.getName());
-                return pinBoardId;
-            }
+            pinBoard.update(pinBoardRequest.getName());
+            return pinBoardId;
         }
     }
 

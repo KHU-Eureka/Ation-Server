@@ -2,6 +2,7 @@ package com.eureka.ationserver.controller;
 
 import com.eureka.ationserver.domain.user.User;
 import com.eureka.ationserver.dto.pinBoard.PinBoardRequest;
+import com.eureka.ationserver.dto.pinBoard.PinBoardUpdateRequest;
 import com.eureka.ationserver.repository.user.UserRepository;
 import com.eureka.ationserver.service.PinBoardService;
 import io.swagger.annotations.Api;
@@ -50,7 +51,7 @@ public class PinBoardController {
 
     @PutMapping("/pin-board/{pinBoardId}")
     @ApiOperation(value="핀보드 수정")
-    public ResponseEntity update(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long pinBoardId, @RequestBody PinBoardRequest pinBoardRequest){
+    public ResponseEntity update(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long pinBoardId, @RequestBody PinBoardUpdateRequest pinBoardRequest){
         User user = userRepository.findByEmail(userDetails.getUsername()).get();
         return new ResponseEntity(pinBoardService.update(user, pinBoardId, pinBoardRequest), null, HttpStatus.OK);
     }

@@ -47,6 +47,9 @@ dependencies {
     // Apache Commons IO for image
     implementation group: 'commons-io', name: 'commons-io', version: '2.4'
 
+    // WebSocket
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'
+
 
 }
 

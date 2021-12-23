@@ -35,8 +35,7 @@ public class PinBoard {
         this.imgPath = imgPath;
     }
 
-    public void update(Persona persona, String name) {
-        this.persona = persona;
+    public void update(String name) {
         this.name = name;
     }
     @Column
