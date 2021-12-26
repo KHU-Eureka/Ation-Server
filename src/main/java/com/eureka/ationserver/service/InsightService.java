@@ -179,7 +179,7 @@ public class InsightService {
 
     @Transactional(readOnly = true)
     public Set<InsightResponse> search(String keyword){
-        Set<InsightResponse> insightResponseList = insightRepository.findByOpenAndTitleContainingOrInsightTagList_NameContainingOrderByCreatedAtDesc(true, keyword, keyword).stream().map(InsightResponse::new).collect(Collectors.toSet());
+        Set<InsightResponse> insightResponseList = insightRepository.findByOpenAndTitleContainingOrInsightMainCategoryNameContainingOrInsightSubCategoryList_InsightSubCategoryNameContainingOrInsightTagList_NameContainingOrderByCreatedAtDesc(true, keyword, keyword, keyword, keyword).stream().map(InsightResponse::new).collect(Collectors.toSet());
         return insightResponseList;
     }
 
