@@ -46,6 +46,12 @@ public class InsightController {
         return new ResponseEntity(insightService.findPublic(insightId),null, HttpStatus.CREATED);
     }
 
+    @GetMapping("/insight/main-category/{mainCategoryId}")
+    @ApiOperation(value="인사이트 카테고리별 조회")
+    public ResponseEntity findByMainCategory(@PathVariable Long mainCategoryId){
+        return new ResponseEntity(insightService.findByMainCategory(mainCategoryId),null, HttpStatus.CREATED);
+    }
+
     @GetMapping("/insight/search")
     @ApiOperation(value="인사이트 검색")
     public ResponseEntity search(@RequestParam String keyword){
