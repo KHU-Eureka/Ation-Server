@@ -28,7 +28,7 @@ public class InsightController {
     }
 
     @PostMapping("/insight/image/{insightId}")
-    @ApiOperation(value="인사이트 썸네일 이미지 설정")
+    @ApiOperation(value="인사이트 썸네일 이미지 변경")
     public ResponseEntity saveImg(@PathVariable Long insightId, @RequestParam(value = "insightImg", required = true) MultipartFile insightImg) throws IOException {
         return new ResponseEntity(insightService.saveImg(insightId, insightImg), null, HttpStatus.OK);
     }

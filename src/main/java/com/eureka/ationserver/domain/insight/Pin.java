@@ -10,7 +10,7 @@ import java.util.List;
 
 
 @Entity
-@Getter
+@Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
@@ -32,6 +32,9 @@ public class Pin {
 
     @Column
     private LocalDateTime createdAt;
+
+    @Column
+    private String pinImgPath;
 
 
     @PrePersist

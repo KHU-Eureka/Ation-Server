@@ -25,6 +25,8 @@ public class InsightResponse {
 
     private String siteName;
 
+    private String icon;
+
     private LocalDateTime createdAt;
 
     private InsightMainCategoryResponse insightMainCategory;
@@ -52,6 +54,7 @@ public class InsightResponse {
         this.insightMainCategory = insightMainCategoryResponse;
         this.insightSubCategoryList = insightSubCategoryResponseList;
         this.tagList = tagList;
+        this.icon = insight.getIcon();
     }
 
 }
