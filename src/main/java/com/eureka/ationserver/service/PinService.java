@@ -83,7 +83,7 @@ public class PinService {
 
             String icon;
             try {
-                icon = document.select("link[rel=apple-touch-icon-precomposed]").get(0).attr("href");
+                icon = document.select("link[rel=apple-touch-icon]").get(0).attr("href");
 
             } catch (Exception e) {
                 icon = insightService.getInsightIconImageDefaultPath();

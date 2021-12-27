@@ -26,6 +26,8 @@ public class InsightPinResponse {
 
     private String siteName;
 
+    private String icon;
+
     private LocalDateTime createdAt;
 
     public InsightPinResponse(Insight insight){
@@ -36,6 +38,7 @@ public class InsightPinResponse {
         this.description = insight.getDescription();
         this.siteName = insight.getSiteName();
         this.createdAt = insight.getCreatedAt();
+        this.icon = insight.getIcon();
     }
 
 }
