@@ -25,6 +25,7 @@ public class PinRequest {
         return Pin.builder()
                 .pinBoard(pinBoard)
                 .insight(insight)
+                .pinImgPath(insight.getImgPath())
                 .build();
 
     }

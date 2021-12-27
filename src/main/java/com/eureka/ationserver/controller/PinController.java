@@ -14,6 +14,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
 
@@ -55,6 +56,11 @@ public class PinController {
         return new ResponseEntity(pinService.delete(user, pinId), null, HttpStatus.OK);
     }
 
+    @PostMapping("/pin/image/{pinId}")
+    @ApiOperation(value="핀 썸네일 이미지 변경")
+    public ResponseEntity saveImg(@PathVariable Long pinId, @RequestParam(value = "pinImg", required = true) MultipartFile pinImg) throws IOException {
+        return new ResponseEntity(pinService.saveImg(pinId, pinImg), null, HttpStatus.OK);
+    }
 
     @GetMapping("/pin")
     @ApiOperation(value="페르소나별 핀 전체 조회")

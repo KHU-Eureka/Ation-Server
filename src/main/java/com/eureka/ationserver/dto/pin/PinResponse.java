@@ -9,6 +9,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Column;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -24,6 +25,7 @@ public class PinResponse {
 
     private List<String> tagList;
 
+    private String pinImgPath;
 
     public PinResponse(Pin pin){
         this.id = pin.getId();
@@ -32,5 +34,6 @@ public class PinResponse {
         List<String> tagList = new ArrayList<>();
         pin.getPinTagList().stream().forEach(x-> tagList.add(x.getName()));
         this.tagList = tagList;
+        this.pinImgPath = pin.getPinImgPath();
     }
 }

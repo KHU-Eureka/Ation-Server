@@ -67,6 +67,15 @@ public class InsightService {
             siteName = "-";
         }
 
+        String icon;
+        try {
+            icon = document.select("link[rel=apple-touch-icon-precomposed]").get(0).attr("href");
+
+        } catch (Exception e) {
+            icon = getInsightIconImageDefaultPath();
+        }
+
+
         // public
         InsightMainCategory insightMainCategory = insightMainCategoryRepository.findById(insightRequest.getInsightMainCategoryId()).get();
         List<InsightSubCategory> insightSubCategoryList= insightSubCategoryRepository.findAllByIdIn(insightRequest.getInsightSubCategoryIdList());
@@ -78,6 +87,7 @@ public class InsightService {
                 .description(description)
                 .imgPath(imageUrl)
                 .siteName(siteName)
+                .icon(icon)
                 .insightMainCategory(insightMainCategory)
                 .open(true)
                 .build();
@@ -121,6 +131,15 @@ public class InsightService {
         String fileName = "insight.png";
         String url = "http://"+HOST+":"+PORT+"/api/image?path=";
         String apiPath = url + IMAGEPATH+"insight/" + fileName;
+        return apiPath;
+    }
+    public String getInsightIconImageDefaultPath(){
+        // set file name
+        List<String> pathList = new ArrayList<>();
+
+        String fileName = "insight-icon.png";
+        String url = "http://"+HOST+":"+PORT+"/api/image?path=";
+        String apiPath = url + IMAGEPATH+"insight-icon/" + fileName;
         return apiPath;
     }
 

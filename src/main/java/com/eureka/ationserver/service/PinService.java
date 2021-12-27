@@ -4,6 +4,7 @@ import com.eureka.ationserver.advice.exception.ForbiddenException;
 import com.eureka.ationserver.domain.insight.*;
 import com.eureka.ationserver.domain.persona.Persona;
 import com.eureka.ationserver.domain.user.User;
+import com.eureka.ationserver.dto.insight.InsightResponse;
 import com.eureka.ationserver.dto.pin.InsightPinRequest;
 import com.eureka.ationserver.dto.pin.PinRequest;
 import com.eureka.ationserver.dto.pin.PinResponse;
@@ -17,10 +18,14 @@ import com.eureka.ationserver.repository.persona.PersonaRepository;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -76,6 +81,14 @@ public class PinService {
                 siteName = "-";
             }
 
+            String icon;
+            try {
+                icon = document.select("link[rel=apple-touch-icon-precomposed]").get(0).attr("href");
+
+            } catch (Exception e) {
+                icon = insightService.getInsightIconImageDefaultPath();
+            }
+
 
             Insight insight = Insight.builder()
                     .url(insightPinRequest.getUrl())
@@ -83,6 +96,7 @@ public class PinService {
                     .description(description)
                     .imgPath(imageUrl)
                     .siteName(siteName)
+                    .icon(icon)
                     .insightMainCategory(null)
                     .insightSubCategoryList(null)
                     .open(false)
@@ -95,6 +109,7 @@ public class PinService {
             Pin pin = Pin.builder()
                     .pinBoard(pinBoard)
                     .insight(insight)
+                    .pinImgPath(insight.getImgPath())
                     .build();
             Pin saved = pinRepository.save(pin);
 
@@ -225,4 +240,50 @@ public class PinService {
         return pinResponseList;
     }
 
+    @Value("${server.address}")
+    private String HOST;
+
+    @Value("${server.port}")
+    private String PORT;
+
+    @Value("${eureka.app.imagePath}")
+    private String IMAGEPATH;
+
+    public String getPinImageDefaultPath(){
+        // set file name
+        List<String> pathList = new ArrayList<>();
+
+        String fileName = "pin.png";
+        String url = "http://"+HOST+":"+PORT+"/api/image?path=";
+        String apiPath = url + IMAGEPATH+"pin/" + fileName;
+        return apiPath;
+    }
+
+    public List<String> getPinImagePath(Long pinId){
+        // set file name
+        List<String> pathList = new ArrayList<>();
+
+        String fileName = "pin-"+ pinId +".png";
+        String url = "http://"+HOST+":"+PORT+"/api/image?path=";
+        String apiPath = url +IMAGEPATH+"pin/"+ fileName;
+
+        String path = IMAGEPATH + "pin/"+ fileName;
+        pathList.add(apiPath);
+        pathList.add(path);
+        return pathList;
+    }
+
+
+    @Transactional
+    public PinResponse saveImg(Long pinId, MultipartFile pinImg) throws IOException{
+        Pin pin = pinRepository.getById(pinId);
+
+        List<String> pathList = getPinImagePath(pinId);
+        File file = new File(pathList.get(1));
+        pinImg.transferTo(file);
+        pin.setPinImgPath(pathList.get(0));
+
+
+        return new PinResponse(pin);
+    }
 }

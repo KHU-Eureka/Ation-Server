@@ -40,6 +40,9 @@ public class Insight {
     private String imgPath;
 
     @Column
+    private String icon;
+
+    @Column
     private String description;
 
     @Column
