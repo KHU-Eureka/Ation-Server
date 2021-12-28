@@ -25,6 +25,8 @@ public class PersonaRequest {
 
     private String job;
 
+    private String introduction;
+
     private List<String> charmList;
 
     private List<Long> senseIdList;
@@ -40,6 +42,7 @@ public class PersonaRequest {
                 .gender(gender)
                 .mbti(mbti)
                 .job(job)
+                .introduction(introduction)
                 .profileImgPath(defaultPath)
                 .build();
     }

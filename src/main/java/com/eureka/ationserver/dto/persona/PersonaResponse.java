@@ -26,6 +26,9 @@ public class PersonaResponse {
 
     private String job;
 
+    private String introduction;
+
+
     private String profileImgPath;
 
     private List<String> charmList;
@@ -50,10 +53,12 @@ public class PersonaResponse {
         this.mbti = persona.getMbti();
         this.gender = persona.getGender();
         this.job = persona.getJob();
+        this.introduction = persona.getIntroduction();
         this.profileImgPath = persona.getProfileImgPath();
         this.charmList = charmList;
         this.senseIdList = senseIdList;
         this.interestIdList = interestIdList;
+
 
     }
 

@@ -40,6 +40,9 @@ public class Persona {
     @Column
     private String profileImgPath;
 
+    @Column
+    private String introduction;
+
     @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL)
     private List<PersonaSense> personaSenseList;
 
@@ -55,6 +58,7 @@ public class Persona {
         this.gender = personaRequest.getGender();
         this.mbti = personaRequest.getMbti();
         this.job = personaRequest.getJob();
+        this.introduction = personaRequest.getIntroduction();
         return this;
     }
 
