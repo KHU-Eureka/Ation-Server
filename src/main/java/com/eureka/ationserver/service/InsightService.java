@@ -46,6 +46,9 @@ public class InsightService {
         String description;
         try {
             description = document.select("meta[property=og:description]").get(0).attr("content");
+            if(description.length()>255){
+                description = description.substring(0,255);
+            }
 
         } catch (Exception e) {
             description = null;
