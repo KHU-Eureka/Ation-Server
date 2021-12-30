@@ -27,6 +27,7 @@ public class AuthService {
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
+    private final MyPageService myPageService;
 
     @Transactional
     public void register(SignupRequest signupRequest){
@@ -37,9 +38,10 @@ public class AuthService {
                 .email(signupRequest.getEmail())
                 .password(encoder.encode(signupRequest.getPassword()))
                 .name(signupRequest.getName())
+                .mypageImgPath(myPageService.getMyPageImageDefaultPath())
                 .build();
 
-        userRepository.save(user);
+        User saved = userRepository.save(user);
     }
 
     @Transactional
