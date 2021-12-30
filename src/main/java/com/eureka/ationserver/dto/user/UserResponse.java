@@ -13,10 +13,13 @@ public class UserResponse {
 
     private String name;
 
+    private String myPageImgPath;
+
     public UserResponse(User user) {
         this.id = user.getId();
         this.email = user.getEmail();
         this.name = user.getName();
+        this.myPageImgPath = user.getMypageImgPath();
     }
 
 

@@ -28,6 +28,10 @@ public class User {
     @JoinColumn(name="persona_id")
     private Persona persona;
 
+    @Column(nullable=false)
+    @Setter
+    private String mypageImgPath;
+
     public void setPersona(Persona persona) {
         this.persona = persona;
     }
