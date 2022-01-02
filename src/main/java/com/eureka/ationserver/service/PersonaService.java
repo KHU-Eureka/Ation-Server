@@ -77,7 +77,7 @@ public class PersonaService {
         }
     }
 
-    @Value("${server.address}")
+    @Value("${eureka.app.publicIp}")
     private String HOST;
 
     @Value("${server.port}")
