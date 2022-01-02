@@ -1,5 +1,7 @@
 package com.eureka.ationserver.domain.persona;
 
+import com.eureka.ationserver.domain.insight.Pin;
+import com.eureka.ationserver.domain.insight.PinBoard;
 import com.eureka.ationserver.domain.user.User;
 import com.eureka.ationserver.dto.persona.PersonaRequest;
 import lombok.*;
@@ -61,6 +63,8 @@ public class Persona {
         this.introduction = personaRequest.getIntroduction();
         return this;
     }
+    @OneToMany(mappedBy = "persona", cascade = CascadeType.REMOVE)
+    private List<PinBoard> pinBoardList;
 
     public void setProfileImgPath(String personaImgPath) {
         this.profileImgPath = personaImgPath;

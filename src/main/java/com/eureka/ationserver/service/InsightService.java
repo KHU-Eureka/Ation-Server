@@ -1,5 +1,6 @@
 package com.eureka.ationserver.service;
 
+import com.eureka.ationserver.advice.exception.DuplicateException;
 import com.eureka.ationserver.advice.exception.ForbiddenException;
 import com.eureka.ationserver.domain.insight.*;
 import com.eureka.ationserver.domain.persona.Interest;
@@ -8,6 +9,7 @@ import com.eureka.ationserver.domain.user.User;
 import com.eureka.ationserver.dto.insight.*;
 import com.eureka.ationserver.dto.persona.PersonaSimpleResponse;
 import com.eureka.ationserver.repository.insight.*;
+import com.eureka.ationserver.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
@@ -20,6 +22,7 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -32,6 +35,8 @@ public class InsightService {
     private final InsightSubCategoryRepository insightSubCategoryRepository;
     private final InsightTagRepository insightTagRepository;
     private final InsightCategoryRepository insightCategoryRepository;
+    private final InsightViewRepository insightViewRepository;
+    private final UserRepository userRepository;
 
     @Transactional
     public Long savePublic(InsightRequest insightRequest) throws IOException {
@@ -183,9 +188,18 @@ public class InsightService {
        return new InsightResponse(insight);
     }
 
-    @Transactional(readOnly = true)
-    public InsightResponse findPublic(Long insightId){
+    @Transactional()
+    public InsightResponse findPublic(User user, Long insightId){
         Insight insight = insightRepository.getById(insightId);
+
+        Optional<InsightView> insightView = insightViewRepository.findByUserAndInsight(user, insight);
+        if(!insightView.isPresent()){
+            InsightView newInsightView = InsightView.builder()
+                    .insight(insight)
+                    .user(user)
+                    .build();
+            insightViewRepository.save(newInsightView);
+        }
         return new InsightResponse(insight);
     }
 
@@ -204,6 +218,8 @@ public class InsightService {
         Set<InsightResponse> insightResponseList = insightRepository.findByOpenAndTitleContainingOrInsightMainCategoryNameContainingOrInsightSubCategoryList_InsightSubCategoryNameContainingOrInsightTagList_NameContainingOrderByCreatedAtDesc(true, keyword, keyword, keyword, keyword).stream().map(InsightResponse::new).collect(Collectors.toSet());
         return insightResponseList;
     }
+
+
 
 
 }
