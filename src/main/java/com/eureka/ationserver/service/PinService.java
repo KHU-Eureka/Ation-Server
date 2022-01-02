@@ -243,6 +243,7 @@ public class PinService {
         return pinResponseList;
     }
 
+
     @Value("${eureka.app.publicIp}")
     private String HOST;
 

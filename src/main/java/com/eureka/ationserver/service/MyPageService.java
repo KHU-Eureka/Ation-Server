@@ -17,6 +17,7 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class MyPageService {
+
     @Value("${eureka.app.publicIp}")
     private String HOST;
 

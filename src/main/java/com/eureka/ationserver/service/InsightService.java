@@ -123,6 +123,7 @@ public class InsightService {
 
     }
 
+
     @Value("${eureka.app.publicIp}")
     private String HOST;
 
