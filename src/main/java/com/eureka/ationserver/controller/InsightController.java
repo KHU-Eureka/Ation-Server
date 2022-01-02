@@ -1,13 +1,17 @@
 package com.eureka.ationserver.controller;
 
 
+import com.eureka.ationserver.domain.user.User;
 import com.eureka.ationserver.dto.insight.InsightRequest;
+import com.eureka.ationserver.repository.user.UserRepository;
 import com.eureka.ationserver.service.InsightService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -20,6 +24,8 @@ import java.io.IOException;
 public class InsightController {
 
     private final InsightService insightService;
+    private final UserRepository userRepository;
+
 
     @PostMapping("/insight")
     @ApiOperation(value="인사이트 생성")
@@ -42,8 +48,10 @@ public class InsightController {
 
     @GetMapping("/insight/{insightId}")
     @ApiOperation(value="인사이트 조회")
-    public ResponseEntity findPublic(@PathVariable Long insightId){
-        return new ResponseEntity(insightService.findPublic(insightId),null, HttpStatus.CREATED);
+    public ResponseEntity findPublic(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long insightId){
+        User user = userRepository.findByEmail(userDetails.getUsername()).get();
+
+        return new ResponseEntity(insightService.findPublic(user, insightId),null, HttpStatus.CREATED);
     }
 
     @GetMapping("/insight/main-category/{mainCategoryId}")
@@ -57,6 +65,7 @@ public class InsightController {
     public ResponseEntity search(@RequestParam String keyword){
         return new ResponseEntity(insightService.search(keyword),null, HttpStatus.OK);
     }
+
 
 
 

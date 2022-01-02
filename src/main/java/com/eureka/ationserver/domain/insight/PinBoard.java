@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 @Entity
 @Getter
@@ -24,6 +25,9 @@ public class PinBoard {
     @ManyToOne(targetEntity = Persona.class, fetch = FetchType.LAZY)
     @JoinColumn(name="persona_id")
     private Persona persona;
+
+    @OneToMany(mappedBy = "pinBoard", cascade = CascadeType.REMOVE)
+    private List<Pin> pinList;
 
     @Column
     private String name;
