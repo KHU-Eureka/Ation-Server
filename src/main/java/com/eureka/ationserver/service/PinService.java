@@ -243,7 +243,7 @@ public class PinService {
         return pinResponseList;
     }
 
-    @Value("${server.address}")
+    @Value("${erueka.app.publicIp}")
     private String HOST;
 
     @Value("${server.port}")
