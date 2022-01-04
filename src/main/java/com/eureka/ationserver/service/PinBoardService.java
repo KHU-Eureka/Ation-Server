@@ -45,7 +45,7 @@ public class PinBoardService {
         }
     }
 
-    @Value("${eureka.app.publicIp")
+    @Value("${eureka.app.publicIp}")
     private String HOST;
 
     @Value("${server.port}")

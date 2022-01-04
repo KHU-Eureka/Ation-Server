@@ -19,14 +19,32 @@ public class RecommendService {
     private final UserRepository userRepository;
     private final InsightRepository insightRepository;
     @Transactional(readOnly = true)
-    public int[][] createMatrix(){
+    public int[][] createUserInsightViewMatrix(){
         List<User> userList= userRepository.findAll();
         List<Insight> insightList = insightRepository.findAll();
         List<InsightView> insightViewList = insightViewRepository.findAll();
 
-        int[][] matrix = new int[userList.size()+1][insightList.size()+1];
+        int[][] matrix = new int[insightViewList.size()][2];
+        int i = 0;
         for(InsightView insightView : insightViewList){
-            matrix[insightView.getUser().getId().intValue()][insightView.getInsight().getId().intValue()] = 1;
+            matrix[i][0] = insightView.getUser().getId().intValue();
+            matrix[i][1] = insightView.getInsight().getId().intValue();
+            i++;
+        }
+        return matrix;
+    }
+
+    @Transactional(readOnly = true)
+    public String[][] createInsightMatrix(){
+        List<Insight> insightList = insightRepository.findAll();
+
+        String[][] matrix = new String[insightList.size()][2];
+        int i = 0;
+        for(Insight insight : insightList){
+            matrix[i][0] = insight.getId().toString();
+            matrix[i][1] = insight.getTitle();
+            i++;
+
         }
         return matrix;
     }

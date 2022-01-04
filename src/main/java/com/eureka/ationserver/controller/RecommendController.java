@@ -15,10 +15,18 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = {"Recommend"})
 @RequiredArgsConstructor
 public class RecommendController {
+
     private final RecommendService recommendService;
-    @GetMapping("/recommend/matrix")
+
+    @GetMapping("/recommend/view-matrix")
     @ApiOperation(value="유저별 인사이트 조회 결과 matrix 생성")
-    public ResponseEntity createMatrix(){
-        return new ResponseEntity(recommendService.createMatrix(),null, HttpStatus.OK);
+    public ResponseEntity createViewMatrix(){
+        return new ResponseEntity(recommendService.createUserInsightViewMatrix(),null, HttpStatus.OK);
+    }
+
+    @GetMapping("/recommend/insight-matrix")
+    @ApiOperation(value="인사이트 정보 matrix 생성")
+    public ResponseEntity createInsightMatrix(){
+        return new ResponseEntity(recommendService.createInsightMatrix(),null, HttpStatus.OK);
     }
 }
