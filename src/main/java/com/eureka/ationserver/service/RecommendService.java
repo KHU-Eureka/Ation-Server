@@ -20,8 +20,6 @@ public class RecommendService {
     private final InsightRepository insightRepository;
     @Transactional(readOnly = true)
     public int[][] createUserInsightViewMatrix(){
-        List<User> userList= userRepository.findAll();
-        List<Insight> insightList = insightRepository.findAll();
         List<InsightView> insightViewList = insightViewRepository.findAll();
 
         int[][] matrix = new int[insightViewList.size()][2];
@@ -36,7 +34,7 @@ public class RecommendService {
 
     @Transactional(readOnly = true)
     public String[][] createInsightMatrix(){
-        List<Insight> insightList = insightRepository.findAll();
+        List<Insight> insightList = insightRepository.findByOpen(Boolean.TRUE);
 
         String[][] matrix = new String[insightList.size()][2];
         int i = 0;
