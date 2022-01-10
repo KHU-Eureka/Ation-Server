@@ -29,4 +29,10 @@ public class RecommendController {
     public ResponseEntity createInsightMatrix(){
         return new ResponseEntity(recommendService.createInsightMatrix(),null, HttpStatus.OK);
     }
+
+    @GetMapping("/recommend/user-matrix")
+    @ApiOperation(value="유저 정보 matrix 생성")
+    public ResponseEntity createUserMatrix(){
+        return new ResponseEntity(recommendService.createUserMatrix(),null, HttpStatus.OK);
+    }
 }

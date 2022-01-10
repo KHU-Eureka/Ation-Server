@@ -10,6 +10,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -43,6 +44,19 @@ public class RecommendService {
             matrix[i][1] = insight.getTitle();
             i++;
 
+        }
+        return matrix;
+    }
+
+    @Transactional(readOnly = true)
+    public List<Long> createUserMatrix(){
+        List<User> userList = userRepository.findAll();
+
+        List<Long> matrix = new ArrayList<>();
+
+        int i = 0;
+        for(User user : userList){
+            matrix.add(user.getId());
         }
         return matrix;
     }
