@@ -55,7 +55,12 @@ public class PinService {
             String crawlingUrl = insightPinRequest.getUrl();
             Document document = Jsoup.connect(crawlingUrl).get();
 
-            String title = document.select("meta[property=og:title]").first().attr("content");
+            String title;
+            try{
+                title = document.select("meta[property=og:title]").first().attr("content");
+            } catch(Exception e){
+                title = "-";
+            }
 
             String description;
             try {
@@ -73,7 +78,7 @@ public class PinService {
                 imageUrl = document.select("meta[property=og:image]").get(0).attr("content");
 
             } catch (Exception e) {
-                imageUrl = insightService.getInsightImageDefaultPath();
+                imageUrl = this.getPinImageDefaultPath();
             }
 
             String siteName;
@@ -129,6 +134,8 @@ public class PinService {
 
         }
     }
+
+
 
     @Transactional
     public Long pinUp(User user, PinRequest pinRequest){
@@ -219,8 +226,11 @@ public class PinService {
     }
 
     @Transactional(readOnly = true)
-    public Set<PinResponse> search(Long personaId, String keyword){
+    public Set<PinResponse> search(User user, Long personaId, String keyword){
         Persona persona = personaRepository.getById(personaId);
+        if(persona.getUser().getId() != user.getId()){
+            throw new ForbiddenException();
+        }
         Set<Pin> pins1 = pinRepository.findByPinBoard_PersonaAndInsight_TitleContainingOrderByCreatedAtDesc(persona, keyword);
         Set<Pin> pins2 = pinRepository.findByPinTagList_NameContainingOrderByCreatedAtDesc(keyword);
         for(Pin pin : pins2){
@@ -237,8 +247,11 @@ public class PinService {
     }
 
     @Transactional(readOnly = true)
-    public List<PinResponse> findByPinBoard(Long pinBoardId){
+    public List<PinResponse> findByPinBoard(User user, Long pinBoardId){
         PinBoard pinBoard = pinBoardRepository.getById(pinBoardId);
+        if(pinBoard.getPersona().getUser().getId() != user.getId()){
+            throw new ForbiddenException();
+        }
         List<PinResponse> pinResponseList = pinRepository.findByPinBoard(pinBoard).stream().map(PinResponse::new).collect(Collectors.toList());
         return pinResponseList;
     }
