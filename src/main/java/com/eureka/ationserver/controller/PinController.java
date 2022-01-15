@@ -78,13 +78,15 @@ public class PinController {
 
     @GetMapping("/pin/search")
     @ApiOperation(value="핀 검색")
-    public ResponseEntity search(@RequestParam Long personaId, @RequestParam String keyword){
-        return new ResponseEntity(pinService.search(personaId, keyword), null, HttpStatus.OK);
+    public ResponseEntity search(@AuthenticationPrincipal UserDetails userDetails, @RequestParam Long personaId, @RequestParam String keyword){
+        User user = userRepository.findByEmail(userDetails.getUsername()).get();
+        return new ResponseEntity(pinService.search(user, personaId, keyword), null, HttpStatus.OK);
     }
 
     @GetMapping("/pin/pin-board/{pinBoardId}")
     @ApiOperation(value="핀보드별 핀 조회")
-    public ResponseEntity findByPinBoard(@PathVariable Long pinBoardId){
-        return new ResponseEntity(pinService.findByPinBoard(pinBoardId), null, HttpStatus.OK);
+    public ResponseEntity findByPinBoard(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long pinBoardId){
+        User user = userRepository.findByEmail(userDetails.getUsername()).get();
+        return new ResponseEntity(pinService.findByPinBoard(user, pinBoardId), null, HttpStatus.OK);
     }
 }
