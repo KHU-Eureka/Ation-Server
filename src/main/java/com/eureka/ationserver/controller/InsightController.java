@@ -1,7 +1,7 @@
 package com.eureka.ationserver.controller;
 
 
-import com.eureka.ationserver.domain.user.User;
+import com.eureka.ationserver.model.user.User;
 import com.eureka.ationserver.dto.insight.InsightRequest;
 import com.eureka.ationserver.repository.user.UserRepository;
 import com.eureka.ationserver.service.InsightService;

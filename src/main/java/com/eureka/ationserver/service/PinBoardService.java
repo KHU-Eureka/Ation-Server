@@ -2,10 +2,9 @@ package com.eureka.ationserver.service;
 
 
 import com.eureka.ationserver.advice.exception.ForbiddenException;
-import com.eureka.ationserver.domain.insight.PinBoard;
-import com.eureka.ationserver.domain.persona.Persona;
-import com.eureka.ationserver.domain.user.User;
-import com.eureka.ationserver.dto.pin.PinResponse;
+import com.eureka.ationserver.model.insight.PinBoard;
+import com.eureka.ationserver.model.persona.Persona;
+import com.eureka.ationserver.model.user.User;
 import com.eureka.ationserver.dto.pinBoard.PinBoardRequest;
 import com.eureka.ationserver.dto.pinBoard.PinBoardResponse;
 import com.eureka.ationserver.dto.pinBoard.PinBoardUpdateRequest;
@@ -22,7 +21,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -45,38 +43,6 @@ public class PinBoardService {
         }
     }
 
-    @Value("${eureka.app.publicIp}")
-    private String HOST;
-
-    @Value("${server.port}")
-    private String PORT;
-
-    @Value("${eureka.app.imagePath}")
-    private String IMAGEPATH;
-
-    private String getPinBoardImageDefaultPath(){
-        // set file name
-                List<String> pathList = new ArrayList<>();
-
-        String fileName = "pinBoard.png";
-        String url = "http://"+HOST+":"+PORT+"/api/image?path=";
-        String apiPath = url + IMAGEPATH+"pinboard/" + fileName;
-        return apiPath;
-    }
-
-    private List<String> getPinBoardImagePath(Long pinBoardId){
-        // set file name
-        List<String> pathList = new ArrayList<>();
-
-        String fileName = "pinBoard-"+ pinBoardId +".png";
-        String url = "http://"+HOST+":"+PORT+"/api/image?path=";
-        String apiPath = url +IMAGEPATH+"pinboard/"+ fileName;
-
-        String path = IMAGEPATH + "pinboard/"+ fileName;
-        pathList.add(apiPath);
-        pathList.add(path);
-        return pathList;
-    }
 
     @Transactional
     public PinBoardResponse saveImg(User user, Long pinBoardId, MultipartFile pinBoardImg) throws IOException{
@@ -136,4 +102,37 @@ public class PinBoardService {
         return pinRepository.countByPinBoard(pinBoard);
     }
 
+
+    @Value("${eureka.app.publicIp}")
+    private String HOST;
+
+    @Value("${server.port}")
+    private String PORT;
+
+    @Value("${eureka.app.imagePath}")
+    private String IMAGEPATH;
+
+    private String getPinBoardImageDefaultPath(){
+        // set file name
+        List<String> pathList = new ArrayList<>();
+
+        String fileName = "pinBoard.png";
+        String url = "http://"+HOST+":"+PORT+"/api/image?path=";
+        String apiPath = url + IMAGEPATH+"pinboard/" + fileName;
+        return apiPath;
+    }
+
+    private List<String> getPinBoardImagePath(Long pinBoardId){
+        // set file name
+        List<String> pathList = new ArrayList<>();
+
+        String fileName = "pinBoard-"+ pinBoardId +".png";
+        String url = "http://"+HOST+":"+PORT+"/api/image?path=";
+        String apiPath = url +IMAGEPATH+"pinboard/"+ fileName;
+
+        String path = IMAGEPATH + "pinboard/"+ fileName;
+        pathList.add(apiPath);
+        pathList.add(path);
+        return pathList;
+    }
 }

@@ -1,15 +1,12 @@
 package com.eureka.ationserver.dto.pin;
 
 
-import com.eureka.ationserver.domain.insight.Pin;
-import com.eureka.ationserver.dto.insight.InsightResponse;
-import com.eureka.ationserver.dto.pinBoard.PinBoardResponse;
+import com.eureka.ationserver.model.insight.Pin;
 import com.eureka.ationserver.dto.pinBoard.PinBoardSimpleResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.Column;
 import java.util.ArrayList;
 import java.util.List;
 

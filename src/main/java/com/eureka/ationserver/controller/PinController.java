@@ -1,6 +1,6 @@
 package com.eureka.ationserver.controller;
 
-import com.eureka.ationserver.domain.user.User;
+import com.eureka.ationserver.model.user.User;
 import com.eureka.ationserver.dto.pin.InsightPinRequest;
 import com.eureka.ationserver.dto.pin.PinRequest;
 import com.eureka.ationserver.dto.pin.PinUpdateRequest;

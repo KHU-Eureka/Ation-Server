@@ -1,6 +1,6 @@
 package com.eureka.ationserver.config.security.details;
 
-import com.eureka.ationserver.domain.user.User;
+import com.eureka.ationserver.model.user.User;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

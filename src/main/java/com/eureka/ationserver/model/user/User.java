@@ -1,6 +1,6 @@
-package com.eureka.ationserver.domain.user;
+package com.eureka.ationserver.model.user;
 
-import com.eureka.ationserver.domain.persona.Persona;
+import com.eureka.ationserver.model.persona.Persona;
 import lombok.*;
 
 import javax.persistence.*;

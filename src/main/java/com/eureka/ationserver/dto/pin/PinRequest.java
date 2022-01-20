@@ -1,9 +1,9 @@
 package com.eureka.ationserver.dto.pin;
 
 
-import com.eureka.ationserver.domain.insight.Insight;
-import com.eureka.ationserver.domain.insight.Pin;
-import com.eureka.ationserver.domain.insight.PinBoard;
+import com.eureka.ationserver.model.insight.Insight;
+import com.eureka.ationserver.model.insight.Pin;
+import com.eureka.ationserver.model.insight.PinBoard;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

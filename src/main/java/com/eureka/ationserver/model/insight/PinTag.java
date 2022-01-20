@@ -1,4 +1,5 @@
-package com.eureka.ationserver.domain.insight;
+package com.eureka.ationserver.model.insight;
+
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,14 +13,14 @@ import javax.persistence.*;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class InsightTag {
+public class PinTag {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(targetEntity = Insight.class, fetch = FetchType.LAZY)
-    @JoinColumn(name="insight_id")
-    private Insight insight;
+    @ManyToOne(targetEntity = Pin.class, fetch = FetchType.LAZY)
+    @JoinColumn(name="pin_id")
+    private Pin pin;
 
     @Column
     private String name;

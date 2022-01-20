@@ -1,4 +1,4 @@
-package com.eureka.ationserver.domain.persona;
+package com.eureka.ationserver.model.persona;
 
 import lombok.*;
 

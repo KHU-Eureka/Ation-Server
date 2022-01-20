@@ -1,8 +1,6 @@
 package com.eureka.ationserver.service;
 
-import com.eureka.ationserver.domain.insight.Pin;
-import com.eureka.ationserver.domain.user.User;
-import com.eureka.ationserver.dto.pin.PinResponse;
+import com.eureka.ationserver.model.user.User;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;

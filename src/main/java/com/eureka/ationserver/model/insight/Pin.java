@@ -1,7 +1,5 @@
-package com.eureka.ationserver.domain.insight;
+package com.eureka.ationserver.model.insight;
 
-import com.eureka.ationserver.domain.persona.PersonaCharm;
-import com.eureka.ationserver.domain.user.User;
 import lombok.*;
 
 import javax.persistence.*;

@@ -1,7 +1,6 @@
-package com.eureka.ationserver.domain.insight;
+package com.eureka.ationserver.model.insight;
 
-import com.eureka.ationserver.domain.persona.Persona;
-import com.eureka.ationserver.domain.user.User;
+import com.eureka.ationserver.model.persona.Persona;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -42,6 +41,7 @@ public class PinBoard {
     public void update(String name) {
         this.name = name;
     }
+
     @Column
     private LocalDateTime createdAt;
 

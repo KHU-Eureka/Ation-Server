@@ -1,11 +1,9 @@
 package com.eureka.ationserver.dto.insight;
 
-import com.eureka.ationserver.domain.insight.InsightMainCategory;
+import com.eureka.ationserver.model.insight.InsightMainCategory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.persistence.Entity;
 
 
 @Getter

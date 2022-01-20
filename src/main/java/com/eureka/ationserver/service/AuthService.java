@@ -4,7 +4,7 @@ import com.eureka.ationserver.advice.exception.DuplicateException;
 import com.eureka.ationserver.advice.exception.UnAuthorizedException;
 import com.eureka.ationserver.config.security.details.UserDetailsImpl;
 import com.eureka.ationserver.config.security.jwt.JwtUtils;
-import com.eureka.ationserver.domain.user.User;
+import com.eureka.ationserver.model.user.User;
 import com.eureka.ationserver.dto.auth.JwtResponse;
 import com.eureka.ationserver.dto.auth.LoginRequest;
 import com.eureka.ationserver.dto.auth.SignupRequest;

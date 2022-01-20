@@ -1,6 +1,6 @@
 package com.eureka.ationserver.dto.persona;
 
-import com.eureka.ationserver.domain.persona.Persona;
+import com.eureka.ationserver.model.persona.Persona;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

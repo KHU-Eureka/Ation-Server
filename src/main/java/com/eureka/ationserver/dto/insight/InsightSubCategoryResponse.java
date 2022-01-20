@@ -1,7 +1,7 @@
 package com.eureka.ationserver.dto.insight;
 
-import com.eureka.ationserver.domain.insight.InsightCategory;
-import com.eureka.ationserver.domain.insight.InsightSubCategory;
+import com.eureka.ationserver.model.insight.InsightCategory;
+import com.eureka.ationserver.model.insight.InsightSubCategory;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

@@ -1,8 +1,8 @@
 package com.eureka.ationserver.service;
 
 import com.eureka.ationserver.advice.exception.ForbiddenException;
-import com.eureka.ationserver.domain.user.User;
-import com.eureka.ationserver.domain.persona.*;
+import com.eureka.ationserver.model.user.User;
+import com.eureka.ationserver.model.persona.*;
 import com.eureka.ationserver.dto.persona.*;
 import com.eureka.ationserver.repository.persona.*;
 import lombok.RequiredArgsConstructor;

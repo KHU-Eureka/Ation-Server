@@ -1,7 +1,5 @@
-package com.eureka.ationserver.domain.insight;
+package com.eureka.ationserver.model.insight;
 
-import com.eureka.ationserver.domain.persona.Interest;
-import com.eureka.ationserver.domain.persona.Persona;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;

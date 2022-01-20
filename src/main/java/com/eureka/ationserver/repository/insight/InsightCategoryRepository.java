@@ -1,11 +1,9 @@
 package com.eureka.ationserver.repository.insight;
 
-import com.eureka.ationserver.domain.insight.InsightCategory;
-import com.eureka.ationserver.domain.insight.InsightSubCategory;
-import com.eureka.ationserver.domain.persona.Interest;
+import com.eureka.ationserver.model.insight.InsightCategory;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.stereotype.Repository;
 
-import java.util.List;
-
+@Repository
 public interface InsightCategoryRepository extends JpaRepository<InsightCategory, Long> {
 }
