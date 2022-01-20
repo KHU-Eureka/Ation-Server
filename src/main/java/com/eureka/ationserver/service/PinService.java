@@ -1,14 +1,12 @@
 package com.eureka.ationserver.service;
 
 import com.eureka.ationserver.advice.exception.ForbiddenException;
-import com.eureka.ationserver.domain.insight.*;
-import com.eureka.ationserver.domain.persona.Persona;
-import com.eureka.ationserver.domain.user.User;
-import com.eureka.ationserver.dto.insight.InsightResponse;
+import com.eureka.ationserver.model.insight.*;
+import com.eureka.ationserver.model.persona.Persona;
+import com.eureka.ationserver.model.user.User;
 import com.eureka.ationserver.dto.pin.InsightPinRequest;
 import com.eureka.ationserver.dto.pin.PinRequest;
 import com.eureka.ationserver.dto.pin.PinResponse;
-import com.eureka.ationserver.dto.insight.InsightRequest;
 import com.eureka.ationserver.dto.pin.PinUpdateRequest;
 import com.eureka.ationserver.repository.insight.PinRepository;
 import com.eureka.ationserver.repository.insight.InsightRepository;
@@ -89,14 +87,7 @@ public class PinService {
                 siteName = "-";
             }
 
-            String icon;
-            try {
-                icon = document.select("link[rel=apple-touch-icon]").get(0).attr("href");
-
-            } catch (Exception e) {
-                icon = insightService.getInsightIconImageDefaultPath();
-            }
-
+            String icon = "http://www.google.com/s2/favicons?domain=" + insightPinRequest.getUrl();
 
             Insight insight = Insight.builder()
                     .url(insightPinRequest.getUrl())

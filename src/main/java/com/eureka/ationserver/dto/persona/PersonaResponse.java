@@ -1,13 +1,12 @@
 package com.eureka.ationserver.dto.persona;
 
-import com.eureka.ationserver.domain.persona.*;
+import com.eureka.ationserver.model.persona.*;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Getter
 @AllArgsConstructor

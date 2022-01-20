@@ -1,8 +1,8 @@
 package com.eureka.ationserver.service;
 
-import com.eureka.ationserver.domain.insight.Insight;
-import com.eureka.ationserver.domain.insight.InsightView;
-import com.eureka.ationserver.domain.user.User;
+import com.eureka.ationserver.model.insight.Insight;
+import com.eureka.ationserver.model.insight.InsightView;
+import com.eureka.ationserver.model.user.User;
 import com.eureka.ationserver.repository.insight.InsightRepository;
 import com.eureka.ationserver.repository.insight.InsightViewRepository;
 import com.eureka.ationserver.repository.user.UserRepository;

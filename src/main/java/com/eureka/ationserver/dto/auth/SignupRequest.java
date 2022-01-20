@@ -1,6 +1,6 @@
 package com.eureka.ationserver.dto.auth;
 
-import com.eureka.ationserver.domain.user.User;
+import com.eureka.ationserver.model.user.User;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

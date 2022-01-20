@@ -1,4 +1,4 @@
-package com.eureka.ationserver.domain.insight;
+package com.eureka.ationserver.model.insight;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;

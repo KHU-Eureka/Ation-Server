@@ -1,10 +1,9 @@
 package com.eureka.ationserver.dto.pinBoard;
 
-import com.eureka.ationserver.domain.insight.PinBoard;
+import com.eureka.ationserver.model.insight.PinBoard;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 @NoArgsConstructor

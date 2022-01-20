@@ -1,14 +1,11 @@
 package com.eureka.ationserver.dto.pin;
 
-import com.eureka.ationserver.domain.insight.Insight;
-import com.eureka.ationserver.dto.insight.InsightMainCategoryResponse;
-import com.eureka.ationserver.dto.insight.InsightSubCategoryResponse;
+import com.eureka.ationserver.model.insight.Insight;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Getter
 @NoArgsConstructor

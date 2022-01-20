@@ -1,13 +1,13 @@
 package com.eureka.ationserver.repository.insight;
 
-import com.eureka.ationserver.domain.insight.Insight;
-import io.swagger.models.auth.In;
+import com.eureka.ationserver.model.insight.Insight;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Set;
+import org.springframework.stereotype.Repository;
 
+@Repository
 public interface InsightRepository extends JpaRepository<Insight, Long> {
     List<Insight> findByOpenOrderByCreatedAtDesc(Boolean open);
     List<Insight> findByOpen(Boolean open);

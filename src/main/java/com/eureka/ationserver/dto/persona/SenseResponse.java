@@ -1,7 +1,7 @@
 package com.eureka.ationserver.dto.persona;
 
-import com.eureka.ationserver.domain.persona.PersonaSense;
-import com.eureka.ationserver.domain.persona.Sense;
+import com.eureka.ationserver.model.persona.PersonaSense;
+import com.eureka.ationserver.model.persona.Sense;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

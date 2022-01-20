@@ -1,13 +1,8 @@
 package com.eureka.ationserver.service;
 
-import com.eureka.ationserver.advice.exception.DuplicateException;
-import com.eureka.ationserver.advice.exception.ForbiddenException;
-import com.eureka.ationserver.domain.insight.*;
-import com.eureka.ationserver.domain.persona.Interest;
-import com.eureka.ationserver.domain.persona.PersonaInterest;
-import com.eureka.ationserver.domain.user.User;
+import com.eureka.ationserver.model.insight.*;
+import com.eureka.ationserver.model.user.User;
 import com.eureka.ationserver.dto.insight.*;
-import com.eureka.ationserver.dto.persona.PersonaSimpleResponse;
 import com.eureka.ationserver.repository.insight.*;
 import com.eureka.ationserver.repository.user.UserRepository;
 import lombok.RequiredArgsConstructor;
@@ -75,13 +70,8 @@ public class InsightService {
             siteName = "-";
         }
 
-        String icon;
-        try {
-            icon = document.select("link[rel=apple-touch-icon-precomposed]").get(0).attr("href");
+        String icon = "http://www.google.com/s2/favicons?domain=" + insightRequest.getUrl();
 
-        } catch (Exception e) {
-            icon = getInsightIconImageDefaultPath();
-        }
 
 
         // public
