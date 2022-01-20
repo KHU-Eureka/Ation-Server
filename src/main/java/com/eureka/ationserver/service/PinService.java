@@ -87,14 +87,7 @@ public class PinService {
                 siteName = "-";
             }
 
-            String icon;
-            try {
-                icon = document.select("link[rel=apple-touch-icon]").get(0).attr("href");
-
-            } catch (Exception e) {
-                icon = insightService.getInsightIconImageDefaultPath();
-            }
-
+            String icon = "http://www.google.com/s2/favicons?domain=" + insightPinRequest.getUrl();
 
             Insight insight = Insight.builder()
                     .url(insightPinRequest.getUrl())

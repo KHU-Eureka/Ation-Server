@@ -70,13 +70,8 @@ public class InsightService {
             siteName = "-";
         }
 
-        String icon;
-        try {
-            icon = document.select("link[rel=apple-touch-icon-precomposed]").get(0).attr("href");
+        String icon = "http://www.google.com/s2/favicons?domain=" + insightRequest.getUrl();
 
-        } catch (Exception e) {
-            icon = getInsightIconImageDefaultPath();
-        }
 
 
         // public
