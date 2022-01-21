@@ -1,13 +1,16 @@
 package com.eureka.ationserver.model.insight;
 
+import com.eureka.ationserver.model.category.SubCategory;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import javax.persistence.*;
 
 @Entity
-@Getter
+@Data
+@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class InsightSubCategory {
@@ -15,11 +18,11 @@ public class InsightSubCategory {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column
-    private String name;
+    @ManyToOne(targetEntity = Insight.class, fetch = FetchType.LAZY)
+    @JoinColumn(name="insight_id")
+    private Insight insight;
 
-    @ManyToOne(targetEntity = InsightMainCategory.class, fetch = FetchType.LAZY)
-    @JoinColumn(name="insightmaincategory_id")
-    private InsightMainCategory insightMainCategory;
-
+    @ManyToOne(targetEntity = SubCategory.class, fetch = FetchType.LAZY)
+    @JoinColumn(name="insightsubcategory_id")
+    private SubCategory subCategory;
 }

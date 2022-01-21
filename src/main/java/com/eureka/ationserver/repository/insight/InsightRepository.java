@@ -11,6 +11,6 @@ import org.springframework.stereotype.Repository;
 public interface InsightRepository extends JpaRepository<Insight, Long> {
     List<Insight> findByOpenOrderByCreatedAtDesc(Boolean open);
     List<Insight> findByOpen(Boolean open);
-    Set<Insight> findByOpenAndTitleContainingOrInsightMainCategoryNameContainingOrInsightSubCategoryList_InsightSubCategoryNameContainingOrInsightTagList_NameContainingOrderByCreatedAtDesc(boolean open, String keyword1, String keyword2, String keyword3, String keyword4);
+    Set<Insight> findByOpenAndTitleContainingOrInsightMainCategoryNameContainingOrInsightSubCategoryList_SubCategoryNameContainingOrInsightTagList_NameContainingOrderByCreatedAtDesc(boolean open, String keyword1, String keyword2, String keyword3, String keyword4);
     List<Insight> findByInsightMainCategoryIdOrderByCreatedAtDesc(Long insightMainCategoryId);
 }

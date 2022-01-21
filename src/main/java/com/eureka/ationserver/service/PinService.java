@@ -13,17 +13,16 @@ import com.eureka.ationserver.repository.insight.InsightRepository;
 import com.eureka.ationserver.repository.insight.PinBoardRepository;
 import com.eureka.ationserver.repository.insight.PinTagRepository;
 import com.eureka.ationserver.repository.persona.PersonaRepository;
+import com.eureka.ationserver.util.image.ImageUtil;
+import com.eureka.ationserver.util.parse.Parse;
+import com.eureka.ationserver.util.parse.ParseUtil;
 import lombok.RequiredArgsConstructor;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -42,67 +41,30 @@ public class PinService {
 
 
     @Transactional
-    public Long saveNewPin(User user, InsightPinRequest insightPinRequest) throws IOException {
+    public Long saveNewPin(User user, InsightPinRequest insightPinRequest) throws Exception {
 
         PinBoard pinBoard = pinBoardRepository.getById(insightPinRequest.getPinBoardId());
 
         if (user.getId() != pinBoard.getPersona().getUser().getId()) {
             throw new ForbiddenException();
         } else {
-            // save insgiht
-            String crawlingUrl = insightPinRequest.getUrl();
-            Document document = Jsoup.connect(crawlingUrl).get();
 
-            String title;
-            try{
-                title = document.select("meta[property=og:title]").first().attr("content");
-            } catch(Exception e){
-                title = "-";
-            }
-
-            String description;
-            try {
-                description = document.select("meta[property=og:description]").get(0).attr("content");
-                if(description.length()>255){
-                    description = description.substring(0,255);
-                }
-
-            } catch (Exception e) {
-                description = null;
-            }
-
-            String imageUrl;
-            try {
-                imageUrl = document.select("meta[property=og:image]").get(0).attr("content");
-
-            } catch (Exception e) {
-                imageUrl = this.getPinImageDefaultPath();
-            }
-
-            String siteName;
-            try {
-                siteName = document.select("meta[property=og:site_name]").get(0).attr("content");
-
-            } catch (Exception e) {
-                siteName = "-";
-            }
-
-            String icon = "http://www.google.com/s2/favicons?domain=" + insightPinRequest.getUrl();
+            Parse parse = ParseUtil.parse(Pin.PIN_PREFIX, insightPinRequest.getUrl());
 
             Insight insight = Insight.builder()
                     .url(insightPinRequest.getUrl())
-                    .title(title)
-                    .description(description)
-                    .imgPath(imageUrl)
-                    .siteName(siteName)
-                    .icon(icon)
+                    .title(parse.getTitle())
+                    .description(parse.getDescription())
+                    .imgPath(parse.getImageUrl())
+                    .siteName(parse.getSiteName())
+                    .icon(parse.getIcon())
                     .insightMainCategory(null)
                     .insightSubCategoryList(null)
                     .open(false)
                     .build();
+
             insightRepository.save(insight);
             pinBoard.setImgPath(insight.getImgPath());
-
 
             // save InsightPin
             Pin pin = Pin.builder()
@@ -143,10 +105,10 @@ public class PinService {
                     .name(insight.getInsightMainCategory().getName())
                     .build();
             pinTagRepository.save(pinTag);
-            for( InsightCategory insightSubCategory : insight.getInsightSubCategoryList()){
+            for( InsightSubCategory insightSubCategory : insight.getInsightSubCategoryList()){
                 PinTag tag = PinTag.builder()
                         .pin(pin)
-                        .name(insightSubCategory.getInsightSubCategory().getName())
+                        .name(insightSubCategory.getSubCategory().getName())
                         .build();
                 pinTagRepository.save(tag);
 
@@ -247,44 +209,11 @@ public class PinService {
         return pinResponseList;
     }
 
-    @Value("${eureka.app.publicIp}")
-    private String HOST;
-
-    @Value("${server.port}")
-    private String PORT;
-
-    @Value("${eureka.app.imagePath}")
-    private String IMAGEPATH;
-
-    public String getPinImageDefaultPath(){
-        // set file name
-        List<String> pathList = new ArrayList<>();
-
-        String fileName = "pin.png";
-        String url = "http://"+HOST+":"+PORT+"/api/image?path=";
-        String apiPath = url + IMAGEPATH+"pin/" + fileName;
-        return apiPath;
-    }
-
-    public List<String> getPinImagePath(Long pinId){
-        // set file name
-        List<String> pathList = new ArrayList<>();
-
-        String fileName = "pin-"+ pinId +".png";
-        String url = "http://"+HOST+":"+PORT+"/api/image?path=";
-        String apiPath = url +IMAGEPATH+"pin/"+ fileName;
-
-        String path = IMAGEPATH + "pin/"+ fileName;
-        pathList.add(apiPath);
-        pathList.add(path);
-        return pathList;
-    }
-
 
     @Transactional
     public PinResponse saveImg(Long pinId, MultipartFile pinImg) throws IOException{
         Pin pin = pinRepository.getById(pinId);
-        List<String> pathList = getPinImagePath(pinId);
+        List<String> pathList = ImageUtil.getImagePath(Pin.PIN_PREFIX, pinId);
         File file = new File(pathList.get(1));
         pinImg.transferTo(file);
         pin.setPinImgPath(pathList.get(0));

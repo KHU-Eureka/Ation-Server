@@ -11,6 +11,11 @@ import javax.persistence.*;
 @NoArgsConstructor
 @AllArgsConstructor
 public class User {
+
+    public static final String USER_PREFIX= "user";
+
+    public static final String MYPAGE_PREFIX= "my-page";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

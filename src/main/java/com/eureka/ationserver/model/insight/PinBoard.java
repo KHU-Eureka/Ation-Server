@@ -17,6 +17,8 @@ import java.util.List;
 @NoArgsConstructor
 public class PinBoard {
 
+    public static final String PINBOARD_PREFIX= "pin-board";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

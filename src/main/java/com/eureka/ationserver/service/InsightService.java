@@ -1,14 +1,19 @@
 package com.eureka.ationserver.service;
 
+import com.eureka.ationserver.dto.insight.InsightRequest;
+import com.eureka.ationserver.model.category.MainCategory;
+import com.eureka.ationserver.model.category.SubCategory;
 import com.eureka.ationserver.model.insight.*;
 import com.eureka.ationserver.model.user.User;
 import com.eureka.ationserver.dto.insight.*;
+import com.eureka.ationserver.repository.category.MainCategoryRepository;
+import com.eureka.ationserver.repository.category.SubCategoryRepository;
 import com.eureka.ationserver.repository.insight.*;
 import com.eureka.ationserver.repository.user.UserRepository;
+import com.eureka.ationserver.util.image.ImageUtil;
+import com.eureka.ationserver.util.parse.Parse;
+import com.eureka.ationserver.util.parse.ParseUtil;
 import lombok.RequiredArgsConstructor;
-import org.jsoup.Jsoup;
-import org.jsoup.nodes.Document;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -26,133 +31,56 @@ import java.util.stream.Collectors;
 public class InsightService {
 
     private final InsightRepository insightRepository;
-    private final InsightMainCategoryRepository insightMainCategoryRepository;
-    private final InsightSubCategoryRepository insightSubCategoryRepository;
+    private final MainCategoryRepository mainCategoryRepository;
+    private final SubCategoryRepository subCategoryRepository;
     private final InsightTagRepository insightTagRepository;
-    private final InsightCategoryRepository insightCategoryRepository;
+    private final InsightSubCategoryRepository insightSubCategoryRepository;
     private final InsightViewRepository insightViewRepository;
     private final UserRepository userRepository;
 
     @Transactional
-    public Long savePublic(InsightRequest insightRequest) throws IOException {
+    public Long savePublic(InsightRequest insightRequest) throws Exception {
 
-        String crawlingUrl = insightRequest.getUrl();
-        Document document = Jsoup.connect(crawlingUrl).get();
-
-
-        String title = document.select("meta[property=og:title]").first().attr("content");
-
-
-        String description;
-        try {
-            description = document.select("meta[property=og:description]").get(0).attr("content");
-            if(description.length()>255){
-                description = description.substring(0,255);
-            }
-
-        } catch (Exception e) {
-            description = null;
-        }
-
-        String imageUrl;
-        try {
-            imageUrl = document.select("meta[property=og:image]").get(0).attr("content");
-
-        } catch (Exception e) {
-            imageUrl = getInsightImageDefaultPath();
-        }
-
-        String siteName;
-        try {
-            siteName = document.select("meta[property=og:site_name]").get(0).attr("content");
-
-        } catch (Exception e) {
-            siteName = "-";
-        }
-
-        String icon = "http://www.google.com/s2/favicons?domain=" + insightRequest.getUrl();
-
+        Parse parse = ParseUtil.parse(Insight.INSIGHT_PREFIX, insightRequest.getUrl());
 
 
         // public
-        InsightMainCategory insightMainCategory = insightMainCategoryRepository.findById(insightRequest.getInsightMainCategoryId()).get();
-        List<InsightSubCategory> insightSubCategoryList= insightSubCategoryRepository.findAllByIdIn(insightRequest.getInsightSubCategoryIdList());
+        MainCategory mainCategory = mainCategoryRepository.findById(insightRequest.getInsightMainCategoryId()).get();
+        List<SubCategory> subCategoryList = subCategoryRepository.findAllByIdIn(insightRequest.getInsightSubCategoryIdList());
 
 
         Insight insight = Insight.builder()
-                .url(insightRequest.getUrl())
-                .title(title)
-                .description(description)
-                .imgPath(imageUrl)
-                .siteName(siteName)
-                .icon(icon)
-                .insightMainCategory(insightMainCategory)
-                .open(true)
-                .build();
+            .url(insightRequest.getUrl())
+            .title(parse.getTitle())
+            .description(parse.getDescription())
+            .imgPath(parse.getImageUrl())
+            .siteName(parse.getSiteName())
+            .icon(parse.getIcon())
+            .insightMainCategory(mainCategory)
+            .open(true)
+            .build();
         Insight saved = insightRepository.save(insight);
 
-        for(InsightSubCategory insightSubCategory : insightSubCategoryList){
-            InsightCategory insightCategory = InsightCategory.builder()
-                    .insight(insight)
-                    .insightSubCategory(insightSubCategory)
-                    .build();
-            insightCategoryRepository.save(insightCategory);
+        for(SubCategory subCategory : subCategoryList){
+            InsightSubCategory insightSubCategory = InsightSubCategory.builder()
+                .insight(insight)
+                .subCategory(subCategory)
+                .build();
+            insightSubCategoryRepository.save(insightSubCategory);
         }
 
 
         for(String tag : insightRequest.getTagList()){
             InsightTag insightTag = InsightTag.builder()
-                                        .insight(insight)
-                                        .name(tag)
-                                        .build();
+                .insight(insight)
+                .name(tag)
+                .build();
             insightTagRepository.save(insightTag);
         }
 
         return saved.getId();
 
 
-    }
-
-    @Value("${eureka.app.publicIp}")
-    private String HOST;
-
-    @Value("${server.port}")
-    private String PORT;
-
-    @Value("${eureka.app.imagePath}")
-    private String IMAGEPATH;
-
-    public String getInsightImageDefaultPath(){
-        // set file name
-        List<String> pathList = new ArrayList<>();
-
-        String fileName = "insight.png";
-        String url = "http://"+HOST+":"+PORT+"/api/image?path=";
-        String apiPath = url + IMAGEPATH+"insight/" + fileName;
-        return apiPath;
-    }
-    public String getInsightIconImageDefaultPath(){
-        // set file name
-        List<String> pathList = new ArrayList<>();
-
-        String fileName = "insight-icon.png";
-        String url = "http://"+HOST+":"+PORT+"/api/image?path=";
-        String apiPath = url + IMAGEPATH+"insight-icon/" + fileName;
-        return apiPath;
-    }
-
-    public List<String> getInsightImagePath(Long insightId){
-        // set file name
-        List<String> pathList = new ArrayList<>();
-
-        String fileName = "insight-"+ insightId +".png";
-        String url = "http://"+HOST+":"+PORT+"/api/image?path=";
-        String apiPath = url +IMAGEPATH+"insight/"+ fileName;
-
-        String path = IMAGEPATH + "insight/"+ fileName;
-        pathList.add(apiPath);
-        pathList.add(path);
-        return pathList;
     }
 
     @Transactional(readOnly = true)
@@ -169,7 +97,7 @@ public class InsightService {
     public InsightResponse saveImg(Long insightId, MultipartFile insightImg) throws IOException{
         Insight insight = insightRepository.getById(insightId);
 
-        List<String> pathList = getInsightImagePath(insightId);
+        List<String> pathList = ImageUtil.getImagePath(Insight.INSIGHT_PREFIX, insightId);
         File file = new File(pathList.get(1));
         insightImg.transferTo(file);
         insight.setImgPath(pathList.get(0));
@@ -205,7 +133,7 @@ public class InsightService {
 
     @Transactional(readOnly = true)
     public Set<InsightResponse> search(String keyword){
-        Set<InsightResponse> insightResponseList = insightRepository.findByOpenAndTitleContainingOrInsightMainCategoryNameContainingOrInsightSubCategoryList_InsightSubCategoryNameContainingOrInsightTagList_NameContainingOrderByCreatedAtDesc(true, keyword, keyword, keyword, keyword).stream().map(InsightResponse::new).collect(Collectors.toSet());
+        Set<InsightResponse> insightResponseList = insightRepository.findByOpenAndTitleContainingOrInsightMainCategoryNameContainingOrInsightSubCategoryList_SubCategoryNameContainingOrInsightTagList_NameContainingOrderByCreatedAtDesc(true, keyword, keyword, keyword, keyword).stream().map(InsightResponse::new).collect(Collectors.toSet());
         return insightResponseList;
     }
 

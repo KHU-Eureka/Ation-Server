@@ -10,6 +10,7 @@ import com.eureka.ationserver.dto.auth.LoginRequest;
 import com.eureka.ationserver.dto.auth.SignupRequest;
 import com.eureka.ationserver.dto.user.UserResponse;
 import com.eureka.ationserver.repository.user.UserRepository;
+import com.eureka.ationserver.util.image.ImageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -27,7 +28,6 @@ public class AuthService {
     private final PasswordEncoder encoder;
     private final AuthenticationManager authenticationManager;
     private final JwtUtils jwtUtils;
-    private final MyPageService myPageService;
 
     @Transactional
     public void register(SignupRequest signupRequest){
@@ -38,7 +38,7 @@ public class AuthService {
                 .email(signupRequest.getEmail())
                 .password(encoder.encode(signupRequest.getPassword()))
                 .name(signupRequest.getName())
-                .mypageImgPath(myPageService.getMyPageImageDefaultPath())
+                .mypageImgPath(ImageUtil.getDefaultImagePath(User.MYPAGE_PREFIX))
                 .build();
 
         User saved = userRepository.save(user);

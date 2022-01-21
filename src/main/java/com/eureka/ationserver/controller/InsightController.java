@@ -29,7 +29,7 @@ public class InsightController {
 
     @PostMapping("/insight")
     @ApiOperation(value="인사이트 생성")
-    public ResponseEntity savePublic(@RequestBody InsightRequest insightRequest) throws IOException {
+    public ResponseEntity savePublic(@RequestBody InsightRequest insightRequest) throws Exception {
         return new ResponseEntity(insightService.savePublic(insightRequest),null, HttpStatus.CREATED);
     }
 

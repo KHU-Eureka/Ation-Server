@@ -16,6 +16,8 @@ import java.util.List;
 @AllArgsConstructor
 public class Persona {
 
+    public static final String PERSONA_PREFIX= "persona";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;

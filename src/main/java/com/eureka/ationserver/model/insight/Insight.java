@@ -1,5 +1,6 @@
 package com.eureka.ationserver.model.insight;
 
+import com.eureka.ationserver.model.category.MainCategory;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,16 +13,21 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 public class Insight {
+
+    public static final String INSIGHT_PREFIX= "insight";
+
+    public static final String INSIGHT_ICON_PREFIX= "icon";
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(targetEntity = InsightMainCategory.class, fetch = FetchType.LAZY)
-    @JoinColumn(name="insightmaincategory_id",nullable = true)
-    private InsightMainCategory insightMainCategory;
+    @ManyToOne(targetEntity = MainCategory.class, fetch = FetchType.LAZY)
+    @JoinColumn(name="main_category_id",nullable = true)
+    private MainCategory insightMainCategory;
 
     @OneToMany(mappedBy = "insight", cascade = CascadeType.ALL)
-    private List<InsightCategory> insightSubCategoryList;
+    private List<InsightSubCategory> insightSubCategoryList;
 
 
     @OneToMany(mappedBy = "insight", cascade = CascadeType.ALL)
@@ -48,7 +54,6 @@ public class Insight {
 
     @Column
     private boolean open;
-
 
     @Column
     private LocalDateTime createdAt;

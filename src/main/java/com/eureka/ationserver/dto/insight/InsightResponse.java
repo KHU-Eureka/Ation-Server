@@ -1,5 +1,7 @@
 package com.eureka.ationserver.dto.insight;
 
+import com.eureka.ationserver.dto.category.MainCategoryResponse;
+import com.eureka.ationserver.dto.category.SubCategoryResponse;
 import com.eureka.ationserver.model.insight.Insight;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -29,18 +31,18 @@ public class InsightResponse {
 
     private LocalDateTime createdAt;
 
-    private InsightMainCategoryResponse insightMainCategory;
+    private MainCategoryResponse insightMainCategory;
 
-    private List<InsightSubCategoryResponse> insightSubCategoryList;
+    private List<SubCategoryResponse> insightSubCategoryList;
 
     private List<String> tagList;
 
 
     public InsightResponse(Insight insight){
 
-        InsightMainCategoryResponse insightMainCategoryResponse = new InsightMainCategoryResponse(insight.getInsightMainCategory());
-        List<InsightSubCategoryResponse> insightSubCategoryResponseList = new ArrayList<>();
-        insight.getInsightSubCategoryList().stream().forEach(x->insightSubCategoryResponseList.add(new InsightSubCategoryResponse(x)));
+        MainCategoryResponse mainCategoryResponse = new MainCategoryResponse(insight.getInsightMainCategory());
+        List<SubCategoryResponse> subCategoryResponseList = new ArrayList<>();
+        insight.getInsightSubCategoryList().stream().forEach(x-> subCategoryResponseList.add(new SubCategoryResponse(x)));
         List<String> tagList = new ArrayList<>();
         insight.getInsightTagList().stream().forEach(x-> tagList.add(x.getName()));
 
@@ -51,8 +53,8 @@ public class InsightResponse {
         this.description = insight.getDescription();
         this.siteName = insight.getSiteName();
         this.createdAt = insight.getCreatedAt();
-        this.insightMainCategory = insightMainCategoryResponse;
-        this.insightSubCategoryList = insightSubCategoryResponseList;
+        this.insightMainCategory = mainCategoryResponse;
+        this.insightSubCategoryList = subCategoryResponseList;
         this.tagList = tagList;
         this.icon = insight.getIcon();
     }

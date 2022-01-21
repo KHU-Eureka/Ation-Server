@@ -5,6 +5,7 @@ import com.eureka.ationserver.model.user.User;
 import com.eureka.ationserver.model.persona.*;
 import com.eureka.ationserver.dto.persona.*;
 import com.eureka.ationserver.repository.persona.*;
+import com.eureka.ationserver.util.image.ImageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -30,7 +31,7 @@ public class PersonaService {
 
     @Transactional
     public Long save(User user, PersonaRequest personaRequest){
-        String defaultPath = getPersonaImageDefaultPath();
+        String defaultPath = ImageUtil.getDefaultImagePath(Persona.PERSONA_PREFIX);
 
         Persona persona = personaRepository.save(personaRequest.toEntity(user, defaultPath));
 
@@ -86,31 +87,6 @@ public class PersonaService {
     @Value("${eureka.app.imagePath}")
     private String IMAGEPATH;
 
-    private String getPersonaImageDefaultPath(){
-        // set file name
-        //String absolutePath = new File("").getAbsolutePath() + "/persona/";
-        List<String> pathList = new ArrayList<>();
-
-        String fileName = "persona.png";
-        String url = "http://"+HOST+":"+PORT+"/api/image?path=";
-        String apiPath = url + IMAGEPATH+"persona/" + fileName;
-        return apiPath;
-    }
-
-    private List<String> getPersonaImagePath(Long personaId){
-        // set file name
-
-        List<String> pathList = new ArrayList<>();
-
-        String fileName = "persona-"+personaId+".png";
-        String url = "http://"+HOST+":"+PORT+"/api/image?path=";
-        String apiPath = url + IMAGEPATH+ "persona/" + fileName;
-
-        String path = IMAGEPATH+ "persona/" + fileName;
-        pathList.add(apiPath);
-        pathList.add(path);
-        return pathList;
-    }
 
     @Transactional
     public Long saveImg(User user, Long personaId, MultipartFile profileImg) throws IOException {
@@ -118,7 +94,7 @@ public class PersonaService {
         if(user.getId() != persona.getUser().getId()){
             throw new ForbiddenException();
         } else {
-            List<String> pathList = getPersonaImagePath(personaId);
+            List<String> pathList = ImageUtil.getImagePath(Persona.PERSONA_PREFIX,personaId);
             File file = new File(pathList.get(1));
             profileImg.transferTo(file);
 
