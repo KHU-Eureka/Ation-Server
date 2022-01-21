@@ -1,10 +1,9 @@
-package com.eureka.ationserver.util.image;
+package com.eureka.ationserver.utils.image;
 
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-import org.springframework.stereotype.Service;
 
 @Component
 public class ImageUtil {

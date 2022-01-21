@@ -1,7 +1,7 @@
-package com.eureka.ationserver.util.parse;
+package com.eureka.ationserver.utils.parse;
 
 import com.eureka.ationserver.model.insight.Insight;
-import com.eureka.ationserver.util.image.ImageUtil;
+import com.eureka.ationserver.utils.image.ImageUtil;
 import java.net.URL;
 import java.net.URLConnection;
 import org.jsoup.Jsoup;
@@ -53,10 +53,16 @@ public class ParseUtil {
     URL connUrl = new URL(url);
     URL faviconUrl = new URL(connUrl.getProtocol()+"://"+connUrl.getHost()+"/favicon.ico");
 
-    URLConnection conn = faviconUrl.openConnection();
-    if("image/x-icon".equals(conn.getContentType())){
-      parse.setIcon(faviconUrl.toString());
+    try{
+      URLConnection conn = faviconUrl.openConnection();
+
+      if(conn.getContentType() != null && conn.getContentType().contains("image")){
+        parse.setIcon(faviconUrl.toString());
+      }
+    } catch (Exception e){
+
     }
+
 
     return parse;
   }

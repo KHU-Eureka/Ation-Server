@@ -10,7 +10,7 @@ import com.eureka.ationserver.dto.auth.LoginRequest;
 import com.eureka.ationserver.dto.auth.SignupRequest;
 import com.eureka.ationserver.dto.user.UserResponse;
 import com.eureka.ationserver.repository.user.UserRepository;
-import com.eureka.ationserver.util.image.ImageUtil;
+import com.eureka.ationserver.utils.image.ImageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;

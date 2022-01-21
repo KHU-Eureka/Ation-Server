@@ -5,7 +5,7 @@ import com.eureka.ationserver.model.user.User;
 import com.eureka.ationserver.model.persona.*;
 import com.eureka.ationserver.dto.persona.*;
 import com.eureka.ationserver.repository.persona.*;
-import com.eureka.ationserver.util.image.ImageUtil;
+import com.eureka.ationserver.utils.image.ImageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
