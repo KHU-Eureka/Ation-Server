@@ -13,6 +13,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -33,38 +34,40 @@ public class IdeationController {
 
   @PostMapping("/ideation")
   @ApiOperation(value = "아이데이션 생성")
-  public ResponseEntity save(@AuthenticationPrincipal UserDetails userDetails, @RequestBody
-      IdeationRequest ideationRequest) {
-    User user = userRepository.findByEmail(userDetails.getUsername()).get();
-    return new ResponseEntity(ideationService.save(user, ideationRequest), null,
+  public ResponseEntity save(@RequestBody IdeationRequest ideationRequest) {
+    return new ResponseEntity(ideationService.save(ideationRequest), null,
         HttpStatus.CREATED);
+  }
+
+  @GetMapping("/ideation")
+  @ApiOperation("아이데이션 전체 조회")
+  public ResponseEntity findAll(@RequestParam(value="personaId", required = true) Long personaId) {
+    return new ResponseEntity(ideationService.findAll(personaId), null, HttpStatus.OK);
+  }
+
+  @GetMapping("/ideation/{ideationId}")
+  @ApiOperation("아이데이션 조회")
+  public ResponseEntity find(Long ideationId) {
+    return new ResponseEntity(ideationService.find(ideationId), null, HttpStatus.OK);
   }
 
   @PostMapping("/ideation/image/{ideationId}")
   @ApiOperation(value = "아이데이션 이미지 설정")
-  public ResponseEntity saveImg(
-      @AuthenticationPrincipal UserDetails userDetails,
-      @PathVariable Long ideationId,
-      @RequestParam(value = "ideationImg", required = true) MultipartFile ideationImg) throws IOException {
-    User user = userRepository.findByEmail(userDetails.getUsername()).get();
-    return new ResponseEntity(ideationService.saveImg(user, ideationId, ideationImg), null, HttpStatus.OK);
+  public ResponseEntity saveImg( @PathVariable Long ideationId, @RequestParam(value = "ideationImg") MultipartFile ideationImg) throws IOException {
+    return new ResponseEntity(ideationService.saveImg(ideationId, ideationImg), null, HttpStatus.OK);
   }
 
   @PutMapping("/ideation/{ideationId}")
   @ApiOperation(value = "아이데이션 수정")
-  public ResponseEntity update(@AuthenticationPrincipal UserDetails userDetails,
-      @PathVariable Long ideationId,
-      @RequestBody IdeationRequest ideationRequest){
-    User user = userRepository.findByEmail(userDetails.getUsername()).get();
-    return new ResponseEntity(ideationService.update(user, ideationId, ideationRequest), null, HttpStatus.OK);
+  public ResponseEntity update(@PathVariable Long ideationId, @RequestBody IdeationRequest ideationRequest){
+    return new ResponseEntity(ideationService.update(ideationId, ideationRequest), null, HttpStatus.OK);
   }
 
 
   @DeleteMapping("/ideation/{ideationId}")
   @ApiOperation(value = "아이데이션 삭제")
-  public ResponseEntity delete(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long ideationId){
-    User user = userRepository.findByEmail(userDetails.getUsername()).get();
-    return new ResponseEntity(ideationService.delete(user, ideationId), null, HttpStatus.OK);
+  public ResponseEntity delete(@PathVariable Long ideationId){
+    return new ResponseEntity(ideationService.delete(ideationId), null, HttpStatus.OK);
   }
 
 }
