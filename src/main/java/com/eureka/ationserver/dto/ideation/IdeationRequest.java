@@ -12,21 +12,20 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class IdeationRequest {
 
-  @NotEmpty
   private Long personaId;
 
   @NotEmpty
   private String title;
 
   @NotEmpty
-  private String content;
+  private String whiteBoard;
 
   public Ideation toEntity(Persona persona, String imgPath){
     return Ideation.builder()
         .persona(persona)
         .imgPath(imgPath)
-        .title(title)
-        .content(content)
+        .title(this.title)
+        .whiteBoard(this.whiteBoard)
         .build();
   }
 

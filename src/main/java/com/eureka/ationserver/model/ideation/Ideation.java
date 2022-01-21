@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Ideation {
 
-  private static final String IDEATION_PREFIX= "ideation";
+  public static final String IDEATION_PREFIX= "ideation";
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,10 +34,18 @@ public class Ideation {
   private String title;
 
   @Column
-  private String content;
+  private String whiteBoard;
 
   @Column
   private String imgPath;
+
+  @Column
+  private LocalDateTime createdAt;
+
+  @PrePersist
+  public void createdAt(){
+    this.createdAt = LocalDateTime.now();
+  }
 
   @ManyToOne(targetEntity = Persona.class, fetch = FetchType.LAZY)
   @JoinColumn(name="persona_id")
@@ -45,7 +53,7 @@ public class Ideation {
 
   public Ideation update(IdeationRequest ideationRequest) {
     this.title = ideationRequest.getTitle();
-    this.content = ideationRequest.getContent();
+    this.whiteBoard = ideationRequest.getWhiteBoard();
     return this;
   }
 
@@ -53,12 +61,5 @@ public class Ideation {
     this.imgPath = imgPath;
   }
 
-  @Column
-  private LocalDateTime createdAt;
 
-
-  @PrePersist
-  public void createdAt(){
-    this.createdAt = LocalDateTime.now();
-  }
 }
