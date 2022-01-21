@@ -11,6 +11,7 @@ import com.eureka.ationserver.dto.pinBoard.PinBoardUpdateRequest;
 import com.eureka.ationserver.repository.insight.PinBoardRepository;
 import com.eureka.ationserver.repository.insight.PinRepository;
 import com.eureka.ationserver.repository.persona.PersonaRepository;
+import com.eureka.ationserver.util.image.ImageUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
@@ -36,7 +37,7 @@ public class PinBoardService {
         if(user.getId() != persona.getUser().getId()){
             throw new ForbiddenException();
         }else{
-            String defaultPath = getPinBoardImageDefaultPath();
+            String defaultPath = ImageUtil.getDefaultImagePath(PinBoard.PINBOARD_PREFIX);
             PinBoard pinBoard = pinBoardRequest.toEntity(persona, defaultPath);
             PinBoard saved = pinBoardRepository.save(pinBoard);
             return saved.getId();
@@ -50,7 +51,7 @@ public class PinBoardService {
         if(user.getId() != pinBoard.getPersona().getUser().getId()) {
             throw new ForbiddenException();
         }else{
-            List<String> pathList = getPinBoardImagePath(pinBoardId);
+            List<String> pathList = ImageUtil.getImagePath(PinBoard.PINBOARD_PREFIX, pinBoardId);
             File file = new File(pathList.get(1));
             pinBoardImg.transferTo(file);
             pinBoard.setImgPath(pathList.get(0));
@@ -102,37 +103,4 @@ public class PinBoardService {
         return pinRepository.countByPinBoard(pinBoard);
     }
 
-
-    @Value("${eureka.app.publicIp}")
-    private String HOST;
-
-    @Value("${server.port}")
-    private String PORT;
-
-    @Value("${eureka.app.imagePath}")
-    private String IMAGEPATH;
-
-    private String getPinBoardImageDefaultPath(){
-        // set file name
-        List<String> pathList = new ArrayList<>();
-
-        String fileName = "pinBoard.png";
-        String url = "http://"+HOST+":"+PORT+"/api/image?path=";
-        String apiPath = url + IMAGEPATH+"pinboard/" + fileName;
-        return apiPath;
-    }
-
-    private List<String> getPinBoardImagePath(Long pinBoardId){
-        // set file name
-        List<String> pathList = new ArrayList<>();
-
-        String fileName = "pinBoard-"+ pinBoardId +".png";
-        String url = "http://"+HOST+":"+PORT+"/api/image?path=";
-        String apiPath = url +IMAGEPATH+"pinboard/"+ fileName;
-
-        String path = IMAGEPATH + "pinboard/"+ fileName;
-        pathList.add(apiPath);
-        pathList.add(path);
-        return pathList;
-    }
 }

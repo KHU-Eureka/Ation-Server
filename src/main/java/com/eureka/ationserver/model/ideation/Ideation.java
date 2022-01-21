@@ -24,6 +24,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Ideation {
 
+  private static final String IDEATION_PREFIX= "ideation";
+
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;

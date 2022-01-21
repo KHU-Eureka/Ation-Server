@@ -29,7 +29,7 @@ public class PinController {
 
     @PostMapping("/pin")
     @ApiOperation(value="핀 생성")
-    public ResponseEntity saveNewPin(@AuthenticationPrincipal UserDetails userDetails, @RequestBody InsightPinRequest insightPinRequest) throws IOException {
+    public ResponseEntity saveNewPin(@AuthenticationPrincipal UserDetails userDetails, @RequestBody InsightPinRequest insightPinRequest) throws Exception {
         User user = userRepository.findByEmail(userDetails.getUsername()).get();
         return new ResponseEntity(pinService.saveNewPin(user, insightPinRequest),null, HttpStatus.CREATED);
     }
