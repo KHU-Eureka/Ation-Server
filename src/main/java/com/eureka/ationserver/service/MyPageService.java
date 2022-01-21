@@ -16,7 +16,6 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class MyPageService {
-
     @Transactional
     public Long saveImg(User user, MultipartFile myPageImg) throws IOException {
 

@@ -209,7 +209,6 @@ public class PinService {
         return pinResponseList;
     }
 
-
     @Transactional
     public PinResponse saveImg(Long pinId, MultipartFile pinImg) throws IOException{
         Pin pin = pinRepository.getById(pinId);

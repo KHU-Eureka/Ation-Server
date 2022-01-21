@@ -78,6 +78,7 @@ public class PersonaService {
         }
     }
 
+
     @Value("${eureka.app.publicIp}")
     private String HOST;
 
