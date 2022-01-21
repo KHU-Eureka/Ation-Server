@@ -1,4 +1,4 @@
-package com.eureka.ationserver.util.parse;
+package com.eureka.ationserver.utils.parse;
 
 import lombok.Data;
 

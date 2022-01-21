@@ -1,16 +1,14 @@
 package com.eureka.ationserver.service;
 
 import com.eureka.ationserver.model.user.User;
-import com.eureka.ationserver.util.image.ImageUtil;
+import com.eureka.ationserver.utils.image.ImageUtil;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.List;
 
 @Service
