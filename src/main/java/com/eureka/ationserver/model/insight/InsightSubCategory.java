@@ -23,6 +23,6 @@ public class InsightSubCategory {
     private Insight insight;
 
     @ManyToOne(targetEntity = SubCategory.class, fetch = FetchType.LAZY)
-    @JoinColumn(name="insightsubcategory_id")
+    @JoinColumn(name="insight_subcategory_id")
     private SubCategory subCategory;
 }
