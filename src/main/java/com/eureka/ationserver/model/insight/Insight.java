@@ -14,57 +14,57 @@ import java.util.List;
 @AllArgsConstructor
 public class Insight {
 
-    public static final String INSIGHT_PREFIX= "insight";
+  public static final String INSIGHT_PREFIX = "insight";
 
-    public static final String INSIGHT_ICON_PREFIX= "icon";
+  public static final String INSIGHT_ICON_PREFIX = "icon";
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+  @Id
+  @GeneratedValue(strategy = GenerationType.IDENTITY)
+  private Long id;
 
-    @ManyToOne(targetEntity = MainCategory.class, fetch = FetchType.LAZY)
-    @JoinColumn(name="main_category_id",nullable = true)
-    private MainCategory insightMainCategory;
+  @ManyToOne(targetEntity = MainCategory.class, fetch = FetchType.LAZY)
+  @JoinColumn(name = "main_category_id", nullable = true)
+  private MainCategory insightMainCategory;
 
-    @OneToMany(mappedBy = "insight", cascade = CascadeType.ALL)
-    private List<InsightSubCategory> insightSubCategoryList;
-
-
-    @OneToMany(mappedBy = "insight", cascade = CascadeType.ALL)
-    private List<InsightTag> insightTagList;
+  @OneToMany(mappedBy = "insight", cascade = CascadeType.ALL)
+  private List<InsightSubCategory> insightSubCategoryList;
 
 
-    @Column
-    private String url;
-
-    @Column
-    private String title;
-
-    @Column
-    private String imgPath;
-
-    @Column
-    private String icon;
-
-    @Column
-    private String description;
-
-    @Column
-    private String siteName;
-
-    @Column
-    private boolean open;
-
-    @Column
-    private LocalDateTime createdAt;
+  @OneToMany(mappedBy = "insight", cascade = CascadeType.ALL)
+  private List<InsightTag> insightTagList;
 
 
-    @PrePersist
-    public void createdAt(){
-        this.createdAt = LocalDateTime.now();
-    }
+  @Column
+  private String url;
 
-    public void setImgPath(String imgPath) {
-        this.imgPath = imgPath;
-    }
+  @Column
+  private String title;
+
+  @Column
+  private String imgPath;
+
+  @Column
+  private String icon;
+
+  @Column
+  private String description;
+
+  @Column
+  private String siteName;
+
+  @Column
+  private boolean open;
+
+  @Column
+  private LocalDateTime createdAt;
+
+
+  @PrePersist
+  public void createdAt() {
+    this.createdAt = LocalDateTime.now();
+  }
+
+  public void setImgPath(String imgPath) {
+    this.imgPath = imgPath;
+  }
 }
