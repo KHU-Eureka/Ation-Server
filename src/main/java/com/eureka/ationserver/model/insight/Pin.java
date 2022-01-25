@@ -1,5 +1,6 @@
 package com.eureka.ationserver.model.insight;
 
+import com.eureka.ationserver.model.common.AuditingEntity;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,7 +13,7 @@ import java.util.List;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class Pin {
+public class Pin extends AuditingEntity {
 
     public static final String PIN_PREFIX= "pin";
 
@@ -32,16 +33,7 @@ public class Pin {
     private List<PinTag> pinTagList;
 
     @Column
-    private LocalDateTime createdAt;
-
-    @Column
     private String pinImgPath;
-
-
-    @PrePersist
-    public void createdAt(){
-        this.createdAt = LocalDateTime.now();
-    }
 
     public void setPinBoard(PinBoard pinBoard) {
         this.pinBoard = pinBoard;
