@@ -50,9 +50,11 @@ public class Lounge {
   @OneToMany(mappedBy = "lounge", cascade = CascadeType.ALL)
   private List<LoungeSubCategory> loungeSubCategoryList;
 
-
   @OneToMany(mappedBy = "lounge", cascade = CascadeType.ALL)
   private List<LoungeTag> loungeTagList;
+
+  @OneToMany(mappedBy = "lounge", cascade = CascadeType.ALL)
+  private List<LoungeMember> loungeMemberList;
 
   @Column
   private String title;
@@ -65,6 +67,9 @@ public class Lounge {
 
   @Column
   private String introduction;
+
+  @Column
+  private String notice;
 
   @Column
   private String imgPath;

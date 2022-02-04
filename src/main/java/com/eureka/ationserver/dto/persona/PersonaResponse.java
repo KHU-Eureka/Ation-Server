@@ -1,12 +1,11 @@
 package com.eureka.ationserver.dto.persona;
 
-import com.eureka.ationserver.model.persona.*;
+import com.eureka.ationserver.model.persona.Persona;
+import java.util.ArrayList;
+import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.ArrayList;
-import java.util.List;
 
 @Getter
 @AllArgsConstructor
@@ -26,7 +25,6 @@ public class PersonaResponse {
     private String job;
 
     private String introduction;
-
 
     private String profileImgPath;
 

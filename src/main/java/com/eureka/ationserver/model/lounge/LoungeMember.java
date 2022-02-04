@@ -18,7 +18,7 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoungePersona {
+public class LoungeMember {
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -32,6 +32,6 @@ public class LoungePersona {
   @JoinColumn(name = "persona_id")
   private Persona persona;
 
-  private Integer status;
+  private Boolean ready;
 
 }

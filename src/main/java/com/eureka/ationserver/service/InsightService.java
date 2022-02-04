@@ -1,23 +1,24 @@
 package com.eureka.ationserver.service;
 
 import com.eureka.ationserver.dto.insight.InsightRequest;
+import com.eureka.ationserver.dto.insight.InsightResponse;
 import com.eureka.ationserver.model.category.MainCategory;
 import com.eureka.ationserver.model.category.SubCategory;
-import com.eureka.ationserver.model.insight.*;
+import com.eureka.ationserver.model.insight.Insight;
+import com.eureka.ationserver.model.insight.InsightSubCategory;
+import com.eureka.ationserver.model.insight.InsightTag;
+import com.eureka.ationserver.model.insight.InsightView;
 import com.eureka.ationserver.model.user.User;
-import com.eureka.ationserver.dto.insight.*;
 import com.eureka.ationserver.repository.category.MainCategoryRepository;
 import com.eureka.ationserver.repository.category.SubCategoryRepository;
-import com.eureka.ationserver.repository.insight.*;
+import com.eureka.ationserver.repository.insight.InsightRepository;
+import com.eureka.ationserver.repository.insight.InsightSubCategoryRepository;
+import com.eureka.ationserver.repository.insight.InsightTagRepository;
+import com.eureka.ationserver.repository.insight.InsightViewRepository;
 import com.eureka.ationserver.repository.user.UserRepository;
 import com.eureka.ationserver.utils.image.ImageUtil;
 import com.eureka.ationserver.utils.parse.Parse;
 import com.eureka.ationserver.utils.parse.ParseUtil;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
@@ -25,6 +26,10 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -43,11 +48,11 @@ public class InsightService {
 
         Parse parse = ParseUtil.parse(Insight.INSIGHT_PREFIX, insightRequest.getUrl());
 
-
         // public
-        MainCategory mainCategory = mainCategoryRepository.findById(insightRequest.getInsightMainCategoryId()).get();
-        List<SubCategory> subCategoryList = subCategoryRepository.findAllByIdIn(insightRequest.getInsightSubCategoryIdList());
-
+        MainCategory mainCategory = mainCategoryRepository.findById(
+            insightRequest.getMainCategoryId()).get();
+        List<SubCategory> subCategoryList = subCategoryRepository.findAllByIdIn(
+            insightRequest.getSubCategoryIdList());
 
         Insight insight = Insight.builder()
             .url(insightRequest.getUrl())
@@ -59,6 +64,7 @@ public class InsightService {
             .insightMainCategory(mainCategory)
             .open(true)
             .build();
+
         Insight saved = insightRepository.save(insight);
 
         for(SubCategory subCategory : subCategoryList){

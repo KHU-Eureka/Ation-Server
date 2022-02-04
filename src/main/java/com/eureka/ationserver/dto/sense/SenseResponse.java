@@ -1,4 +1,4 @@
-package com.eureka.ationserver.dto.persona;
+package com.eureka.ationserver.dto.sense;
 
 import com.eureka.ationserver.model.persona.PersonaSense;
 import com.eureka.ationserver.model.persona.Sense;
@@ -10,15 +10,16 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SenseResponse {
+
     private Long senseId;
     private String name;
 
-    public SenseResponse(PersonaSense personaSense){
+    public SenseResponse(PersonaSense personaSense) {
         senseId = personaSense.getSense().getId();
         name = personaSense.getSense().getName();
     }
 
-    public SenseResponse(Sense sense){
+    public SenseResponse(Sense sense) {
         senseId = sense.getId();
         name = sense.getName();
     }
