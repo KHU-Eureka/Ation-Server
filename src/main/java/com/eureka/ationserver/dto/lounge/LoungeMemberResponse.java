@@ -17,7 +17,7 @@ public class LoungeMemberResponse {
 
   public LoungeMemberResponse(LoungeMember loungeMember) {
     this.ready = loungeMember.getReady();
-    this.persona = new PersonaSimpleResponse(loungeMember);
+    this.persona = new PersonaSimpleResponse(loungeMember.getPersona());
   }
 
 }

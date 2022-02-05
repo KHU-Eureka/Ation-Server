@@ -21,6 +21,7 @@ import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 @Entity
 @Data
@@ -84,18 +85,30 @@ public class Lounge {
   }
 
 
-  public Lounge update(LoungeRequest loungeRequest, MainCategory mainCategory, Sense sense) {
+  public Lounge update(LoungeRequest loungeRequest, Persona persona, MainCategory mainCategory, Sense sense) {
     this.title = loungeRequest.getTitle();
     this.limitMember = loungeRequest.getLimitMember();
-    this.status = loungeRequest.getStatus();
     this.introduction = loungeRequest.getIntroduction();
     this.sense = sense;
     this.loungeMainCategory = mainCategory;
+    this.persona = persona;
     return this;
   }
 
   public void setImgPath(String imgPath) {
     this.imgPath = imgPath;
+  }
+
+  public void open(){
+    this.status = 0;
+  }
+
+  public void start(){
+    this.status = 1;
+  }
+
+  public void close(){
+    this.status = 2;
   }
 
 }

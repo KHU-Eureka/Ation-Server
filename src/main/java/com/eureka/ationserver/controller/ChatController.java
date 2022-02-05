@@ -8,8 +8,8 @@ import org.springframework.stereotype.Controller;
 
 @Controller
 public class ChatController {
-  @MessageMapping("/rounge-receive/{roungeId}")
-  @SendTo("/rounge-send/{roungeId}")
+  @MessageMapping("/rounge/{roungeId}/receive")
+  @SendTo("/rounge/{roungeId}/send")
   public ChatResponse roungeChat(ChatRequest chatRequest){
     ChatResponse chatResponse =  ChatResponse.builder()
         .userId(chatRequest.getUserId())

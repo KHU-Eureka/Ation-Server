@@ -50,6 +50,8 @@ public class LoungeService {
     Lounge saved = loungeRepository.save(
         loungeRequest.toEntity(persona, mainCategory, sense, defaultPath));
 
+    saved.open();
+
     List<SubCategory> subCategoryList = subCategoryRepository.findAllByIdIn(
         loungeRequest.getSubCategoryIdList());
 
@@ -73,13 +75,79 @@ public class LoungeService {
 
 
   @Transactional(readOnly = true)
-  public List<LoungeResponse> findAll(){
-    return loungeRepository.findAll().stream().map(LoungeResponse::new).collect(Collectors.toList());
+  public List<LoungeResponse> findAll() {
+    return loungeRepository.findAll().stream().map(LoungeResponse::new)
+        .collect(Collectors.toList());
   }
 
   @Transactional(readOnly = true)
-  public LoungeResponse find(Long loungeId){
+  public LoungeResponse find(Long loungeId) {
     return new LoungeResponse(loungeRepository.getById(loungeId));
+  }
+
+  @Transactional
+  public Long update(Long loungeId, LoungeRequest loungeRequest) {
+
+    Lounge lounge = loungeRepository.getById(loungeId);
+
+    loungeSubCategoryRepository.deleteByLounge_Id(loungeId);
+
+    loungeTagRepository.deleteByLounge_Id(loungeId);
+
+    List<SubCategory> subCategoryList = subCategoryRepository.findAllByIdIn(
+        loungeRequest.getSubCategoryIdList());
+
+    subCategoryList.stream().forEach(x -> loungeSubCategoryRepository.save(
+        LoungeSubCategory.builder()
+            .lounge(lounge)
+            .subCategory(x)
+            .build()
+    ));
+
+    loungeRequest.getTagList().stream().forEach(x -> loungeTagRepository.save(
+        LoungeTag.builder()
+            .lounge(lounge)
+            .name(x)
+            .build()
+    ));
+
+    Persona persona = personaRepository.getById(loungeRequest.getPersonaId());
+
+    MainCategory mainCategory = mainCategoryRepository.getById(
+        loungeRequest.getMainCategoryId());
+
+    Sense sense = senseRepository.getById(loungeRequest.getSenseId());
+
+    lounge.update(loungeRequest, persona, mainCategory, sense);
+
+    return loungeId;
+  }
+
+  @Transactional
+  public Long delete(Long loungeId) {
+    loungeRepository.deleteById(loungeId);
+    return loungeId;
+  }
+
+  @Transactional
+  public Long updateNotice(Long loungeId, String notice) {
+    Lounge lounge = loungeRepository.getById(loungeId);
+    lounge.setNotice(notice);
+    return loungeId;
+  }
+
+  @Transactional
+  public Long close(Long loungeId) {
+    Lounge lounge = loungeRepository.getById(loungeId);
+    lounge.close();
+    return loungeId;
+  }
+
+  @Transactional
+  public Long start(Long loungeId) {
+    Lounge lounge = loungeRepository.getById(loungeId);
+    lounge.start();
+    return loungeId;
   }
 
 }

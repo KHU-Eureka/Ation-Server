@@ -23,21 +23,15 @@ public class PersonaSimpleResponse {
   private List<SenseResponse> senseList;
 
   public PersonaSimpleResponse(Persona persona) {
+
+    List<SenseResponse> senseList = new ArrayList<>();
+    persona.getPersonaSenseList().stream()
+        .forEach(x -> senseList.add(new SenseResponse(x)));
+
     this.id = persona.getId();
     this.nickname = persona.getNickname();
     this.profileImgPath = persona.getProfileImgPath();
-  }
-
-  public PersonaSimpleResponse(LoungeMember loungeMember) {
-
-    List<SenseResponse> senseList = new ArrayList<>();
-    loungeMember.getPersona().getPersonaSenseList().stream()
-        .forEach(x -> senseList.add(new SenseResponse(x.getSense())));
-
-    this.id = loungeMember.getPersona().getId();
-    this.nickname = loungeMember.getPersona().getNickname();
-    this.profileImgPath = loungeMember.getPersona().getProfileImgPath();
     this.senseList = senseList;
-
   }
+
 }

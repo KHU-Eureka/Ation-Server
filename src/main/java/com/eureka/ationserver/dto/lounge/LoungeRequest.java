@@ -25,8 +25,6 @@ public class LoungeRequest {
 
   private String introduction;
 
-  private Integer status;
-
   private Long senseId;
 
   private List<String> tagList;
@@ -40,7 +38,7 @@ public class LoungeRequest {
         .title(this.title)
         .limitMember(this.limitMember)
         .introduction(this.introduction)
-        .status(this.status)
+        .status(0)
         .imgPath(imgPath)
         .loungeMainCategory(mainCategory)
         .sense(sense)
