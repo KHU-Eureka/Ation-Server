@@ -9,8 +9,11 @@ import lombok.NoArgsConstructor;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class ChatResponse {
-  private Long userId;
+public class SocketChatRequest {
+
+  private Long personaId;
 
   private String content;
+
 }
+

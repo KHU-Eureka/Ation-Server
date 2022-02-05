@@ -66,7 +66,7 @@ public class Lounge {
   private Integer limitMember;
 
   @Column
-  private Integer status; // 0 : 모집 중, 1 : 종료, 2: 진행 중
+  private ELonugeStatus status; // 0 : 모집 중, 1 : 종료, 2: 진행 중
 
   @Column
   private String introduction;
@@ -102,15 +102,15 @@ public class Lounge {
   }
 
   public void open(){
-    this.status = 0;
+    this.status = ELonugeStatus.OPEN;
   }
 
   public void start(){
-    this.status = 1;
+    this.status = ELonugeStatus.START;
   }
 
   public void close(){
-    this.status = 2;
+    this.status = ELonugeStatus.END;
   }
 
 }

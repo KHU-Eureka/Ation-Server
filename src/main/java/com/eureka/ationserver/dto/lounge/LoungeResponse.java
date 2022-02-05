@@ -4,6 +4,7 @@ import com.eureka.ationserver.dto.category.MainCategoryResponse;
 import com.eureka.ationserver.dto.category.SubCategoryResponse;
 import com.eureka.ationserver.dto.persona.PersonaSimpleResponse;
 import com.eureka.ationserver.dto.sense.SenseResponse;
+import com.eureka.ationserver.model.lounge.ELonugeStatus;
 import com.eureka.ationserver.model.lounge.Lounge;
 import com.eureka.ationserver.repository.lounge.LoungeMemberRepository;
 import java.time.LocalDateTime;
@@ -25,7 +26,7 @@ public class LoungeResponse {
 
   private Integer limitMember;
 
-  private Integer status; // 0 : 모집 중, 1 : 종료, 2: 진행 중
+  private ELonugeStatus status; // 0 : 모집 중, 1 : 종료, 2: 진행 중
 
   private String introduction;
 

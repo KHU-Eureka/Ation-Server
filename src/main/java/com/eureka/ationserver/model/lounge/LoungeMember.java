@@ -36,4 +36,6 @@ public class LoungeMember {
 
   private Boolean admin;
 
+  private Long userId;
+
 }

@@ -38,7 +38,6 @@ public class LoungeRequest {
         .title(this.title)
         .limitMember(this.limitMember)
         .introduction(this.introduction)
-        .status(0)
         .imgPath(imgPath)
         .loungeMainCategory(mainCategory)
         .sense(sense)

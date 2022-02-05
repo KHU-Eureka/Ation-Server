@@ -6,6 +6,7 @@ import com.eureka.ationserver.dto.lounge.LoungeRequest;
 import com.eureka.ationserver.service.LoungeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -18,7 +19,9 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api")
@@ -32,7 +35,6 @@ public class LoungeController {
   @ApiOperation("라운지 생성")
   public ResponseEntity save(@RequestBody LoungeRequest loungeRequest){
     return new ResponseEntity(loungeService.save(loungeRequest), null, HttpStatus.CREATED);
-
   }
 
   @GetMapping("/lounge")
@@ -57,7 +59,14 @@ public class LoungeController {
   @PutMapping("/lounge/{loungeId}/notice")
   @ApiOperation("라운지 공지 수정")
   public ResponseEntity updateNotice(@PathVariable Long loungeId, @RequestBody String notice){
-    return new ResponseEntity(loungeService.updateNotice(loungeId, notice), null, HttpStatus.CREATED);
+    return new ResponseEntity(loungeService.updateNotice(loungeId, notice), null, HttpStatus.OK);
+
+  }
+
+  @PutMapping("/lounge/{loungeId}/image")
+  @ApiOperation("라운지 이미지 변경")
+  public ResponseEntity saveImg(@PathVariable Long loungeId, @RequestParam(value = "loungeImg", required = true) MultipartFile loungeImg) throws IOException {
+    return new ResponseEntity(loungeService.saveImg(loungeId, loungeImg), null, HttpStatus.OK);
 
   }
 
@@ -93,6 +102,19 @@ public class LoungeController {
     return new ResponseEntity(loungeService.exit(loungeId,personaId), null, HttpStatus.OK);
   }
 
+  @PutMapping("/lounge/{loungeId}/ready/{personaId}")
+  @ApiOperation("라운지 레디")
+  public ResponseEntity ready(@PathVariable Long loungeId, @PathVariable Long personaId){
+    return new ResponseEntity(loungeService.ready(loungeId,personaId), null, HttpStatus.OK);
+  }
+
+  @PutMapping("/lounge/{loungeId}/unready/{personaId}")
+  @ApiOperation("라운지 레디 해제")
+  public ResponseEntity unready(@PathVariable Long loungeId, @PathVariable Long personaId){
+    return new ResponseEntity(loungeService.unready(loungeId,personaId), null, HttpStatus.OK);
+  }
+
+
   @GetMapping("/lounge/{loungeId}/chat")
   @ApiOperation("라운지 채팅 조회")
   public ResponseEntity getChat(@PathVariable Long loungeId){
@@ -100,19 +122,19 @@ public class LoungeController {
   }
 
   @GetMapping("/lounge/wait")
-  @ApiOperation("유저의 대기 라운지 조회")
+  @ApiOperation("유저 대기 라운지 조회")
   public ResponseEntity getWait(@AuthenticationPrincipal UserDetailsImpl userDetails){
     return new ResponseEntity(loungeService.getWait(userDetails), null, HttpStatus.OK);
   }
 
   @GetMapping("/lounge/current")
-  @ApiOperation("유저의 실시간 라운지 조회")
+  @ApiOperation("유저 실시간 라운지 조회")
   public ResponseEntity getCurrent(@AuthenticationPrincipal UserDetailsImpl userDetails){
     return new ResponseEntity(loungeService.getCurrent(userDetails), null, HttpStatus.OK);
   }
 
   @GetMapping("/lounge/history")
-  @ApiOperation("유저의 라운지 참여 이력 조회")
+  @ApiOperation("유저 라운지 참여 이력 조회")
   public ResponseEntity getHistory(@AuthenticationPrincipal UserDetailsImpl userDetails){
     return new ResponseEntity(loungeService.getHistory(userDetails), null, HttpStatus.OK);
   }

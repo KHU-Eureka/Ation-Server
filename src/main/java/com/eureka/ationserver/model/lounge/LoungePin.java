@@ -28,9 +28,7 @@ public class LoungePin {
   @JoinColumn(name = "lounge_id")
   private Lounge lounge;
 
-  @ManyToOne(targetEntity = Persona.class, fetch = FetchType.LAZY)
-  @JoinColumn(name = "persona_id")
-  private Persona persona;
+  private Long userId;
 
 
 }
