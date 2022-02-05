@@ -78,21 +78,21 @@ public class LoungeController {
 
   }
 
-  @PutMapping("/lounge/{loungeId}/member/enter/{memberId}")
+  @PutMapping("/lounge/{loungeId}/enter/{personaId}")
   @ApiOperation("라운지 입장")
-  public ResponseEntity enter(@PathVariable Long loungeId, @PathVariable Long memberId){
-    return null;
+  public ResponseEntity enter(@PathVariable Long loungeId, @PathVariable Long personaId){
+    return new ResponseEntity(loungeService.enter(loungeId, personaId), null, HttpStatus.OK);
   }
 
-  @PutMapping("/lounge/{loungeId}/member/exit/{memberId}")
+  @PutMapping("/lounge/{loungeId}/exit/{personaId}")
   @ApiOperation("라운지 퇴장")
-  public ResponseEntity exit(@PathVariable Long loungeId, @PathVariable Long memberId){
-    return null;
+  public ResponseEntity exit(@PathVariable Long loungeId, @PathVariable Long personaId){
+    return new ResponseEntity(loungeService.exit(loungeId,personaId), null, HttpStatus.OK);
   }
 
   @GetMapping("/lounge/{loungeId}/chat")
   @ApiOperation("라운지 채팅 조회")
-  public ResponseEntity getChat(@RequestBody LoungeRequest loungeRequest){
+  public ResponseEntity getChat(@PathVariable Long loungeId){
     return null;
 
   }

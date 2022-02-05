@@ -1,16 +1,22 @@
 package com.eureka.ationserver.service;
 
+import com.eureka.ationserver.advice.exception.CommonException;
+import com.eureka.ationserver.dto.lounge.LoungeChatResponse;
+import com.eureka.ationserver.dto.lounge.LoungeMemberResponse;
 import com.eureka.ationserver.dto.lounge.LoungeRequest;
 import com.eureka.ationserver.dto.lounge.LoungeResponse;
 import com.eureka.ationserver.model.category.MainCategory;
 import com.eureka.ationserver.model.category.SubCategory;
 import com.eureka.ationserver.model.lounge.Lounge;
+import com.eureka.ationserver.model.lounge.LoungeMember;
 import com.eureka.ationserver.model.lounge.LoungeSubCategory;
 import com.eureka.ationserver.model.lounge.LoungeTag;
 import com.eureka.ationserver.model.persona.Persona;
 import com.eureka.ationserver.model.persona.Sense;
 import com.eureka.ationserver.repository.category.MainCategoryRepository;
 import com.eureka.ationserver.repository.category.SubCategoryRepository;
+import com.eureka.ationserver.repository.lounge.LoungeChatRepository;
+import com.eureka.ationserver.repository.lounge.LoungeMemberRepository;
 import com.eureka.ationserver.repository.lounge.LoungeRepository;
 import com.eureka.ationserver.repository.lounge.LoungeSubCategoryRepository;
 import com.eureka.ationserver.repository.lounge.LoungeTagRepository;
@@ -34,6 +40,8 @@ public class LoungeService {
   private final SenseRepository senseRepository;
   private final LoungeSubCategoryRepository loungeSubCategoryRepository;
   private final LoungeTagRepository loungeTagRepository;
+  private final LoungeMemberRepository loungeMemberRepository;
+  private final LoungeChatRepository loungeChatRepository;
 
   @Transactional
   public Long save(LoungeRequest loungeRequest) {
@@ -149,5 +157,38 @@ public class LoungeService {
     lounge.start();
     return loungeId;
   }
+
+  @Transactional
+  public Long enter(Long loungeId, Long personaId) {
+    if (loungeMemberRepository.findByLounge_IdAndPersona_Id(loungeId, personaId).isPresent()) {
+      throw new CommonException("이미 입장 중인 페르소나 입니다.");
+    }
+
+    LoungeMember loungeMember = LoungeMember.builder()
+        .lounge(loungeRepository.getById(loungeId))
+        .persona(personaRepository.getById(personaId))
+        .ready(Boolean.FALSE)
+        .build();
+
+    // TODO socket
+
+    return loungeId;
+  }
+
+  @Transactional
+  public Long exit(Long loungeId, Long personaId) {
+    loungeMemberRepository.deleteByLounge_IdAndPersona_Id(loungeId, personaId);
+
+    // TODO socket
+
+    return loungeId;
+  }
+
+  @Transactional
+  public List<LoungeChatResponse> getChat(Long loungeId){
+    return loungeChatRepository.findByLounge_Id(loungeId).stream().map(LoungeChatResponse::new).collect(
+        Collectors.toList());
+  }
+
 
 }

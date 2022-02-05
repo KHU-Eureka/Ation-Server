@@ -5,12 +5,14 @@ import com.eureka.ationserver.dto.category.SubCategoryResponse;
 import com.eureka.ationserver.dto.persona.PersonaSimpleResponse;
 import com.eureka.ationserver.dto.sense.SenseResponse;
 import com.eureka.ationserver.model.lounge.Lounge;
+import com.eureka.ationserver.repository.lounge.LoungeMemberRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
 @Getter
 @NoArgsConstructor
@@ -30,6 +32,8 @@ public class LoungeResponse {
   private String notice;
 
   private String imgPath;
+
+  private Long totalMember;
 
   private LocalDateTime createdAt;
 

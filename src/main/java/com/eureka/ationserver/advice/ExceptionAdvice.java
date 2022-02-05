@@ -1,5 +1,6 @@
 package com.eureka.ationserver.advice;
 
+import com.eureka.ationserver.advice.exception.CommonException;
 import com.eureka.ationserver.advice.exception.DuplicateException;
 import com.eureka.ationserver.advice.exception.ForbiddenException;
 import com.eureka.ationserver.advice.exception.UnAuthorizedException;
@@ -42,5 +43,10 @@ public class ExceptionAdvice {
     @ExceptionHandler(ForbiddenException.class)
     public ResponseEntity forbiddenException(ForbiddenException e){
         return new ResponseEntity(new MessageResponse(Msg.FORBIDDEN), null, HttpStatus.FORBIDDEN);
+    }
+
+    @ExceptionHandler(CommonException.class)
+    public ResponseEntity commonException(CommonException e){
+        return new ResponseEntity(new MessageResponse(e.getMessage()), null, HttpStatus.BAD_REQUEST);
     }
 }
