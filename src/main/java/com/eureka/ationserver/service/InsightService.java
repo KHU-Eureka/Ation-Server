@@ -112,7 +112,7 @@ public class InsightService {
        return new InsightResponse(insight);
     }
 
-    @Transactional()
+    @Transactional(readOnly = true)
     public InsightResponse findPublic(User user, Long insightId){
         Insight insight = insightRepository.getById(insightId);
 

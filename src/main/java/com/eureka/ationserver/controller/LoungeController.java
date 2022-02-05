@@ -10,6 +10,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -34,13 +35,13 @@ public class LoungeController {
   @GetMapping("/lounge")
   @ApiOperation("라운지 목록 조회")
   public ResponseEntity getAll() throws Exception {
-    return null;
+    return ResponseEntity.ok(loungeService.findAll());
   }
 
   @GetMapping("/lounge/{loungeId}")
   @ApiOperation("라운지 조회")
-  public ResponseEntity get() throws Exception {
-    return null;
+  public ResponseEntity get(@PathVariable Long loungeId) throws Exception {
+    return ResponseEntity.ok(loungeService.find(loungeId));
   }
 
   @PutMapping("/lounge/{loungeId}")

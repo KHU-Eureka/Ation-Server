@@ -1,6 +1,7 @@
 package com.eureka.ationserver.service;
 
 import com.eureka.ationserver.dto.lounge.LoungeRequest;
+import com.eureka.ationserver.dto.lounge.LoungeResponse;
 import com.eureka.ationserver.model.category.MainCategory;
 import com.eureka.ationserver.model.category.SubCategory;
 import com.eureka.ationserver.model.lounge.Lounge;
@@ -17,6 +18,7 @@ import com.eureka.ationserver.repository.persona.PersonaRepository;
 import com.eureka.ationserver.repository.persona.SenseRepository;
 import com.eureka.ationserver.utils.image.ImageUtil;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -69,5 +71,15 @@ public class LoungeService {
 
   }
 
+
+  @Transactional(readOnly = true)
+  public List<LoungeResponse> findAll(){
+    return loungeRepository.findAll().stream().map(LoungeResponse::new).collect(Collectors.toList());
+  }
+
+  @Transactional(readOnly = true)
+  public LoungeResponse find(Long loungeId){
+    return new LoungeResponse(loungeRepository.getById(loungeId));
+  }
 
 }
