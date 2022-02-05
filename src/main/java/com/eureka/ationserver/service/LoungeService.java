@@ -2,35 +2,43 @@ package com.eureka.ationserver.service;
 
 import com.eureka.ationserver.advice.exception.CommonException;
 import com.eureka.ationserver.dto.lounge.LoungeChatResponse;
-import com.eureka.ationserver.dto.lounge.LoungeMemberResponse;
+import com.eureka.ationserver.dto.lounge.LoungeMemberStatusResponse;
 import com.eureka.ationserver.dto.lounge.LoungeRequest;
 import com.eureka.ationserver.dto.lounge.LoungeResponse;
 import com.eureka.ationserver.model.category.MainCategory;
 import com.eureka.ationserver.model.category.SubCategory;
 import com.eureka.ationserver.model.lounge.Lounge;
+import com.eureka.ationserver.model.lounge.LoungeHistory;
 import com.eureka.ationserver.model.lounge.LoungeMember;
 import com.eureka.ationserver.model.lounge.LoungeSubCategory;
 import com.eureka.ationserver.model.lounge.LoungeTag;
 import com.eureka.ationserver.model.persona.Persona;
 import com.eureka.ationserver.model.persona.Sense;
+import com.eureka.ationserver.model.user.User;
 import com.eureka.ationserver.repository.category.MainCategoryRepository;
 import com.eureka.ationserver.repository.category.SubCategoryRepository;
 import com.eureka.ationserver.repository.lounge.LoungeChatRepository;
+import com.eureka.ationserver.repository.lounge.LoungeHistoryRepository;
 import com.eureka.ationserver.repository.lounge.LoungeMemberRepository;
 import com.eureka.ationserver.repository.lounge.LoungeRepository;
 import com.eureka.ationserver.repository.lounge.LoungeSubCategoryRepository;
 import com.eureka.ationserver.repository.lounge.LoungeTagRepository;
 import com.eureka.ationserver.repository.persona.PersonaRepository;
 import com.eureka.ationserver.repository.persona.SenseRepository;
+import com.eureka.ationserver.repository.user.UserRepository;
 import com.eureka.ationserver.utils.image.ImageUtil;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @RequiredArgsConstructor
+@Slf4j
 public class LoungeService {
 
   private final LoungeRepository loungeRepository;
@@ -42,6 +50,8 @@ public class LoungeService {
   private final LoungeTagRepository loungeTagRepository;
   private final LoungeMemberRepository loungeMemberRepository;
   private final LoungeChatRepository loungeChatRepository;
+  private final LoungeHistoryRepository loungeHistoryRepository;
+  private final UserRepository userRepository;
 
   @Transactional
   public Long save(LoungeRequest loungeRequest) {
@@ -76,6 +86,15 @@ public class LoungeService {
             .name(x)
             .build()
     ));
+
+    loungeMemberRepository.save(
+        LoungeMember.builder()
+            .lounge(saved)
+            .persona(persona)
+            .admin(Boolean.TRUE)
+            .ready(Boolean.TRUE)
+            .build()
+    );
 
     return saved.getId();
 
@@ -148,6 +167,19 @@ public class LoungeService {
   public Long close(Long loungeId) {
     Lounge lounge = loungeRepository.getById(loungeId);
     lounge.close();
+
+    // save history
+    lounge.getLoungeMemberList().stream().forEach(x ->
+        loungeHistoryRepository.save(
+            LoungeHistory.builder()
+                .lounge(lounge)
+                .persona(x.getPersona())
+                .build()
+        )
+    );
+
+    loungeMemberRepository.deleteByLounge_Id(loungeId);
+
     return loungeId;
   }
 
@@ -168,6 +200,7 @@ public class LoungeService {
         .lounge(loungeRepository.getById(loungeId))
         .persona(personaRepository.getById(personaId))
         .ready(Boolean.FALSE)
+        .admin(Boolean.FALSE)
         .build();
 
     // TODO socket
@@ -185,10 +218,47 @@ public class LoungeService {
   }
 
   @Transactional
-  public List<LoungeChatResponse> getChat(Long loungeId){
-    return loungeChatRepository.findByLounge_Id(loungeId).stream().map(LoungeChatResponse::new).collect(
-        Collectors.toList());
+  public List<LoungeChatResponse> getChat(Long loungeId) {
+    return loungeChatRepository.findByLounge_Id(loungeId).stream().map(LoungeChatResponse::new)
+        .collect(
+            Collectors.toList());
   }
+  @Transactional
+  public List<LoungeMemberStatusResponse> getWait(UserDetails userDetails) {
+    User user = userRepository.findByEmail(userDetails.getUsername()).get();
+    List<Long> personaIdList = new ArrayList<>();
+    personaRepository.findByUserId(user.getId()).stream()
+        .forEach(x -> personaIdList.add(x.getId()));
+    return loungeMemberRepository.findByPersona_IdInAndLounge_Status(personaIdList, 0).stream().map(
+            LoungeMemberStatusResponse::new)
+        .collect(
+            Collectors.toList());
+  }
+
+  @Transactional
+  public List<LoungeMemberStatusResponse> getCurrent(UserDetails userDetails) {
+    User user = userRepository.findByEmail(userDetails.getUsername()).get();
+    List<Long> personaIdList = new ArrayList<>();
+    personaRepository.findByUserId(user.getId()).stream()
+        .forEach(x -> personaIdList.add(x.getId()));
+    return loungeMemberRepository.findByPersona_IdInAndLounge_StatusAndReady(personaIdList, 1, Boolean.TRUE).stream().map(
+            LoungeMemberStatusResponse::new)
+        .collect(
+            Collectors.toList());
+  }
+
+  @Transactional
+  public List<LoungeMemberStatusResponse> getHistory(UserDetails userDetails) {
+    User user = userRepository.findByEmail(userDetails.getUsername()).get();
+    List<Long> personaIdList = new ArrayList<>();
+    personaRepository.findByUserId(user.getId()).stream()
+        .forEach(x -> personaIdList.add(x.getId()));
+    return loungeMemberRepository.findByPersona_IdInAndLounge_Status(personaIdList, 2).stream().map(
+            LoungeMemberStatusResponse::new)
+        .collect(
+            Collectors.toList());
+  }
+
 
 
 }

@@ -34,4 +34,6 @@ public class LoungeMember {
 
   private Boolean ready;
 
+  private Boolean admin;
+
 }

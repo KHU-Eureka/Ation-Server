@@ -13,4 +13,8 @@ public interface LoungeMemberRepository extends JpaRepository<LoungeMember, Long
 
   Optional<LoungeMember> findByLounge_IdAndPersona_Id(@Param(value="loungeId")Long loungeId, @Param(value="personaId")Long personaId);
   void deleteByLounge_IdAndPersona_Id(@Param(value="loungeId")Long loungeId, @Param(value="personaId")Long personaId);
+  List<LoungeMember> findByPersona_IdInAndLounge_Status(List<Long> personaIdList, Integer status);
+  List<LoungeMember> findByPersona_IdInAndLounge_StatusAndReady(List<Long> personaIdList, Integer status, Boolean ready);
+
+  void deleteByLounge_Id(@Param(value="loungeId")Long loungeId);
 }

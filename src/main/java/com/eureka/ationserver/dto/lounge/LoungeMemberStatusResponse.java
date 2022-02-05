@@ -9,18 +9,23 @@ import lombok.NoArgsConstructor;
 @Getter
 @NoArgsConstructor
 @AllArgsConstructor
-public class LoungeMemberResponse {
+public class LoungeMemberStatusResponse {
+
+  private LoungeResponse lounge;
+
+  private PersonaSimpleResponse persona;
 
   private Boolean ready;
 
   private Boolean admin;
 
-  private PersonaSimpleResponse persona;
-
-  public LoungeMemberResponse(LoungeMember loungeMember) {
+  public LoungeMemberStatusResponse(LoungeMember loungeMember){
+    this.lounge = new LoungeResponse(loungeMember.getLounge());
+    this.persona = new PersonaSimpleResponse(loungeMember.getPersona());
     this.ready = loungeMember.getReady();
     this.admin = loungeMember.getAdmin();
-    this.persona = new PersonaSimpleResponse(loungeMember.getPersona());
   }
+
+
 
 }

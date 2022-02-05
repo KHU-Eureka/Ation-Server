@@ -1,6 +1,7 @@
 package com.eureka.ationserver.controller;
 
 
+import com.eureka.ationserver.config.security.details.UserDetailsImpl;
 import com.eureka.ationserver.dto.lounge.LoungeRequest;
 import com.eureka.ationserver.service.LoungeService;
 import io.swagger.annotations.Api;
@@ -8,6 +9,8 @@ import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -93,8 +96,25 @@ public class LoungeController {
   @GetMapping("/lounge/{loungeId}/chat")
   @ApiOperation("라운지 채팅 조회")
   public ResponseEntity getChat(@PathVariable Long loungeId){
-    return null;
+    return new ResponseEntity(loungeService.getChat(loungeId), null, HttpStatus.OK);
+  }
 
+  @GetMapping("/lounge/wait")
+  @ApiOperation("유저의 대기 라운지 조회")
+  public ResponseEntity getWait(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    return new ResponseEntity(loungeService.getWait(userDetails), null, HttpStatus.OK);
+  }
+
+  @GetMapping("/lounge/current")
+  @ApiOperation("유저의 실시간 라운지 조회")
+  public ResponseEntity getCurrent(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    return new ResponseEntity(loungeService.getCurrent(userDetails), null, HttpStatus.OK);
+  }
+
+  @GetMapping("/lounge/history")
+  @ApiOperation("유저의 라운지 참여 이력 조회")
+  public ResponseEntity getHistory(@AuthenticationPrincipal UserDetailsImpl userDetails){
+    return new ResponseEntity(loungeService.getHistory(userDetails), null, HttpStatus.OK);
   }
 
 }

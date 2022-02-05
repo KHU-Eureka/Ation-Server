@@ -1,5 +1,6 @@
 package com.eureka.ationserver.model.persona;
 
+import com.eureka.ationserver.model.category.MainCategory;
 import com.eureka.ationserver.model.ideation.Ideation;
 import com.eureka.ationserver.model.insight.PinBoard;
 import com.eureka.ationserver.model.user.User;
@@ -22,8 +23,8 @@ public class Persona {
   @GeneratedValue(strategy = GenerationType.IDENTITY)
   private Long id;
 
-  @ManyToOne(fetch = FetchType.LAZY)
-  @JoinColumn(name = "user_id")
+  @ManyToOne(targetEntity = User.class, fetch = FetchType.LAZY)
+  @JoinColumn(name = "user_id", nullable = false)
   private User user;
 
   @Column(unique = true)
