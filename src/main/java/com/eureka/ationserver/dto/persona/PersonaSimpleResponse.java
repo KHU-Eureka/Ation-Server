@@ -22,6 +22,8 @@ public class PersonaSimpleResponse {
 
   private List<SenseResponse> senseList;
 
+  private String job;
+
   public PersonaSimpleResponse(Persona persona) {
 
     List<SenseResponse> senseList = new ArrayList<>();
@@ -32,6 +34,7 @@ public class PersonaSimpleResponse {
     this.nickname = persona.getNickname();
     this.profileImgPath = persona.getProfileImgPath();
     this.senseList = senseList;
+    this.job = persona.getJob();
   }
 
 }
