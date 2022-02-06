@@ -77,10 +77,10 @@ public class LoungeController {
 
   }
 
-  @PutMapping("/lounge/{loungeId}/close")
+  @PutMapping("/lounge/{loungeId}/end")
   @ApiOperation("라운지 종료")
-  public ResponseEntity close(@PathVariable Long loungeId){
-    return new ResponseEntity(loungeService.close(loungeId), null, HttpStatus.OK);
+  public ResponseEntity end(@PathVariable Long loungeId){
+    return new ResponseEntity(loungeService.end(loungeId), null, HttpStatus.OK);
   }
 
   @PutMapping("/lounge/{loungeId}/start")

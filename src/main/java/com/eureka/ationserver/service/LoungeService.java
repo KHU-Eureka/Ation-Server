@@ -183,9 +183,9 @@ public class LoungeService {
   }
 
   @Transactional
-  public Long close(Long loungeId) {
+  public Long end(Long loungeId) {
     Lounge lounge = loungeRepository.getById(loungeId);
-    lounge.close();
+    lounge.end();
     messageSendingOperations.convertAndSend(String.format("/lounge/%d/status/send", loungeId),
         SocketLoungeStatusResponse.builder().status(ELonugeStatus.END).build());
     return loungeId;
@@ -197,6 +197,7 @@ public class LoungeService {
     lounge.start();
 
     loungeMemberRepository.deleteByLounge_IdAndReady(loungeId, Boolean.FALSE);
+    loungeChatRepository.deleteByLounge_Id(loungeId);
 
     messageSendingOperations.convertAndSend(String.format("/lounge/%d/status/send", loungeId),
         SocketLoungeStatusResponse.builder().status(ELonugeStatus.START).build());
