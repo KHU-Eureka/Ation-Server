@@ -208,6 +208,10 @@ public class LoungeService {
   public Long enter(Long loungeId, Long personaId) {
 
     Persona persona = personaRepository.getById(personaId);
+    Lounge lounge = loungeRepository.getById(loungeId);
+    if(lounge.getLoungeMemberList().size()>=lounge.getLimitMember()){
+      throw new CommonException("인원이 다 찼습니다.");
+    }
 
     if (loungeMemberRepository.findByLounge_IdAndUserId(loungeId, persona.getUser().getId())
         .isPresent()) {
@@ -215,7 +219,7 @@ public class LoungeService {
     }
 
     LoungeMember loungeMember = LoungeMember.builder()
-        .lounge(loungeRepository.getById(loungeId))
+        .lounge(lounge)
         .persona(persona)
         .ready(Boolean.FALSE)
         .admin(Boolean.FALSE)
