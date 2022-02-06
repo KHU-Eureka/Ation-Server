@@ -109,7 +109,7 @@ public class Lounge {
     this.status = ELonugeStatus.START;
   }
 
-  public void close(){
+  public void end(){
     this.status = ELonugeStatus.END;
   }
 

@@ -7,5 +7,6 @@ import org.springframework.data.repository.query.Param;
 
 public interface LoungeChatRepository extends JpaRepository<LoungeChat, Long> {
   List<LoungeChat> findByLounge_Id(@Param(value="loungeId")Long loungeId);
+  void deleteByLounge_Id(@Param(value="loungeId")Long loungeId);
 
 }
