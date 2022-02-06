@@ -79,16 +79,6 @@ public class PersonaService {
     }
 
 
-    @Value("${eureka.app.publicIp}")
-    private String HOST;
-
-    @Value("${server.port}")
-    private String PORT;
-
-    @Value("${eureka.app.imagePath}")
-    private String IMAGEPATH;
-
-
     @Transactional
     public Long saveImg(User user, Long personaId, MultipartFile profileImg) throws IOException {
         Persona persona = personaRepository.getById(personaId);
@@ -121,7 +111,6 @@ public class PersonaService {
 
 
     }
-
 
 
     @Transactional

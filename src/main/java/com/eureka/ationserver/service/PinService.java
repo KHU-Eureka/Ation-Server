@@ -1,32 +1,35 @@
 package com.eureka.ationserver.service;
 
 import com.eureka.ationserver.advice.exception.ForbiddenException;
-import com.eureka.ationserver.model.insight.*;
-import com.eureka.ationserver.model.persona.Persona;
-import com.eureka.ationserver.model.user.User;
 import com.eureka.ationserver.dto.pin.InsightPinRequest;
 import com.eureka.ationserver.dto.pin.PinRequest;
 import com.eureka.ationserver.dto.pin.PinResponse;
 import com.eureka.ationserver.dto.pin.PinUpdateRequest;
-import com.eureka.ationserver.repository.insight.PinRepository;
+import com.eureka.ationserver.model.insight.Insight;
+import com.eureka.ationserver.model.insight.InsightSubCategory;
+import com.eureka.ationserver.model.insight.Pin;
+import com.eureka.ationserver.model.insight.PinBoard;
+import com.eureka.ationserver.model.insight.PinTag;
+import com.eureka.ationserver.model.persona.Persona;
+import com.eureka.ationserver.model.user.User;
 import com.eureka.ationserver.repository.insight.InsightRepository;
 import com.eureka.ationserver.repository.insight.PinBoardRepository;
+import com.eureka.ationserver.repository.insight.PinRepository;
 import com.eureka.ationserver.repository.insight.PinTagRepository;
 import com.eureka.ationserver.repository.persona.PersonaRepository;
 import com.eureka.ationserver.utils.image.ImageUtil;
 import com.eureka.ationserver.utils.parse.Parse;
 import com.eureka.ationserver.utils.parse.ParseUtil;
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -36,56 +39,51 @@ public class PinService {
   private final PinBoardRepository pinBoardRepository;
   private final PinTagRepository pinTagRepository;
   private final PinRepository pinRepository;
-  private final InsightService insightService;
   private final PersonaRepository personaRepository;
 
 
   @Transactional
-  public Long saveNewPin(User user, InsightPinRequest insightPinRequest) throws Exception {
+  public Long saveNewPin(InsightPinRequest insightPinRequest) throws Exception {
 
     PinBoard pinBoard = pinBoardRepository.getById(insightPinRequest.getPinBoardId());
 
-    if (user.getId() != pinBoard.getPersona().getUser().getId()) {
-      throw new ForbiddenException();
-    } else {
+    Parse parse = ParseUtil.parse(Pin.PIN_PREFIX, insightPinRequest.getUrl());
 
-      Parse parse = ParseUtil.parse(Pin.PIN_PREFIX, insightPinRequest.getUrl());
+    Insight insight = Insight.builder()
+        .url(insightPinRequest.getUrl())
+        .title(parse.getTitle())
+        .description(parse.getDescription())
+        .imgPath(parse.getImageUrl())
+        .siteName(parse.getSiteName())
+        .icon(parse.getIcon())
+        .insightMainCategory(null)
+        .insightSubCategoryList(null)
+        .open(false)
+        .build();
 
-      Insight insight = Insight.builder()
-          .url(insightPinRequest.getUrl())
-          .title(parse.getTitle())
-          .description(parse.getDescription())
-          .imgPath(parse.getImageUrl())
-          .siteName(parse.getSiteName())
-          .icon(parse.getIcon())
-          .insightMainCategory(null)
-          .insightSubCategoryList(null)
-          .open(false)
+    insightRepository.save(insight);
+    pinBoard.setImgPath(insight.getImgPath());
+
+    // save InsightPin
+    Pin pin = Pin.builder()
+        .pinBoard(pinBoard)
+        .insight(insight)
+        .pinImgPath(insight.getImgPath())
+        .build();
+    Pin saved = pinRepository.save(pin);
+
+    // save Pin tag
+    for (String name : insightPinRequest.getTagList()) {
+      PinTag pinTag = PinTag.builder()
+          .pin(pin)
+          .name(name)
           .build();
-
-      insightRepository.save(insight);
-      pinBoard.setImgPath(insight.getImgPath());
-
-      // save InsightPin
-      Pin pin = Pin.builder()
-          .pinBoard(pinBoard)
-          .insight(insight)
-          .pinImgPath(insight.getImgPath())
-          .build();
-      Pin saved = pinRepository.save(pin);
-
-      // save Pin tag
-      for (String name : insightPinRequest.getTagList()) {
-        PinTag pinTag = PinTag.builder()
-            .pin(pin)
-            .name(name)
-            .build();
-        pinTagRepository.save(pinTag);
-      }
-
-      return saved.getId();
-
+      pinTagRepository.save(pinTag);
     }
+
+    return saved.getId();
+
+
   }
 
 

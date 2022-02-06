@@ -20,43 +20,41 @@ import java.util.List;
 @EnableSwagger2
 public class SwaggerConfig {
 
-    @Bean
-    public Docket restApi(){
+  @Bean
+  public Docket restApi() {
 
-        ParameterBuilder aParameterBuilder = new ParameterBuilder();
-        aParameterBuilder.name("Authorization")
-                .description("Access Tocken")
-                .modelRef(new ModelRef("string"))
-                .parameterType("header")
-                .required(false)
-                .build();
+    ParameterBuilder aParameterBuilder = new ParameterBuilder();
+    aParameterBuilder.name("Authorization")
+        .description("Access Tocken")
+        .modelRef(new ModelRef("string"))
+        .parameterType("header")
+        .required(false)
+        .build();
 
+    List<Parameter> aParameters = new ArrayList<>();
+    aParameters.add(aParameterBuilder.build());
 
-        List<Parameter> aParameters = new ArrayList<>();
-        aParameters.add(aParameterBuilder.build());
-
-
-        return new Docket(DocumentationType.SWAGGER_2)
-                .globalOperationParameters(aParameters)
-                .apiInfo(apiInfo())
-                .select()
-                .apis(RequestHandlerSelectors.basePackage("com.eureka.ationserver.controller"))
-                .paths(PathSelectors.ant("/api/**"))
-                .build();
+    return new Docket(DocumentationType.SWAGGER_2)
+        .globalOperationParameters(aParameters)
+        .apiInfo(apiInfo())
+        .select()
+        .apis(RequestHandlerSelectors.basePackage("com.eureka.ationserver.controller"))
+        .paths(PathSelectors.ant("/api/**"))
+        .build();
 
 
-    }
+  }
 
-    private static final String INFO_TITLE = "Ation API";
-    private static final String INFO_VERSION = "0.0.1";
-    private static final String INFO_DESC = "Ation api Docs.";
+  private static final String INFO_TITLE = "Ation API";
+  private static final String INFO_VERSION = "0.0.1";
+  private static final String INFO_DESC = "Ation api Docs.";
 
 
-    private ApiInfo apiInfo(){
-        return new ApiInfoBuilder()
-                .title(INFO_TITLE)
-                .version(INFO_VERSION)
-                .description(INFO_DESC)
-                .build();
-    }
+  private ApiInfo apiInfo() {
+    return new ApiInfoBuilder()
+        .title(INFO_TITLE)
+        .version(INFO_VERSION)
+        .description(INFO_DESC)
+        .build();
+  }
 }

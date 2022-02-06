@@ -3,13 +3,12 @@ package com.eureka.ationserver.dto.insight;
 import com.eureka.ationserver.dto.category.MainCategoryResponse;
 import com.eureka.ationserver.dto.category.SubCategoryResponse;
 import com.eureka.ationserver.model.insight.Insight;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 @Getter
 @NoArgsConstructor
@@ -31,9 +30,9 @@ public class InsightResponse {
 
     private LocalDateTime createdAt;
 
-    private MainCategoryResponse insightMainCategory;
+    private MainCategoryResponse mainCategory;
 
-    private List<SubCategoryResponse> insightSubCategoryList;
+    private List<SubCategoryResponse> subCategoryList;
 
     private List<String> tagList;
 
@@ -44,7 +43,7 @@ public class InsightResponse {
         List<SubCategoryResponse> subCategoryResponseList = new ArrayList<>();
         insight.getInsightSubCategoryList().stream().forEach(x-> subCategoryResponseList.add(new SubCategoryResponse(x)));
         List<String> tagList = new ArrayList<>();
-        insight.getInsightTagList().stream().forEach(x-> tagList.add(x.getName()));
+        insight.getInsightTagList().stream().forEach(x -> tagList.add(x.getName()));
 
         this.id = insight.getId();
         this.url = insight.getUrl();
@@ -53,8 +52,8 @@ public class InsightResponse {
         this.description = insight.getDescription();
         this.siteName = insight.getSiteName();
         this.createdAt = insight.getCreatedAt();
-        this.insightMainCategory = mainCategoryResponse;
-        this.insightSubCategoryList = subCategoryResponseList;
+        this.mainCategory = mainCategoryResponse;
+        this.subCategoryList = subCategoryResponseList;
         this.tagList = tagList;
         this.icon = insight.getIcon();
     }

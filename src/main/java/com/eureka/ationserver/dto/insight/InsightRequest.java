@@ -1,11 +1,10 @@
 package com.eureka.ationserver.dto.insight;
 
+import java.util.List;
+import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import javax.validation.constraints.NotEmpty;
-import java.util.List;
 
 
 @Getter
@@ -16,9 +15,9 @@ public class InsightRequest {
     @NotEmpty
     private String url;
 
-    private Long insightMainCategoryId;
+    private Long mainCategoryId;
 
-    private List<Long> insightSubCategoryIdList;
+    private List<Long> subCategoryIdList;
 
     private List<String> tagList;
 
