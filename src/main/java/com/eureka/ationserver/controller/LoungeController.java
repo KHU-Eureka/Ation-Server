@@ -56,14 +56,14 @@ public class LoungeController {
 
   }
 
-  @PutMapping("/lounge/{loungeId}/notice")
+  @PutMapping("/lounge/notice/{loungeId}")
   @ApiOperation("라운지 공지 수정")
   public ResponseEntity updateNotice(@PathVariable Long loungeId, @RequestBody String notice){
     return new ResponseEntity(loungeService.updateNotice(loungeId, notice), null, HttpStatus.OK);
 
   }
 
-  @PutMapping("/lounge/{loungeId}/image")
+  @PutMapping("/lounge/image/{loungeId}")
   @ApiOperation("라운지 이미지 변경")
   public ResponseEntity saveImg(@PathVariable Long loungeId, @RequestParam(value = "loungeImg", required = true) MultipartFile loungeImg) throws IOException {
     return new ResponseEntity(loungeService.saveImg(loungeId, loungeImg), null, HttpStatus.OK);
@@ -123,20 +123,39 @@ public class LoungeController {
 
   @GetMapping("/lounge/wait")
   @ApiOperation("유저 대기 라운지 조회")
-  public ResponseEntity getWait(@AuthenticationPrincipal UserDetailsImpl userDetails){
+  public ResponseEntity getWait(@AuthenticationPrincipal UserDetails userDetails){
     return new ResponseEntity(loungeService.getWait(userDetails), null, HttpStatus.OK);
   }
 
   @GetMapping("/lounge/current")
   @ApiOperation("유저 실시간 라운지 조회")
-  public ResponseEntity getCurrent(@AuthenticationPrincipal UserDetailsImpl userDetails){
+  public ResponseEntity getCurrent(@AuthenticationPrincipal UserDetails userDetails){
     return new ResponseEntity(loungeService.getCurrent(userDetails), null, HttpStatus.OK);
   }
 
   @GetMapping("/lounge/history")
   @ApiOperation("유저 라운지 참여 이력 조회")
-  public ResponseEntity getHistory(@AuthenticationPrincipal UserDetailsImpl userDetails){
+  public ResponseEntity getHistory(@AuthenticationPrincipal UserDetails userDetails){
     return new ResponseEntity(loungeService.getHistory(userDetails), null, HttpStatus.OK);
   }
+
+  @PostMapping("/lounge/pin/{loungeId}")
+  @ApiOperation("라운지 핀")
+  public ResponseEntity pin(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long loungeId){
+    return new ResponseEntity(loungeService.pin(userDetails, loungeId), null, HttpStatus.CREATED);
+  }
+
+  @DeleteMapping("/lounge/pin/{loungeId}")
+  @ApiOperation("라운지 핀 삭제")
+  public ResponseEntity deletePin(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long loungeId){
+    return new ResponseEntity(loungeService.deletePin(userDetails, loungeId), null, HttpStatus.OK);
+  }
+
+  @GetMapping("/lounge/pin")
+  @ApiOperation("유저 라운지 핀 목록 조회")
+  public ResponseEntity getPin(@AuthenticationPrincipal UserDetails userDetails){
+    return new ResponseEntity(loungeService.getPin(userDetails), null, HttpStatus.OK);
+  }
+
 
 }

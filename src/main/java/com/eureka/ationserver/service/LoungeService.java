@@ -4,6 +4,7 @@ import com.eureka.ationserver.advice.exception.CommonException;
 import com.eureka.ationserver.dto.lounge.EMemberStatus;
 import com.eureka.ationserver.dto.lounge.LoungeChatResponse;
 import com.eureka.ationserver.dto.lounge.LoungeMemberStatusResponse;
+import com.eureka.ationserver.dto.lounge.LoungePinResponse;
 import com.eureka.ationserver.dto.lounge.LoungeRequest;
 import com.eureka.ationserver.dto.lounge.LoungeResponse;
 import com.eureka.ationserver.dto.lounge.SocketLoungeStatusResponse;
@@ -14,6 +15,7 @@ import com.eureka.ationserver.model.category.SubCategory;
 import com.eureka.ationserver.model.lounge.ELonugeStatus;
 import com.eureka.ationserver.model.lounge.Lounge;
 import com.eureka.ationserver.model.lounge.LoungeMember;
+import com.eureka.ationserver.model.lounge.LoungePin;
 import com.eureka.ationserver.model.lounge.LoungeSubCategory;
 import com.eureka.ationserver.model.lounge.LoungeTag;
 import com.eureka.ationserver.model.persona.Persona;
@@ -23,6 +25,7 @@ import com.eureka.ationserver.repository.category.MainCategoryRepository;
 import com.eureka.ationserver.repository.category.SubCategoryRepository;
 import com.eureka.ationserver.repository.lounge.LoungeChatRepository;
 import com.eureka.ationserver.repository.lounge.LoungeMemberRepository;
+import com.eureka.ationserver.repository.lounge.LoungePinRepository;
 import com.eureka.ationserver.repository.lounge.LoungeRepository;
 import com.eureka.ationserver.repository.lounge.LoungeSubCategoryRepository;
 import com.eureka.ationserver.repository.lounge.LoungeTagRepository;
@@ -56,6 +59,7 @@ public class LoungeService {
   private final LoungeChatRepository loungeChatRepository;
   private final UserRepository userRepository;
   private final SimpMessageSendingOperations messageSendingOperations;
+  private final LoungePinRepository loungePinRepository;
 
   @Transactional
   public Long save(LoungeRequest loungeRequest) {
@@ -248,6 +252,11 @@ public class LoungeService {
   public Long ready(Long loungeId, Long personaId) {
     Persona persona = personaRepository.getById(personaId);
 
+    if (loungeMemberRepository.findByUserIdAndLounge_StatusAndReady(persona.getUser().getId(),
+        ELonugeStatus.OPEN, Boolean.TRUE).size() >= 3) {
+      throw new CommonException("대기 중인 라운지가 3개 입니다.");
+    }
+
     LoungeMember loungeMember = loungeMemberRepository.findByLounge_IdAndUserId(loungeId,
         persona.getUser().getId()).get();
 
@@ -294,7 +303,8 @@ public class LoungeService {
   @Transactional
   public List<LoungeMemberStatusResponse> getWait(UserDetails userDetails) {
     User user = userRepository.findByEmail(userDetails.getUsername()).get();
-    return loungeMemberRepository.findByUserIdAndLounge_StatusAndReady(user.getId(), ELonugeStatus.OPEN,
+    return loungeMemberRepository.findByUserIdAndLounge_StatusAndReady(user.getId(),
+            ELonugeStatus.OPEN,
             Boolean.TRUE).stream().map(
             LoungeMemberStatusResponse::new)
         .collect(
@@ -304,7 +314,8 @@ public class LoungeService {
   @Transactional
   public List<LoungeMemberStatusResponse> getCurrent(UserDetails userDetails) {
     User user = userRepository.findByEmail(userDetails.getUsername()).get();
-    return loungeMemberRepository.findByUserIdAndLounge_Status(user.getId(), ELonugeStatus.START).stream().map(
+    return loungeMemberRepository.findByUserIdAndLounge_Status(user.getId(), ELonugeStatus.START)
+        .stream().map(
             LoungeMemberStatusResponse::new)
         .collect(
             Collectors.toList());
@@ -314,10 +325,43 @@ public class LoungeService {
   public List<LoungeMemberStatusResponse> getHistory(UserDetails userDetails) {
     User user = userRepository.findByEmail(userDetails.getUsername()).get();
 
-    return loungeMemberRepository.findByUserIdAndLounge_Status(user.getId(), ELonugeStatus.END).stream().map(
+    return loungeMemberRepository.findByUserIdAndLounge_Status(user.getId(), ELonugeStatus.END)
+        .stream().map(
             LoungeMemberStatusResponse::new)
         .collect(
             Collectors.toList());
+  }
+
+  @Transactional
+  public Long pin(UserDetails userDetails, Long loungeId) {
+    User user = userRepository.findByEmail(userDetails.getUsername()).get();
+
+    if (loungePinRepository.findByLounge_IdAndUserId(loungeId, user.getId()).isPresent()) {
+      throw new CommonException("이미 핀 한 라운지 입니다.");
+    }
+
+    loungePinRepository.save(LoungePin.builder()
+        .lounge(loungeRepository.getById(loungeId))
+        .userId(user.getId())
+        .build());
+
+    return loungeId;
+  }
+
+  @Transactional
+  public Long deletePin(UserDetails userDetails, Long lougeId){
+    User user = userRepository.findByEmail(userDetails.getUsername()).get();
+
+    loungePinRepository.deleteByLounge_IdAndUserId(lougeId, user.getId());
+    return lougeId;
+  }
+
+  @Transactional(readOnly = true)
+  public List<LoungePinResponse> getPin(UserDetails userDetails){
+    User user = userRepository.findByEmail(userDetails.getUsername()).get();
+
+    return loungePinRepository.findByUserId(user.getId()).stream().map(LoungePinResponse::new).collect(
+        Collectors.toList());
   }
 
 
