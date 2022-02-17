@@ -6,14 +6,12 @@ import com.eureka.ationserver.dto.persona.PersonaSimpleResponse;
 import com.eureka.ationserver.dto.sense.SenseResponse;
 import com.eureka.ationserver.model.lounge.ELonugeStatus;
 import com.eureka.ationserver.model.lounge.Lounge;
-import com.eureka.ationserver.repository.lounge.LoungeMemberRepository;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-import lombok.RequiredArgsConstructor;
 
 @Getter
 @NoArgsConstructor
@@ -46,8 +44,6 @@ public class LoungeResponse {
 
   private List<SubCategoryResponse> subCategoryList;
 
-  private List<String> tagList;
-
   private List<LoungeMemberResponse> memberList;
 
   public LoungeResponse(Lounge lounge) {
@@ -57,8 +53,6 @@ public class LoungeResponse {
     List<SubCategoryResponse> subCategoryResponseList = new ArrayList<>();
     lounge.getLoungeSubCategoryList().stream()
         .forEach(x -> subCategoryResponseList.add(new SubCategoryResponse(x)));
-    List<String> tagList = new ArrayList<>();
-    lounge.getLoungeTagList().stream().forEach(x -> tagList.add(x.getName()));
     PersonaSimpleResponse personaSimpleResponse = new PersonaSimpleResponse(lounge.getPersona());
     List<LoungeMemberResponse> memberList = new ArrayList<>();
     lounge.getLoungeMemberList().stream()
@@ -76,7 +70,6 @@ public class LoungeResponse {
     this.persona = personaSimpleResponse;
     this.mainCategory = mainCategoryResponse;
     this.subCategoryList = subCategoryResponseList;
-    this.tagList = tagList;
     this.memberList = memberList;
 
   }

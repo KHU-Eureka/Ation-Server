@@ -27,8 +27,6 @@ public class LoungeRequest {
 
   private Long senseId;
 
-  private List<String> tagList;
-
   private Long mainCategoryId;
 
   private List<Long> subCategoryIdList;

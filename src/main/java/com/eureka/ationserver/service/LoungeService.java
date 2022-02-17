@@ -17,7 +17,6 @@ import com.eureka.ationserver.model.lounge.Lounge;
 import com.eureka.ationserver.model.lounge.LoungeMember;
 import com.eureka.ationserver.model.lounge.LoungePin;
 import com.eureka.ationserver.model.lounge.LoungeSubCategory;
-import com.eureka.ationserver.model.lounge.LoungeTag;
 import com.eureka.ationserver.model.persona.Persona;
 import com.eureka.ationserver.model.persona.Sense;
 import com.eureka.ationserver.model.user.User;
@@ -28,7 +27,6 @@ import com.eureka.ationserver.repository.lounge.LoungeMemberRepository;
 import com.eureka.ationserver.repository.lounge.LoungePinRepository;
 import com.eureka.ationserver.repository.lounge.LoungeRepository;
 import com.eureka.ationserver.repository.lounge.LoungeSubCategoryRepository;
-import com.eureka.ationserver.repository.lounge.LoungeTagRepository;
 import com.eureka.ationserver.repository.persona.PersonaRepository;
 import com.eureka.ationserver.repository.persona.SenseRepository;
 import com.eureka.ationserver.repository.user.UserRepository;
@@ -54,7 +52,6 @@ public class LoungeService {
   private final SubCategoryRepository subCategoryRepository;
   private final SenseRepository senseRepository;
   private final LoungeSubCategoryRepository loungeSubCategoryRepository;
-  private final LoungeTagRepository loungeTagRepository;
   private final LoungeMemberRepository loungeMemberRepository;
   private final LoungeChatRepository loungeChatRepository;
   private final UserRepository userRepository;
@@ -85,13 +82,6 @@ public class LoungeService {
         LoungeSubCategory.builder()
             .lounge(saved)
             .subCategory(x)
-            .build()
-    ));
-
-    loungeRequest.getTagList().stream().forEach(x -> loungeTagRepository.save(
-        LoungeTag.builder()
-            .lounge(saved)
-            .name(x)
             .build()
     ));
 
@@ -128,8 +118,6 @@ public class LoungeService {
 
     loungeSubCategoryRepository.deleteByLounge_Id(loungeId);
 
-    loungeTagRepository.deleteByLounge_Id(loungeId);
-
     List<SubCategory> subCategoryList = subCategoryRepository.findAllByIdIn(
         loungeRequest.getSubCategoryIdList());
 
@@ -137,13 +125,6 @@ public class LoungeService {
         LoungeSubCategory.builder()
             .lounge(lounge)
             .subCategory(x)
-            .build()
-    ));
-
-    loungeRequest.getTagList().stream().forEach(x -> loungeTagRepository.save(
-        LoungeTag.builder()
-            .lounge(lounge)
-            .name(x)
             .build()
     ));
 

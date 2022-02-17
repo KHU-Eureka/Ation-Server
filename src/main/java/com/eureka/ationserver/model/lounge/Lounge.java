@@ -51,9 +51,6 @@ public class Lounge {
   private List<LoungeSubCategory> loungeSubCategoryList;
 
   @OneToMany(mappedBy = "lounge", cascade = CascadeType.ALL)
-  private List<LoungeTag> loungeTagList;
-
-  @OneToMany(mappedBy = "lounge", cascade = CascadeType.ALL)
   private List<LoungeMember> loungeMemberList;
 
   @OneToMany(mappedBy = "lounge", cascade = CascadeType.ALL)
