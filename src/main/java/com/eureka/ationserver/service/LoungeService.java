@@ -3,6 +3,7 @@ package com.eureka.ationserver.service;
 import com.eureka.ationserver.advice.exception.CommonException;
 import com.eureka.ationserver.dto.lounge.EMemberStatus;
 import com.eureka.ationserver.dto.lounge.LoungeChatResponse;
+import com.eureka.ationserver.dto.lounge.LoungeImageResponse;
 import com.eureka.ationserver.dto.lounge.LoungeMemberStatusResponse;
 import com.eureka.ationserver.dto.lounge.LoungePinResponse;
 import com.eureka.ationserver.dto.lounge.LoungeRequest;
@@ -12,7 +13,7 @@ import com.eureka.ationserver.dto.lounge.SocketMemberResponse;
 import com.eureka.ationserver.dto.persona.PersonaSimpleResponse;
 import com.eureka.ationserver.model.category.MainCategory;
 import com.eureka.ationserver.model.category.SubCategory;
-import com.eureka.ationserver.model.lounge.ELonugeStatus;
+import com.eureka.ationserver.model.lounge.ELoungeStatus;
 import com.eureka.ationserver.model.lounge.Lounge;
 import com.eureka.ationserver.model.lounge.LoungeMember;
 import com.eureka.ationserver.model.lounge.LoungePin;
@@ -23,6 +24,7 @@ import com.eureka.ationserver.model.user.User;
 import com.eureka.ationserver.repository.category.MainCategoryRepository;
 import com.eureka.ationserver.repository.category.SubCategoryRepository;
 import com.eureka.ationserver.repository.lounge.LoungeChatRepository;
+import com.eureka.ationserver.repository.lounge.LoungeImageRepository;
 import com.eureka.ationserver.repository.lounge.LoungeMemberRepository;
 import com.eureka.ationserver.repository.lounge.LoungePinRepository;
 import com.eureka.ationserver.repository.lounge.LoungeRepository;
@@ -31,8 +33,6 @@ import com.eureka.ationserver.repository.persona.PersonaRepository;
 import com.eureka.ationserver.repository.persona.SenseRepository;
 import com.eureka.ationserver.repository.user.UserRepository;
 import com.eureka.ationserver.utils.image.ImageUtil;
-import java.io.File;
-import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
@@ -40,7 +40,6 @@ import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -57,11 +56,10 @@ public class LoungeService {
   private final UserRepository userRepository;
   private final SimpMessageSendingOperations messageSendingOperations;
   private final LoungePinRepository loungePinRepository;
+  private final LoungeImageRepository loungeImageRepository;
 
   @Transactional
   public Long save(LoungeRequest loungeRequest) {
-
-    String defaultPath = ImageUtil.getDefaultImagePath(Lounge.Lounge_PREFIX);
 
     Persona persona = personaRepository.getById(loungeRequest.getPersonaId());
 
@@ -70,8 +68,11 @@ public class LoungeService {
 
     Sense sense = senseRepository.getById(loungeRequest.getSenseId());
 
+    String imgPath = ImageUtil.getImagePath(Lounge.Lounge_PREFIX, loungeRequest.getImageId())
+        .get(0);
+
     Lounge saved = loungeRepository.save(
-        loungeRequest.toEntity(persona, mainCategory, sense, defaultPath));
+        loungeRequest.toEntity(persona, mainCategory, sense, imgPath));
 
     saved.open();
 
@@ -121,6 +122,9 @@ public class LoungeService {
     List<SubCategory> subCategoryList = subCategoryRepository.findAllByIdIn(
         loungeRequest.getSubCategoryIdList());
 
+    String imgPath = ImageUtil.getImagePath(Lounge.Lounge_PREFIX, loungeRequest.getImageId())
+        .get(0);
+
     subCategoryList.stream().forEach(x -> loungeSubCategoryRepository.save(
         LoungeSubCategory.builder()
             .lounge(lounge)
@@ -135,7 +139,7 @@ public class LoungeService {
 
     Sense sense = senseRepository.getById(loungeRequest.getSenseId());
 
-    lounge.update(loungeRequest, persona, mainCategory, sense);
+    lounge.update(loungeRequest, persona, mainCategory, sense, imgPath);
 
     return loungeId;
   }
@@ -154,21 +158,11 @@ public class LoungeService {
   }
 
   @Transactional
-  public Long saveImg(Long loungeId, MultipartFile loungeImg) throws IOException {
-    Lounge lounge = loungeRepository.getById(loungeId);
-    List<String> pathList = ImageUtil.getImagePath(Lounge.Lounge_PREFIX, loungeId);
-    File file = new File(pathList.get(1));
-    loungeImg.transferTo(file);
-    lounge.setImgPath(pathList.get(0));
-    return loungeId;
-  }
-
-  @Transactional
   public Long end(Long loungeId) {
     Lounge lounge = loungeRepository.getById(loungeId);
     lounge.end();
     messageSendingOperations.convertAndSend(String.format("/lounge/%d/status/send", loungeId),
-        SocketLoungeStatusResponse.builder().status(ELonugeStatus.END).build());
+        SocketLoungeStatusResponse.builder().status(ELoungeStatus.END).build());
     return loungeId;
   }
 
@@ -181,7 +175,7 @@ public class LoungeService {
     loungeChatRepository.deleteByLounge_Id(loungeId);
 
     messageSendingOperations.convertAndSend(String.format("/lounge/%d/status/send", loungeId),
-        SocketLoungeStatusResponse.builder().status(ELonugeStatus.START).build());
+        SocketLoungeStatusResponse.builder().status(ELoungeStatus.START).build());
     return loungeId;
   }
 
@@ -239,7 +233,7 @@ public class LoungeService {
     Persona persona = personaRepository.getById(personaId);
 
     if (loungeMemberRepository.findByUserIdAndLounge_StatusAndReady(persona.getUser().getId(),
-        ELonugeStatus.OPEN, Boolean.TRUE).size() >= 3) {
+        ELoungeStatus.OPEN, Boolean.TRUE).size() >= 3) {
       throw new CommonException("대기 중인 라운지가 3개 입니다.");
     }
 
@@ -290,7 +284,7 @@ public class LoungeService {
   public List<LoungeMemberStatusResponse> getWait(UserDetails userDetails) {
     User user = userRepository.findByEmail(userDetails.getUsername()).get();
     return loungeMemberRepository.findByUserIdAndLounge_StatusAndReady(user.getId(),
-            ELonugeStatus.OPEN,
+            ELoungeStatus.OPEN,
             Boolean.TRUE).stream().map(
             LoungeMemberStatusResponse::new)
         .collect(
@@ -300,7 +294,7 @@ public class LoungeService {
   @Transactional
   public List<LoungeMemberStatusResponse> getCurrent(UserDetails userDetails) {
     User user = userRepository.findByEmail(userDetails.getUsername()).get();
-    return loungeMemberRepository.findByUserIdAndLounge_Status(user.getId(), ELonugeStatus.START)
+    return loungeMemberRepository.findByUserIdAndLounge_Status(user.getId(), ELoungeStatus.START)
         .stream().map(
             LoungeMemberStatusResponse::new)
         .collect(
@@ -311,7 +305,7 @@ public class LoungeService {
   public List<LoungeMemberStatusResponse> getHistory(UserDetails userDetails) {
     User user = userRepository.findByEmail(userDetails.getUsername()).get();
 
-    return loungeMemberRepository.findByUserIdAndLounge_Status(user.getId(), ELonugeStatus.END)
+    return loungeMemberRepository.findByUserIdAndLounge_Status(user.getId(), ELoungeStatus.END)
         .stream().map(
             LoungeMemberStatusResponse::new)
         .collect(
@@ -343,11 +337,18 @@ public class LoungeService {
   }
 
   @Transactional(readOnly = true)
-  public List<LoungePinResponse> getPin(UserDetails userDetails){
+  public List<LoungePinResponse> getPin(UserDetails userDetails) {
     User user = userRepository.findByEmail(userDetails.getUsername()).get();
 
-    return loungePinRepository.findByUserId(user.getId()).stream().map(LoungePinResponse::new).collect(
-        Collectors.toList());
+    return loungePinRepository.findByUserId(user.getId()).stream().map(LoungePinResponse::new)
+        .collect(
+            Collectors.toList());
+  }
+
+  @Transactional(readOnly = true)
+  public List<LoungeImageResponse> getImage() {
+    return loungeImageRepository.findAll().stream().map(LoungeImageResponse::new)
+        .collect(Collectors.toList());
   }
 
 

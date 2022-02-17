@@ -4,7 +4,7 @@ import com.eureka.ationserver.dto.category.MainCategoryResponse;
 import com.eureka.ationserver.dto.category.SubCategoryResponse;
 import com.eureka.ationserver.dto.persona.PersonaSimpleResponse;
 import com.eureka.ationserver.dto.sense.SenseResponse;
-import com.eureka.ationserver.model.lounge.ELonugeStatus;
+import com.eureka.ationserver.model.lounge.ELoungeStatus;
 import com.eureka.ationserver.model.lounge.Lounge;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -24,15 +24,15 @@ public class LoungeResponse {
 
   private Integer limitMember;
 
-  private ELonugeStatus status; // 0 : 모집 중, 1 : 종료, 2: 진행 중
+  private ELoungeStatus status; // 0 : 모집 중, 1 : 종료, 2: 진행 중
 
   private String introduction;
 
   private String notice;
 
-  private String imgPath;
-
   private Long totalMember;
+
+  private String imgPath;
 
   private LocalDateTime createdAt;
 
@@ -64,8 +64,8 @@ public class LoungeResponse {
     this.status = lounge.getStatus();
     this.introduction = lounge.getIntroduction();
     this.notice = lounge.getNotice();
-    this.imgPath = lounge.getImgPath();
     this.createdAt = lounge.getCreatedAt();
+    this.imgPath = lounge.getImgPath();
     this.sense = new SenseResponse(lounge.getSense());
     this.persona = personaSimpleResponse;
     this.mainCategory = mainCategoryResponse;

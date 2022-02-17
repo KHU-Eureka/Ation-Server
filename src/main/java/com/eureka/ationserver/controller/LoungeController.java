@@ -1,7 +1,6 @@
 package com.eureka.ationserver.controller;
 
 
-import com.eureka.ationserver.config.security.details.UserDetailsImpl;
 import com.eureka.ationserver.dto.lounge.LoungeRequest;
 import com.eureka.ationserver.service.LoungeService;
 import io.swagger.annotations.Api;
@@ -19,9 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api")
@@ -58,21 +55,21 @@ public class LoungeController {
 
   @PutMapping("/lounge/notice/{loungeId}")
   @ApiOperation("라운지 공지 수정")
-  public ResponseEntity updateNotice(@PathVariable Long loungeId, @RequestBody String notice){
+  public ResponseEntity updateNotice(@PathVariable Long loungeId, @RequestBody String notice) {
     return new ResponseEntity(loungeService.updateNotice(loungeId, notice), null, HttpStatus.OK);
 
   }
 
-  @PutMapping("/lounge/image/{loungeId}")
-  @ApiOperation("라운지 이미지 변경")
-  public ResponseEntity saveImg(@PathVariable Long loungeId, @RequestParam(value = "loungeImg", required = true) MultipartFile loungeImg) throws IOException {
-    return new ResponseEntity(loungeService.saveImg(loungeId, loungeImg), null, HttpStatus.OK);
+  @PutMapping("/lounge/image")
+  @ApiOperation("라운지 이미지 목록 조회")
+  public ResponseEntity getImage() throws IOException {
+    return new ResponseEntity(loungeService.getImage(), null, HttpStatus.OK);
 
   }
 
   @DeleteMapping("/lounge/{loungeId}")
   @ApiOperation("라운지 삭제")
-  public ResponseEntity delete(@PathVariable Long loungeId){
+  public ResponseEntity delete(@PathVariable Long loungeId) {
     return new ResponseEntity(loungeService.delete(loungeId), null, HttpStatus.OK);
 
   }

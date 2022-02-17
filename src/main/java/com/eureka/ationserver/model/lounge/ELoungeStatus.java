@@ -1,6 +1,6 @@
 package com.eureka.ationserver.model.lounge;
 
-public enum ELonugeStatus {
+public enum ELoungeStatus {
   OPEN,
   START,
   END
