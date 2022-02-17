@@ -19,7 +19,7 @@ public class UserResponse {
         this.id = user.getId();
         this.email = user.getEmail();
         this.name = user.getName();
-        this.myPageImgPath = user.getMypageImgPath();
+        this.myPageImgPath = user.getMyPageImgPath();
     }
 
 
