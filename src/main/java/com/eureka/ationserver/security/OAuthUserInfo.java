@@ -6,7 +6,6 @@ import java.util.Map;
 import lombok.Builder;
 import lombok.Data;
 
-
 @Data
 @Builder
 public class OAuthUserInfo {
@@ -25,7 +24,7 @@ public class OAuthUserInfo {
 
     // kakao
     if (OAuthProvider.kakao.getValue().equals(registrationId)) {
-      return ofKakao("id", attributes, OAuthProvider.kakao);
+      return ofKakao(userNameAttributeName, attributes, OAuthProvider.kakao);
     }
     // google
     return ofGoogle(userNameAttributeName, attributes, OAuthProvider.google);
@@ -42,7 +41,7 @@ public class OAuthUserInfo {
         .nameAttributeKey(userNameAttributeName)
         .provider(oAuthProvider)
         .id((String) attributes.get(userNameAttributeName))
-        .identifyId(String.format("%s@%s", (String) attributes.get(userNameAttributeName),
+        .identifyId(String.format("%s_%s", (String) attributes.get(userNameAttributeName),
             oAuthProvider.getValue()))
         .build();
   }
@@ -52,13 +51,24 @@ public class OAuthUserInfo {
     Map<String, Object> kakaoAccount = (Map<String, Object>) attributes.get("kakao_account");
     Map<String, Object> kakaoProfile = (Map<String, Object>) kakaoAccount.get("profile");
 
-    return OAuthUserInfo.builder()
+    OAuthUserInfo oAuthUserInfo = OAuthUserInfo.builder()
         .name((String) kakaoProfile.get("nickname"))
-        .email((String) kakaoAccount.get("email"))
         .picture((String) kakaoProfile.get("profile_image_url"))
         .attributes(attributes)
         .nameAttributeKey(userNameAttributeName)
+        .provider(oAuthProvider)
+        .id(String.valueOf(attributes.get(userNameAttributeName)))
+        .identifyId(String.format("%s_%s", String.valueOf(attributes.get(userNameAttributeName)),
+            oAuthProvider.getValue()))
         .build();
+
+    try {
+      oAuthUserInfo.setEmail((String) kakaoAccount.get("email"));
+    } catch (Exception e) {
+      oAuthUserInfo.setEmail(
+          String.format("%s@%s", oAuthUserInfo.getId(), oAuthUserInfo.getProvider()));
+    }
+    return oAuthUserInfo;
   }
 
 
