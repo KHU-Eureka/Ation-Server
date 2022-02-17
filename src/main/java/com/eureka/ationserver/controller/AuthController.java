@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
-@Api(tags = {"Authentication"})
+@Api(tags = {"Auth"})
 @RequiredArgsConstructor
 public class AuthController {
     private final AuthService authService;
@@ -23,8 +23,6 @@ public class AuthController {
     public ResponseEntity<?> loggedIn(){
         return new ResponseEntity(authService.checkAuthState(), null, HttpStatus.OK);
     }
-
-
 
 
 

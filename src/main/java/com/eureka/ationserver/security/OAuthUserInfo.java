@@ -10,14 +10,14 @@ import lombok.Data;
 @Builder
 public class OAuthUserInfo {
 
-  private Map<String, Object> attributes;
   private String id;
+  private String identifyId;
   private String nameAttributeKey;
   private String name;
   private String email;
   private String picture;
   private OAuthProvider provider;
-  private String identifyId;
+  private Map<String, Object> attributes;
 
   public static OAuthUserInfo of(String registrationId, String userNameAttributeName,
       Map<String, Object> attributes) {

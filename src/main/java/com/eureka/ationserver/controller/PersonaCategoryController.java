@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api")
-@Api(tags = {"Persona Category"})
+@Api(tags = {"PersonaCategory"})
 @RequiredArgsConstructor
 public class PersonaCategoryController {
 
