@@ -184,7 +184,7 @@ public class LoungeService {
 
     Persona persona = personaRepository.getById(personaId);
     Lounge lounge = loungeRepository.getById(loungeId);
-    if(lounge.getLoungeMemberList().size()>=lounge.getLimitMember()){
+    if (lounge.getLoungeMemberList().size() >= lounge.getLimitMember()) {
       throw new CommonException("인원이 다 찼습니다.");
     }
 
@@ -329,7 +329,7 @@ public class LoungeService {
   }
 
   @Transactional
-  public Long deletePin(UserDetails userDetails, Long lougeId){
+  public Long deletePin(UserDetails userDetails, Long lougeId) {
     User user = userRepository.findByEmail(userDetails.getUsername()).get();
 
     loungePinRepository.deleteByLounge_IdAndUserId(lougeId, user.getId());

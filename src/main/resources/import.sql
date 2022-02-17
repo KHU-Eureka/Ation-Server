@@ -49,63 +49,34 @@ INSERT INTO sub_category(name, main_category_id) values("콘텐츠 마케팅", 4
 INSERT INTO sub_category(name, main_category_id) values("브랜드 마케팅", 4);
 
 INSERT INTO sub_category(name, main_category_id) values("힙합", 5);
-INSERT INTO sub_category(name, main_category_id)
-values ("발라드", 5);
-INSERT INTO sub_category(name, main_category_id)
-values ("POP", 5);
-INSERT INTO sub_category(name, main_category_id)
-values ("인디음악", 5);
-INSERT INTO sub_category(name, main_category_id)
-values ("R&B", 5);
-INSERT INTO sub_category(name, main_category_id)
-values ("클래식", 5);
-INSERT INTO sub_category(name, main_category_id)
-values ("락", 5);
+INSERT INTO sub_category(name, main_category_id) values("발라드", 5);
+INSERT INTO sub_category(name, main_category_id) values("POP", 5);
+INSERT INTO sub_category(name, main_category_id) values("인디음악", 5);
+INSERT INTO sub_category(name, main_category_id) values("R&B", 5);
+INSERT INTO sub_category(name, main_category_id) values("클래식", 5);
+INSERT INTO sub_category(name, main_category_id) values("락", 5);
 
-INSERT INTO sub_category(name, main_category_id)
-values ("스타트업", 6);
-INSERT INTO sub_category(name, main_category_id)
-values ("인턴", 6);
-INSERT INTO sub_category(name, main_category_id)
-values ("회사생활 꿀TIP", 6);
+INSERT INTO sub_category(name, main_category_id) values("스타트업", 6);
+INSERT INTO sub_category(name, main_category_id) values("인턴", 6);
+INSERT INTO sub_category(name, main_category_id) values("회사생활 꿀TIP", 6);
 
-INSERT INTO lounge_image(id)
-values (1);
-INSERT INTO lounge_image(id)
-values (2);
-INSERT INTO lounge_image(id)
-values (3);
-INSERT INTO lounge_image(id)
-values (4);
-INSERT INTO lounge_image(id)
-values (5);
-INSERT INTO lounge_image(id)
-values (6);
-INSERT INTO lounge_image(id)
-values (7);
-INSERT INTO lounge_image(id)
-values (8);
-INSERT INTO lounge_image(id)
-values (9);
-INSERT INTO lounge_image(id)
-values (10);
-INSERT INTO lounge_image(id)
-values (11);
-INSERT INTO lounge_image(id)
-values (12);
-INSERT INTO lounge_image(id)
-values (13);
-INSERT INTO lounge_image(id)
-values (14);
-INSERT INTO lounge_image(id)
-values (15);
-INSERT INTO lounge_image(id)
-values (16);
-INSERT INTO lounge_image(id)
-values (17);
-INSERT INTO lounge_image(id)
-values (18);
-INSERT INTO lounge_image(id)
-values (19);
-INSERT INTO lounge_image(id)
-values (20);
+INSERT INTO lounge_image(id) values(1);
+INSERT INTO lounge_image(id) values(2);
+INSERT INTO lounge_image(id) values(3);
+INSERT INTO lounge_image(id) values(4);
+INSERT INTO lounge_image(id) values(5);
+INSERT INTO lounge_image(id) values(6);
+INSERT INTO lounge_image(id) values(7);
+INSERT INTO lounge_image(id) values(8);
+INSERT INTO lounge_image(id) values(9);
+INSERT INTO lounge_image(id) values(10);
+INSERT INTO lounge_image(id) values(11);
+INSERT INTO lounge_image(id) values(12);
+INSERT INTO lounge_image(id) values(13);
+INSERT INTO lounge_image(id) values(14);
+INSERT INTO lounge_image(id) values(15);
+INSERT INTO lounge_image(id) values(16);
+INSERT INTO lounge_image(id) values(17);
+INSERT INTO lounge_image(id) values(18);
+INSERT INTO lounge_image(id) values(19);
+INSERT INTO lounge_image(id) values(20);

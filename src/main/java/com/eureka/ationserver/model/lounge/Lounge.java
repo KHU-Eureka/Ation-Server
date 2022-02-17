@@ -36,7 +36,7 @@ public class Lounge {
   private Long id;
 
   @ManyToOne(targetEntity = Persona.class, fetch = FetchType.LAZY)
-  @JoinColumn(name="persona_id")
+  @JoinColumn(name = "persona_id")
   private Persona persona;
 
   @ManyToOne(targetEntity = Sense.class, fetch = FetchType.LAZY)
@@ -96,15 +96,15 @@ public class Lounge {
     return this;
   }
 
-  public void open(){
+  public void open() {
     this.status = ELoungeStatus.OPEN;
   }
 
-  public void start(){
+  public void start() {
     this.status = ELoungeStatus.START;
   }
 
-  public void end(){
+  public void end() {
     this.status = ELoungeStatus.END;
   }
 
