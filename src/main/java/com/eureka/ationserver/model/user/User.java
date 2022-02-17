@@ -33,12 +33,12 @@ public class User {
   private Long id;
 
   /**
-   * social login unique Id
+   * social login unique Id with provider name
    */
   @Column(nullable = false, unique = true)
   private String identifyId;
 
-  @Column(nullable = false)
+  @Column
   private String name;
 
   @Column
