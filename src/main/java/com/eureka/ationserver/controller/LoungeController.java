@@ -61,7 +61,7 @@ public class LoungeController {
 
   }
 
-  @PutMapping("/lounge/image")
+  @GetMapping("/lounge/image")
   @ApiOperation("라운지 이미지 목록 조회")
   public ResponseEntity getImage() throws IOException {
     return new ResponseEntity(loungeService.getImage(), null, HttpStatus.OK);
