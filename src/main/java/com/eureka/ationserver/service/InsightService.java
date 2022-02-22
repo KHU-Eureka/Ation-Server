@@ -15,7 +15,6 @@ import com.eureka.ationserver.repository.insight.InsightRepository;
 import com.eureka.ationserver.repository.insight.InsightSubCategoryRepository;
 import com.eureka.ationserver.repository.insight.InsightTagRepository;
 import com.eureka.ationserver.repository.insight.InsightViewRepository;
-import com.eureka.ationserver.repository.user.UserRepository;
 import com.eureka.ationserver.utils.image.ImageUtil;
 import com.eureka.ationserver.utils.parse.Parse;
 import com.eureka.ationserver.utils.parse.ParseUtil;
@@ -41,7 +40,7 @@ public class InsightService {
     private final InsightTagRepository insightTagRepository;
     private final InsightSubCategoryRepository insightSubCategoryRepository;
     private final InsightViewRepository insightViewRepository;
-    private final UserRepository userRepository;
+    private final AuthService authService;
 
     @Transactional
     public Long savePublic(InsightRequest insightRequest) throws Exception {
@@ -113,15 +112,17 @@ public class InsightService {
     }
 
     @Transactional(readOnly = true)
-    public InsightResponse findPublic(User user, Long insightId){
+    public InsightResponse findPublic(Long insightId) {
+        User user = authService.auth();
         Insight insight = insightRepository.getById(insightId);
 
-        Optional<InsightView> insightView = insightViewRepository.findByUserAndInsight(user, insight);
-        if(!insightView.isPresent()){
+        Optional<InsightView> insightView = insightViewRepository.findByUserAndInsight(user,
+            insight);
+        if (!insightView.isPresent()) {
             InsightView newInsightView = InsightView.builder()
-                    .insight(insight)
-                    .user(user)
-                    .build();
+                .insight(insight)
+                .user(user)
+                .build();
             insightViewRepository.save(newInsightView);
         }
         return new InsightResponse(insight);

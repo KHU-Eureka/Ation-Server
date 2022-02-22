@@ -14,8 +14,11 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class MyPageService {
 
+    private final AuthService authService;
+
     @Transactional
-    public Long saveImg(User user, MultipartFile myPageImg) throws IOException {
+    public Long saveImg(MultipartFile myPageImg) throws IOException {
+        User user = authService.auth();
 
         List<String> pathList = ImageUtil.getImagePath(User.MYPAGE_PREFIX, user.getId());
         File file = new File(pathList.get(1));

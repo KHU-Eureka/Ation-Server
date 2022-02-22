@@ -1,22 +1,31 @@
 package com.eureka.ationserver.service;
 
 import com.eureka.ationserver.advice.exception.ForbiddenException;
+import com.eureka.ationserver.dto.persona.PersonaRequest;
+import com.eureka.ationserver.dto.persona.PersonaResponse;
+import com.eureka.ationserver.model.persona.Interest;
+import com.eureka.ationserver.model.persona.Persona;
+import com.eureka.ationserver.model.persona.PersonaCharm;
+import com.eureka.ationserver.model.persona.PersonaInterest;
+import com.eureka.ationserver.model.persona.PersonaSense;
+import com.eureka.ationserver.model.persona.Sense;
 import com.eureka.ationserver.model.user.User;
-import com.eureka.ationserver.model.persona.*;
-import com.eureka.ationserver.dto.persona.*;
-import com.eureka.ationserver.repository.persona.*;
+import com.eureka.ationserver.repository.persona.InterestRepository;
+import com.eureka.ationserver.repository.persona.PersonaCharmRepository;
+import com.eureka.ationserver.repository.persona.PersonaInterestRepository;
+import com.eureka.ationserver.repository.persona.PersonaRepository;
+import com.eureka.ationserver.repository.persona.PersonaSenseReposotiry;
+import com.eureka.ationserver.repository.persona.SenseRepository;
 import com.eureka.ationserver.utils.image.ImageUtil;
-import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.multipart.MultipartFile;
-
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import lombok.RequiredArgsConstructor;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 @RequiredArgsConstructor
@@ -27,19 +36,23 @@ public class PersonaService {
     private final InterestRepository interestRepository;
     private final PersonaInterestRepository personaInterestRepository;
     private final PersonaCharmRepository personaCharmRepository;
+    private final AuthService authService;
 
 
     @Transactional
-    public Long save(User user, PersonaRequest personaRequest){
+    public Long save(PersonaRequest personaRequest) {
+
+        User user = authService.auth();
+
         String defaultPath = ImageUtil.getDefaultImagePath(Persona.PERSONA_PREFIX);
 
         Persona persona = personaRepository.save(personaRequest.toEntity(user, defaultPath));
 
         // sense
         List<Sense> senseList = senseRepository.findAllByIdIn(personaRequest.getSenseIdList());
-        for(Sense sense : senseList){
+        for (Sense sense : senseList) {
             PersonaSense personaSense = PersonaSense.builder()
-                                            .persona(persona)
+                .persona(persona)
                                             .sense(sense)
                                             .build();
             personaSenseReposotiry.save(personaSense);
@@ -80,12 +93,14 @@ public class PersonaService {
 
 
     @Transactional
-    public Long saveImg(User user, Long personaId, MultipartFile profileImg) throws IOException {
+    public Long saveImg(Long personaId, MultipartFile profileImg) throws IOException {
+        User user = authService.auth();
+
         Persona persona = personaRepository.getById(personaId);
-        if(user.getId() != persona.getUser().getId()){
+        if (user.getId() != persona.getUser().getId()) {
             throw new ForbiddenException();
         } else {
-            List<String> pathList = ImageUtil.getImagePath(Persona.PERSONA_PREFIX,personaId);
+            List<String> pathList = ImageUtil.getImagePath(Persona.PERSONA_PREFIX, personaId);
             File file = new File(pathList.get(1));
             profileImg.transferTo(file);
 
@@ -96,15 +111,17 @@ public class PersonaService {
 
 
     @Transactional(readOnly = true)
-    public PersonaResponse find(Long personaId){
+    public PersonaResponse find(Long personaId) {
         Persona persona = personaRepository.getById(personaId);
-         return new PersonaResponse(persona);
+        return new PersonaResponse(persona);
 
     }
-    public List<PersonaResponse> findAll(User user){
+
+    public List<PersonaResponse> findAll() {
+        User user = authService.auth();
         List<Persona> personaList = personaRepository.findByUserId(user.getId());
         List<PersonaResponse> personaResponseList = new ArrayList<>();
-        for (Persona persona : personaList){
+        for (Persona persona : personaList) {
             personaResponseList.add(new PersonaResponse(persona));
         }
         return personaResponseList;
@@ -114,13 +131,15 @@ public class PersonaService {
 
 
     @Transactional
-    public Long update(User user, Long personaId, PersonaRequest personaRequest){
+    public Long update(Long personaId, PersonaRequest personaRequest) {
+
+        User user = authService.auth();
+
         Persona persona = personaRepository.getById(personaId);
-        if(user.getId() != persona.getUser().getId()){
+        if (user.getId() != persona.getUser().getId()) {
             throw new ForbiddenException();
         } else {
             persona.update(personaRequest);
-
 
             personaSenseReposotiry.deleteByPersona_Id(personaId);
             List<Sense> senseList = senseRepository.findAllByIdIn(personaRequest.getSenseIdList());
@@ -157,9 +176,12 @@ public class PersonaService {
     }
 
     @Transactional
-    public Long delete(User user, Long personaId){
+    public Long delete(Long personaId) {
+
+        User user = authService.auth();
+
         Persona persona = personaRepository.getById(personaId);
-        if(user.getId() != persona.getUser().getId()){
+        if (user.getId() != persona.getUser().getId()) {
             throw new ForbiddenException();
         } else {
             personaRepository.deleteById(personaId);
@@ -168,10 +190,12 @@ public class PersonaService {
     }
 
     @Transactional
-    public Long setCurrentPersona(User user, Long personaId){
-        System.out.println(personaId);
+    public Long setCurrentPersona(Long personaId) {
+
+        User user = authService.auth();
+
         Persona persona = personaRepository.getById(personaId);
-        if(user.getId() != persona.getUser().getId()){
+        if (user.getId() != persona.getUser().getId()) {
             throw new ForbiddenException();
         } else {
             user.setPersona(persona);
@@ -180,12 +204,14 @@ public class PersonaService {
     }
 
     @Transactional(readOnly = true)
-    public PersonaResponse getCurrentPersona(User user){
+    public PersonaResponse getCurrentPersona() {
+        User user = authService.auth();
         Persona persona = user.getPersona();
-        if(persona == null){
+        if (persona == null) {
             return null;
-        }else{
+        } else {
             return new PersonaResponse(persona);
         }
+
     }
 }
