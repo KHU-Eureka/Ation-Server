@@ -65,6 +65,8 @@ public class OAuthUserInfo {
     try {
       oAuthUserInfo.setEmail((String) kakaoAccount.get("email"));
     } catch (Exception e) {
+    }
+    if (oAuthUserInfo.getEmail() == null) {
       oAuthUserInfo.setEmail(
           String.format("%s@%s", oAuthUserInfo.getId(), oAuthUserInfo.getProvider()));
     }

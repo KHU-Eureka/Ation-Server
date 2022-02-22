@@ -18,10 +18,10 @@ public class AuthController {
     private final AuthService authService;
 
 
-    @GetMapping("/auth")
+    @GetMapping("/auth/users")
     @ApiOperation(value = "로그인 유저 조회")
     public ResponseEntity<?> loggedIn(){
-        return new ResponseEntity(authService.checkAuthState(), null, HttpStatus.OK);
+        return new ResponseEntity(authService.getLoggedInUser(), null, HttpStatus.OK);
     }
 
 
