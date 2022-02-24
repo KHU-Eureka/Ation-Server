@@ -25,6 +25,8 @@ public class LoungeRequest {
 
   private String introduction;
 
+  private Long imageId;
+
   private Long senseId;
 
   private List<String> tagList;
@@ -33,7 +35,7 @@ public class LoungeRequest {
 
   private List<Long> subCategoryIdList;
 
-  public Lounge toEntity(Persona persona, MainCategory mainCategory, Sense sense, String imgPath){
+  public Lounge toEntity(Persona persona, MainCategory mainCategory, Sense sense, String imgPath) {
     return Lounge.builder()
         .title(this.title)
         .limitMember(this.limitMember)

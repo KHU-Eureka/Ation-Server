@@ -40,7 +40,7 @@ public class PinService {
   private final PinTagRepository pinTagRepository;
   private final PinRepository pinRepository;
   private final PersonaRepository personaRepository;
-
+  private final AuthService authService;
 
   @Transactional
   public Long saveNewPin(InsightPinRequest insightPinRequest) throws Exception {
@@ -88,7 +88,8 @@ public class PinService {
 
 
   @Transactional
-  public Long pinUp(User user, PinRequest pinRequest) {
+  public Long pinUp(PinRequest pinRequest) {
+    User user = authService.auth();
     PinBoard pinBoard = pinBoardRepository.getById(pinRequest.getPinBoardId());
     if (user.getId() != pinBoard.getPersona().getUser().getId()) {
       throw new ForbiddenException();
@@ -117,7 +118,8 @@ public class PinService {
   }
 
   @Transactional
-  public Long update(User user, PinUpdateRequest pinUpdateRequest, Long pinId) {
+  public Long update(PinUpdateRequest pinUpdateRequest, Long pinId) {
+    User user = authService.auth();
     Pin pin = pinRepository.getById(pinId);
     PinBoard orgPinBoard = pin.getPinBoard();
     if (user.getId() != pin.getPinBoard().getPersona().getUser().getId()) {
@@ -155,7 +157,8 @@ public class PinService {
   }
 
   @Transactional
-  public Long delete(User user, Long pinId) {
+  public Long delete(Long pinId) {
+    User user = authService.auth();
     Pin pin = pinRepository.getById(pinId);
     if (user.getId() != pin.getPinBoard().getPersona().getUser().getId()) {
       throw new ForbiddenException();
@@ -175,7 +178,9 @@ public class PinService {
   }
 
   @Transactional(readOnly = true)
-  public List<PinResponse> findAll(User user, Long personaId) {
+  public List<PinResponse> findAll(Long personaId) {
+    User user = authService.auth();
+
     Persona persona = personaRepository.getById(personaId);
     if (persona.getUser().getId() != user.getId()) {
       throw new ForbiddenException();
@@ -188,7 +193,9 @@ public class PinService {
   }
 
   @Transactional(readOnly = true)
-  public PinResponse find(User user, Long pinId) {
+  public PinResponse find(Long pinId) {
+    User user = authService.auth();
+
     Pin pin = pinRepository.getById(pinId);
     if (user.getId() != pin.getPinBoard().getPersona().getUser().getId()) {
       throw new ForbiddenException();
@@ -198,7 +205,9 @@ public class PinService {
   }
 
   @Transactional(readOnly = true)
-  public Set<PinResponse> search(User user, Long personaId, String keyword) {
+  public Set<PinResponse> search(Long personaId, String keyword) {
+    User user = authService.auth();
+
     Persona persona = personaRepository.getById(personaId);
     if (persona.getUser().getId() != user.getId()) {
       throw new ForbiddenException();
@@ -220,7 +229,9 @@ public class PinService {
   }
 
   @Transactional(readOnly = true)
-  public List<PinResponse> findByPinBoard(User user, Long pinBoardId) {
+  public List<PinResponse> findByPinBoard(Long pinBoardId) {
+    User user = authService.auth();
+
     PinBoard pinBoard = pinBoardRepository.getById(pinBoardId);
     if (pinBoard.getPersona().getUser().getId() != user.getId()) {
       throw new ForbiddenException();

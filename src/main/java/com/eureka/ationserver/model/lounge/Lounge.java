@@ -36,7 +36,7 @@ public class Lounge {
   private Long id;
 
   @ManyToOne(targetEntity = Persona.class, fetch = FetchType.LAZY)
-  @JoinColumn(name="persona_id")
+  @JoinColumn(name = "persona_id")
   private Persona persona;
 
   @ManyToOne(targetEntity = Sense.class, fetch = FetchType.LAZY)
@@ -51,9 +51,6 @@ public class Lounge {
   private List<LoungeSubCategory> loungeSubCategoryList;
 
   @OneToMany(mappedBy = "lounge", cascade = CascadeType.ALL)
-  private List<LoungeTag> loungeTagList;
-
-  @OneToMany(mappedBy = "lounge", cascade = CascadeType.ALL)
   private List<LoungeMember> loungeMemberList;
 
   @OneToMany(mappedBy = "lounge", cascade = CascadeType.ALL)
@@ -66,7 +63,7 @@ public class Lounge {
   private Integer limitMember;
 
   @Column
-  private ELonugeStatus status; // 0 : 모집 중, 1 : 종료, 2: 진행 중
+  private ELoungeStatus status; // 0 : 모집 중, 1 : 종료, 2: 진행 중
 
   @Column
   private String introduction;
@@ -87,30 +84,28 @@ public class Lounge {
   }
 
 
-  public Lounge update(LoungeRequest loungeRequest, Persona persona, MainCategory mainCategory, Sense sense) {
+  public Lounge update(LoungeRequest loungeRequest, Persona persona, MainCategory mainCategory,
+      Sense sense, String imgPath) {
     this.title = loungeRequest.getTitle();
     this.limitMember = loungeRequest.getLimitMember();
     this.introduction = loungeRequest.getIntroduction();
     this.sense = sense;
     this.loungeMainCategory = mainCategory;
     this.persona = persona;
+    this.imgPath = imgPath;
     return this;
   }
 
-  public void setImgPath(String imgPath) {
-    this.imgPath = imgPath;
+  public void open() {
+    this.status = ELoungeStatus.OPEN;
   }
 
-  public void open(){
-    this.status = ELonugeStatus.OPEN;
+  public void start() {
+    this.status = ELoungeStatus.START;
   }
 
-  public void start(){
-    this.status = ELonugeStatus.START;
-  }
-
-  public void end(){
-    this.status = ELonugeStatus.END;
+  public void end() {
+    this.status = ELoungeStatus.END;
   }
 
 }

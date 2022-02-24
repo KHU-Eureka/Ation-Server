@@ -3,16 +3,16 @@ package com.eureka.ationserver.advice;
 import com.eureka.ationserver.advice.exception.CommonException;
 import com.eureka.ationserver.advice.exception.DuplicateException;
 import com.eureka.ationserver.advice.exception.ForbiddenException;
+import com.eureka.ationserver.advice.exception.ResourceNotFoundException;
 import com.eureka.ationserver.advice.exception.UnAuthorizedException;
 import com.eureka.ationserver.dto.common.MessageResponse;
 import com.eureka.ationserver.dto.common.Msg;
+import javax.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
-
-import javax.persistence.EntityNotFoundException;
 
 @RestControllerAdvice
 public class ExceptionAdvice {
@@ -52,5 +52,10 @@ public class ExceptionAdvice {
   @ExceptionHandler(CommonException.class)
   public ResponseEntity commonException(CommonException e) {
     return new ResponseEntity(new MessageResponse(e.getMessage()), null, HttpStatus.BAD_REQUEST);
+  }
+
+  @ExceptionHandler(ResourceNotFoundException.class)
+  public ResponseEntity resourceNotFoundException(ResourceNotFoundException e) {
+    return new ResponseEntity(new MessageResponse(e.getMessage()), null, HttpStatus.NOT_FOUND);
   }
 }

@@ -7,19 +7,23 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public class UserResponse {
-    private String email;
 
     private Long id;
 
+    private String identifyId;
+
     private String name;
+
+    private String email;
 
     private String myPageImgPath;
 
     public UserResponse(User user) {
         this.id = user.getId();
-        this.email = user.getEmail();
+        this.identifyId = user.getIdentifyId();
         this.name = user.getName();
-        this.myPageImgPath = user.getMypageImgPath();
+        this.email = user.getEmail();
+        this.myPageImgPath = user.getMyPageImgPath();
     }
 
 

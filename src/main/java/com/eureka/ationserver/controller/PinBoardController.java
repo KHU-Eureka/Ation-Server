@@ -1,66 +1,68 @@
 package com.eureka.ationserver.controller;
 
-import com.eureka.ationserver.model.user.User;
 import com.eureka.ationserver.dto.pinBoard.PinBoardRequest;
 import com.eureka.ationserver.dto.pinBoard.PinBoardUpdateRequest;
-import com.eureka.ationserver.repository.user.UserRepository;
 import com.eureka.ationserver.service.PinBoardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.io.IOException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
-
-import java.io.IOException;
 
 @RestController
 @RequestMapping("/api")
-@Api(tags = {"Pin Board"})
+@Api(tags = {"PinBoard"})
 @RequiredArgsConstructor
 public class PinBoardController {
 
     private final PinBoardService pinBoardService;
-    private final UserRepository userRepository;
 
     @PostMapping("/pin-board")
-    @ApiOperation(value="핀보드 생성")
-    public ResponseEntity save(@AuthenticationPrincipal UserDetails userDetails, @RequestBody PinBoardRequest pinBoardRequest){
-        User user = userRepository.findByEmail(userDetails.getUsername()).get();
-        return new ResponseEntity(pinBoardService.save(user, pinBoardRequest), null, HttpStatus.CREATED);
+    @ApiOperation(value = "핀보드 생성")
+    public ResponseEntity save(@RequestBody PinBoardRequest pinBoardRequest) {
+        return new ResponseEntity(pinBoardService.save(pinBoardRequest), null, HttpStatus.CREATED);
 
     }
 
     @PostMapping("/pin-board/image/{pinBoardId}")
-    @ApiOperation(value="핀보드 이미지 설정")
-    public ResponseEntity saveImg(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long pinBoardId, @RequestParam(value = "pinBoardImg", required = true) MultipartFile pinBoardImg) throws IOException {
-        User user = userRepository.findByEmail(userDetails.getUsername()).get();
-        return new ResponseEntity(pinBoardService.saveImg(user, pinBoardId, pinBoardImg), null, HttpStatus.OK);
+    @ApiOperation(value = "핀보드 이미지 설정")
+    public ResponseEntity saveImg(@PathVariable Long pinBoardId,
+        @RequestParam(value = "pinBoardImg", required = true) MultipartFile pinBoardImg)
+        throws IOException {
+        return new ResponseEntity(pinBoardService.saveImg(pinBoardId, pinBoardImg), null,
+            HttpStatus.OK);
     }
 
     @GetMapping("/pin-board")
-    @ApiOperation(value="유저의 페르소나별 핀보드 조회")
-    public ResponseEntity findAll(@AuthenticationPrincipal UserDetails userDetails, @RequestParam(value="personaId") Long personaId){
-        User user = userRepository.findByEmail(userDetails.getUsername()).get();
-        return new ResponseEntity(pinBoardService.findAll(user, personaId), null, HttpStatus.OK);
+    @ApiOperation(value = "유저의 페르소나별 핀보드 조회")
+    public ResponseEntity findAll(@RequestParam(value = "personaId") Long personaId) {
+        return new ResponseEntity(pinBoardService.findAll(personaId), null, HttpStatus.OK);
 
     }
 
     @PutMapping("/pin-board/{pinBoardId}")
-    @ApiOperation(value="핀보드 수정")
-    public ResponseEntity update(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long pinBoardId, @RequestBody PinBoardUpdateRequest pinBoardRequest){
-        User user = userRepository.findByEmail(userDetails.getUsername()).get();
-        return new ResponseEntity(pinBoardService.update(user, pinBoardId, pinBoardRequest), null, HttpStatus.OK);
+    @ApiOperation(value = "핀보드 수정")
+    public ResponseEntity update(@PathVariable Long pinBoardId,
+        @RequestBody PinBoardUpdateRequest pinBoardRequest) {
+        return new ResponseEntity(pinBoardService.update(pinBoardId, pinBoardRequest), null,
+            HttpStatus.OK);
     }
 
     @DeleteMapping("/pin-board/{pinBoardId}")
-    @ApiOperation(value="핀보드 삭제")
-    public ResponseEntity delete(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long pinBoardId){
-        User user = userRepository.findByEmail(userDetails.getUsername()).get();
-        return new ResponseEntity(pinBoardService.delete(user, pinBoardId), null, HttpStatus.OK);
+    @ApiOperation(value = "핀보드 삭제")
+    public ResponseEntity delete(@PathVariable Long pinBoardId) {
+        return new ResponseEntity(pinBoardService.delete(pinBoardId), null, HttpStatus.OK);
 
 
     }

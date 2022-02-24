@@ -1,7 +1,6 @@
 package com.eureka.ationserver.controller;
 
 
-import com.eureka.ationserver.config.security.details.UserDetailsImpl;
 import com.eureka.ationserver.dto.lounge.LoungeRequest;
 import com.eureka.ationserver.service.LoungeService;
 import io.swagger.annotations.Api;
@@ -19,9 +18,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.multipart.MultipartFile;
 
 @RestController
 @RequestMapping("/api")
@@ -33,127 +30,130 @@ public class LoungeController {
 
   @PostMapping("/lounge")
   @ApiOperation("라운지 생성")
-  public ResponseEntity save(@RequestBody LoungeRequest loungeRequest){
+  public ResponseEntity save(@RequestBody LoungeRequest loungeRequest) {
     return new ResponseEntity(loungeService.save(loungeRequest), null, HttpStatus.CREATED);
   }
 
   @GetMapping("/lounge")
   @ApiOperation("라운지 목록 조회")
-  public ResponseEntity getAll(){
+  public ResponseEntity getAll() {
     return new ResponseEntity(loungeService.findAll(), null, HttpStatus.OK);
   }
 
   @GetMapping("/lounge/{loungeId}")
   @ApiOperation("라운지 조회")
-  public ResponseEntity get(@PathVariable Long loungeId){
+  public ResponseEntity get(@PathVariable Long loungeId) {
     return new ResponseEntity(loungeService.find(loungeId), null, HttpStatus.OK);
   }
 
   @PutMapping("/lounge/{loungeId}")
   @ApiOperation("라운지 정보 수정")
-  public ResponseEntity update(@PathVariable Long loungeId, @RequestBody LoungeRequest loungeRequest){
+  public ResponseEntity update(@PathVariable Long loungeId,
+      @RequestBody LoungeRequest loungeRequest) {
     return new ResponseEntity(loungeService.update(loungeId, loungeRequest), null, HttpStatus.OK);
 
   }
 
   @PutMapping("/lounge/notice/{loungeId}")
   @ApiOperation("라운지 공지 수정")
-  public ResponseEntity updateNotice(@PathVariable Long loungeId, @RequestBody String notice){
+  public ResponseEntity updateNotice(@PathVariable Long loungeId, @RequestBody String notice) {
     return new ResponseEntity(loungeService.updateNotice(loungeId, notice), null, HttpStatus.OK);
 
   }
 
-  @PutMapping("/lounge/image/{loungeId}")
-  @ApiOperation("라운지 이미지 변경")
-  public ResponseEntity saveImg(@PathVariable Long loungeId, @RequestParam(value = "loungeImg", required = true) MultipartFile loungeImg) throws IOException {
-    return new ResponseEntity(loungeService.saveImg(loungeId, loungeImg), null, HttpStatus.OK);
+  @GetMapping("/lounge/image")
+  @ApiOperation("라운지 이미지 목록 조회")
+  public ResponseEntity getImage() throws IOException {
+    return new ResponseEntity(loungeService.getImage(), null, HttpStatus.OK);
 
   }
 
   @DeleteMapping("/lounge/{loungeId}")
   @ApiOperation("라운지 삭제")
-  public ResponseEntity delete(@PathVariable Long loungeId){
+  public ResponseEntity delete(@PathVariable Long loungeId) {
     return new ResponseEntity(loungeService.delete(loungeId), null, HttpStatus.OK);
 
   }
 
   @PutMapping("/lounge/{loungeId}/end")
   @ApiOperation("라운지 종료")
-  public ResponseEntity end(@PathVariable Long loungeId){
+  public ResponseEntity end(@PathVariable Long loungeId) {
     return new ResponseEntity(loungeService.end(loungeId), null, HttpStatus.OK);
   }
 
   @PutMapping("/lounge/{loungeId}/start")
   @ApiOperation("라운지 시작")
-  public ResponseEntity start(@PathVariable Long loungeId){
+  public ResponseEntity start(@PathVariable Long loungeId) {
     return new ResponseEntity(loungeService.start(loungeId), null, HttpStatus.OK);
 
   }
 
   @PutMapping("/lounge/{loungeId}/enter/{personaId}")
   @ApiOperation("라운지 입장")
-  public ResponseEntity enter(@PathVariable Long loungeId, @PathVariable Long personaId){
+  public ResponseEntity enter(@PathVariable Long loungeId, @PathVariable Long personaId) {
     return new ResponseEntity(loungeService.enter(loungeId, personaId), null, HttpStatus.OK);
   }
 
   @PutMapping("/lounge/{loungeId}/exit/{personaId}")
   @ApiOperation("라운지 퇴장")
-  public ResponseEntity exit(@PathVariable Long loungeId, @PathVariable Long personaId){
-    return new ResponseEntity(loungeService.exit(loungeId,personaId), null, HttpStatus.OK);
+  public ResponseEntity exit(@PathVariable Long loungeId, @PathVariable Long personaId) {
+    return new ResponseEntity(loungeService.exit(loungeId, personaId), null, HttpStatus.OK);
   }
 
   @PutMapping("/lounge/{loungeId}/ready/{personaId}")
   @ApiOperation("라운지 레디")
-  public ResponseEntity ready(@PathVariable Long loungeId, @PathVariable Long personaId){
-    return new ResponseEntity(loungeService.ready(loungeId,personaId), null, HttpStatus.OK);
+  public ResponseEntity ready(@PathVariable Long loungeId, @PathVariable Long personaId) {
+    return new ResponseEntity(loungeService.ready(loungeId, personaId), null, HttpStatus.OK);
   }
 
   @PutMapping("/lounge/{loungeId}/unready/{personaId}")
   @ApiOperation("라운지 레디 해제")
-  public ResponseEntity unready(@PathVariable Long loungeId, @PathVariable Long personaId){
-    return new ResponseEntity(loungeService.unready(loungeId,personaId), null, HttpStatus.OK);
+  public ResponseEntity unready(@PathVariable Long loungeId, @PathVariable Long personaId) {
+    return new ResponseEntity(loungeService.unready(loungeId, personaId), null, HttpStatus.OK);
   }
 
 
   @GetMapping("/lounge/{loungeId}/chat")
   @ApiOperation("라운지 채팅 조회")
-  public ResponseEntity getChat(@PathVariable Long loungeId){
+  public ResponseEntity getChat(@PathVariable Long loungeId) {
     return new ResponseEntity(loungeService.getChat(loungeId), null, HttpStatus.OK);
   }
 
   @GetMapping("/lounge/wait")
   @ApiOperation("유저 대기 라운지 조회")
-  public ResponseEntity getWait(@AuthenticationPrincipal UserDetails userDetails){
+  public ResponseEntity getWait(@AuthenticationPrincipal UserDetails userDetails) {
     return new ResponseEntity(loungeService.getWait(userDetails), null, HttpStatus.OK);
   }
 
   @GetMapping("/lounge/current")
   @ApiOperation("유저 실시간 라운지 조회")
-  public ResponseEntity getCurrent(@AuthenticationPrincipal UserDetails userDetails){
+  public ResponseEntity getCurrent(@AuthenticationPrincipal UserDetails userDetails) {
     return new ResponseEntity(loungeService.getCurrent(userDetails), null, HttpStatus.OK);
   }
 
   @GetMapping("/lounge/history")
   @ApiOperation("유저 라운지 참여 이력 조회")
-  public ResponseEntity getHistory(@AuthenticationPrincipal UserDetails userDetails){
+  public ResponseEntity getHistory(@AuthenticationPrincipal UserDetails userDetails) {
     return new ResponseEntity(loungeService.getHistory(userDetails), null, HttpStatus.OK);
   }
 
   @PostMapping("/lounge/pin/{loungeId}")
   @ApiOperation("라운지 핀")
-  public ResponseEntity pin(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long loungeId){
+  public ResponseEntity pin(@AuthenticationPrincipal UserDetails userDetails,
+      @PathVariable Long loungeId) {
     return new ResponseEntity(loungeService.pin(userDetails, loungeId), null, HttpStatus.CREATED);
   }
 
   @DeleteMapping("/lounge/pin/{loungeId}")
   @ApiOperation("라운지 핀 삭제")
-  public ResponseEntity deletePin(@AuthenticationPrincipal UserDetails userDetails, @PathVariable Long loungeId){
+  public ResponseEntity deletePin(@AuthenticationPrincipal UserDetails userDetails,
+      @PathVariable Long loungeId) {
     return new ResponseEntity(loungeService.deletePin(userDetails, loungeId), null, HttpStatus.OK);
   }
 
   @GetMapping("/lounge/pin")
   @ApiOperation("유저 라운지 핀 목록 조회")
-  public ResponseEntity getPin(@AuthenticationPrincipal UserDetails userDetails){
+  public ResponseEntity getPin(@AuthenticationPrincipal UserDetails userDetails) {
     return new ResponseEntity(loungeService.getPin(userDetails), null, HttpStatus.OK);
   }
 

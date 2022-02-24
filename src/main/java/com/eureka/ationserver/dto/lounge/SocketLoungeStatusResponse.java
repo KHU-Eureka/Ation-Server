@@ -1,6 +1,6 @@
 package com.eureka.ationserver.dto.lounge;
 
-import com.eureka.ationserver.model.lounge.ELonugeStatus;
+import com.eureka.ationserver.model.lounge.ELoungeStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -11,5 +11,6 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SocketLoungeStatusResponse {
-  private ELonugeStatus status;
+
+  private ELoungeStatus status;
 }
