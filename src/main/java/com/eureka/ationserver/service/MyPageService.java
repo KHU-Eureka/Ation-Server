@@ -13,7 +13,7 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 public class MyPageService {
-
+  
     private final AuthService authService;
 
     @Transactional
