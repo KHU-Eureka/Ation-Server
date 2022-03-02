@@ -75,6 +75,9 @@ public class Lounge {
   private String imgPath;
 
   @Column
+  private String whiteboard;
+
+  @Column
   private LocalDateTime createdAt;
 
 

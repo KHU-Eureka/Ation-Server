@@ -2,6 +2,7 @@ package com.eureka.ationserver.controller;
 
 
 import com.eureka.ationserver.dto.lounge.LoungeRequest;
+import com.eureka.ationserver.dto.whiteboard.WhiteboardRequest;
 import com.eureka.ationserver.service.LoungeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -111,7 +112,6 @@ public class LoungeController {
   public ResponseEntity unready(@PathVariable Long loungeId, @PathVariable Long personaId) {
     return new ResponseEntity(loungeService.unready(loungeId, personaId), null, HttpStatus.OK);
   }
-
 
   @GetMapping("/lounge/{loungeId}/chat")
   @ApiOperation("라운지 채팅 조회")

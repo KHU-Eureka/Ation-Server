@@ -34,10 +34,10 @@ public class Ideation {
   private String title;
 
   @Column
-  private String whiteBoard;
+  private String imgPath;
 
   @Column
-  private String imgPath;
+  private String whiteboard;
 
   @Column
   private LocalDateTime createdAt;
@@ -53,7 +53,7 @@ public class Ideation {
 
   public Ideation update(IdeationRequest ideationRequest) {
     this.title = ideationRequest.getTitle();
-    this.whiteBoard = ideationRequest.getWhiteBoard();
+    this.whiteboard = ideationRequest.getWhiteboard();
     return this;
   }
 

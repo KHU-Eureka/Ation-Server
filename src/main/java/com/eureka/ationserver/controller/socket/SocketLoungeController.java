@@ -2,15 +2,20 @@ package com.eureka.ationserver.controller.socket;
 
 import com.eureka.ationserver.dto.lounge.SocketLoungeStatusResponse;
 import com.eureka.ationserver.dto.lounge.SocketMemberResponse;
+import com.eureka.ationserver.dto.whiteboard.WhiteboardRequest;
+import com.eureka.ationserver.dto.whiteboard.WhiteboardResponse;
 import com.eureka.ationserver.service.LoungeService;
+import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.stereotype.Controller;
 
 @Controller
-
+@RequiredArgsConstructor
 public class SocketLoungeController {
+
+  private final LoungeService loungeService;
 
   @MessageMapping("/lounge/{loungeId}/member/receive")
   @SendTo("/lounge/{loungeId}/member/send")
@@ -20,10 +25,16 @@ public class SocketLoungeController {
 
   @MessageMapping("/lounge/{loungeId}/status/receive")
   @SendTo("/lounge/{loungeId}/status/send")
-  public SocketLoungeStatusResponse memberHandler(@DestinationVariable Long loungeId, SocketLoungeStatusResponse socketLoungeStatusResponse){
+  public SocketLoungeStatusResponse statusHandler(@DestinationVariable Long loungeId, SocketLoungeStatusResponse socketLoungeStatusResponse){
     return socketLoungeStatusResponse;
   }
 
+  @MessageMapping("/lounge/{loungeId}/whiteboard/receive")
+  @SendTo("/lounge/{loungeId}/whiteboard/send")
+  public WhiteboardResponse whiteboardHandler(@DestinationVariable Long loungeId, WhiteboardRequest whiteboardRequest){
+    loungeService.updateWhiteboard(loungeId, whiteboardRequest);
+    return WhiteboardResponse.builder().whiteboard(whiteboardRequest.getWhiteboard()).build();
+  }
 
 
 }

@@ -3,6 +3,7 @@ package com.eureka.ationserver.service;
 import com.eureka.ationserver.advice.exception.ForbiddenException;
 import com.eureka.ationserver.dto.ideation.IdeationRequest;
 import com.eureka.ationserver.dto.ideation.IdeationResponse;
+import com.eureka.ationserver.dto.whiteboard.WhiteboardRequest;
 import com.eureka.ationserver.model.ideation.Ideation;
 import com.eureka.ationserver.model.persona.Persona;
 import com.eureka.ationserver.model.user.User;
@@ -74,6 +75,13 @@ public class IdeationService {
     ideation.update(ideationRequest);
     return ideationId;
 
+  }
+
+  @Transactional
+  public Long updateWhiteboard(Long ideationId, WhiteboardRequest whiteboardRequest){
+    Ideation ideation = ideationRepository.getById(ideationId);
+    ideation.setWhiteboard(whiteboardRequest.getWhiteboard());
+    return ideationId;
   }
 
   @Transactional

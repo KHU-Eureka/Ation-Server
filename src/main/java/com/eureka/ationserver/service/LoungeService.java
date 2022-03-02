@@ -11,6 +11,7 @@ import com.eureka.ationserver.dto.lounge.LoungeResponse;
 import com.eureka.ationserver.dto.lounge.SocketLoungeStatusResponse;
 import com.eureka.ationserver.dto.lounge.SocketMemberResponse;
 import com.eureka.ationserver.dto.persona.PersonaSimpleResponse;
+import com.eureka.ationserver.dto.whiteboard.WhiteboardRequest;
 import com.eureka.ationserver.model.category.MainCategory;
 import com.eureka.ationserver.model.category.SubCategory;
 import com.eureka.ationserver.model.lounge.ELoungeStatus;
@@ -155,6 +156,13 @@ public class LoungeService {
     Lounge lounge = loungeRepository.getById(loungeId);
     lounge.setNotice(notice);
     return loungeId;
+  }
+
+  @Transactional
+  public String updateWhiteboard(Long loungeId, WhiteboardRequest whiteboardRequest){
+    Lounge lounge = loungeRepository.getById(loungeId);
+    lounge.setWhiteboard(whiteboardRequest.getWhiteboard());
+    return whiteboardRequest.getWhiteboard();
   }
 
   @Transactional

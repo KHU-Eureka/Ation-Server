@@ -20,7 +20,7 @@ public class IdeationResponse {
 
   private String imgPath;
 
-  private String whiteBoard;
+  private String whiteboard;
 
   private LocalDateTime createdAt;
 
@@ -28,7 +28,7 @@ public class IdeationResponse {
     this.id = ideation.getId();
     this.persona = new PersonaResponse(ideation.getPersona());
     this.title = ideation.getTitle();
-    this.whiteBoard = ideation.getWhiteBoard();
+    this.whiteboard = ideation.getWhiteboard();
     this.imgPath = ideation.getImgPath();
     this.createdAt = ideation.getCreatedAt();
 
