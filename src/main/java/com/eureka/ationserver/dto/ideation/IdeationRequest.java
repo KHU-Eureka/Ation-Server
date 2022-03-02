@@ -17,15 +17,14 @@ public class IdeationRequest {
   @NotEmpty
   private String title;
 
-  @NotEmpty
-  private String whiteBoard;
+  private String whiteboard;
 
   public Ideation toEntity(Persona persona, String imgPath){
     return Ideation.builder()
         .persona(persona)
         .imgPath(imgPath)
         .title(this.title)
-        .whiteBoard(this.whiteBoard)
+        .whiteboard(this.whiteboard)
         .build();
   }
 

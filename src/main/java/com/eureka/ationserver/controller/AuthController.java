@@ -24,6 +24,4 @@ public class AuthController {
         return new ResponseEntity(authService.getLoggedInUser(), null, HttpStatus.OK);
     }
 
-
-
 }

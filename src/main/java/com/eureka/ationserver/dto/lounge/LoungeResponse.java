@@ -24,7 +24,7 @@ public class LoungeResponse {
 
   private Integer limitMember;
 
-  private ELoungeStatus status; // 0 : 모집 중, 1 : 종료, 2: 진행 중
+  private ELoungeStatus status;
 
   private String introduction;
 
@@ -33,6 +33,8 @@ public class LoungeResponse {
   private Long totalMember;
 
   private String imgPath;
+
+  private String whiteboard;
 
   private LocalDateTime createdAt;
 
@@ -45,6 +47,7 @@ public class LoungeResponse {
   private List<SubCategoryResponse> subCategoryList;
 
   private List<LoungeMemberResponse> memberList;
+
 
   public LoungeResponse(Lounge lounge) {
 
@@ -66,6 +69,7 @@ public class LoungeResponse {
     this.notice = lounge.getNotice();
     this.createdAt = lounge.getCreatedAt();
     this.imgPath = lounge.getImgPath();
+    this.whiteboard = lounge.getWhiteboard();
     this.sense = new SenseResponse(lounge.getSense());
     this.persona = personaSimpleResponse;
     this.mainCategory = mainCategoryResponse;
