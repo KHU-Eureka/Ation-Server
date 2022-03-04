@@ -1,5 +1,6 @@
 package com.eureka.ationserver.controller.socket;
 
+import com.eureka.ationserver.dto.common.SimpleValueResponse;
 import com.eureka.ationserver.dto.lounge.SocketLoungeStatusResponse;
 import com.eureka.ationserver.dto.lounge.SocketMemberResponse;
 import com.eureka.ationserver.dto.whiteboard.WhiteboardRequest;
@@ -19,19 +20,29 @@ public class SocketLoungeController {
 
   @MessageMapping("/lounge/{loungeId}/member/receive")
   @SendTo("/lounge/{loungeId}/member/send")
-  public SocketMemberResponse memberHandler(@DestinationVariable Long loungeId, SocketMemberResponse socketMemberResponse){
+  public SocketMemberResponse memberHandler(@DestinationVariable Long loungeId,
+      SocketMemberResponse socketMemberResponse) {
     return socketMemberResponse;
   }
 
   @MessageMapping("/lounge/{loungeId}/status/receive")
   @SendTo("/lounge/{loungeId}/status/send")
-  public SocketLoungeStatusResponse statusHandler(@DestinationVariable Long loungeId, SocketLoungeStatusResponse socketLoungeStatusResponse){
+  public SocketLoungeStatusResponse statusHandler(@DestinationVariable Long loungeId,
+      SocketLoungeStatusResponse socketLoungeStatusResponse) {
     return socketLoungeStatusResponse;
+  }
+
+  @MessageMapping("/lounge/{loungeId}/notice/receive")
+  @SendTo("/lounge/{loungeId}/notice/send")
+  public SimpleValueResponse<String> statusHandler(@DestinationVariable Long loungeId,
+      SimpleValueResponse<String> notice) {
+    return notice;
   }
 
   @MessageMapping("/lounge/{loungeId}/whiteboard/receive")
   @SendTo("/lounge/{loungeId}/whiteboard/send")
-  public WhiteboardResponse whiteboardHandler(@DestinationVariable Long loungeId, WhiteboardRequest whiteboardRequest){
+  public WhiteboardResponse whiteboardHandler(@DestinationVariable Long loungeId,
+      WhiteboardRequest whiteboardRequest) {
     loungeService.updateWhiteboard(loungeId, whiteboardRequest);
     return WhiteboardResponse.builder().whiteboard(whiteboardRequest.getWhiteboard()).build();
   }
