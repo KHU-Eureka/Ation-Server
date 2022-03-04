@@ -1,6 +1,7 @@
 package com.eureka.ationserver.service;
 
 import com.eureka.ationserver.advice.exception.CommonException;
+import com.eureka.ationserver.dto.common.SimpleValueResponse;
 import com.eureka.ationserver.dto.lounge.EMemberStatus;
 import com.eureka.ationserver.dto.lounge.LoungeChatResponse;
 import com.eureka.ationserver.dto.lounge.LoungeImageResponse;
@@ -155,6 +156,8 @@ public class LoungeService {
   public Long updateNotice(Long loungeId, String notice) {
     Lounge lounge = loungeRepository.getById(loungeId);
     lounge.setNotice(notice);
+    messageSendingOperations.convertAndSend(String.format("/lounge/%d/notice/send", loungeId),
+        new SimpleValueResponse<String>(notice));
     return loungeId;
   }
 
