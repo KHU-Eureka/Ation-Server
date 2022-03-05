@@ -195,9 +195,12 @@ public class LoungeService {
 
     Persona persona = personaRepository.getById(personaId);
     Lounge lounge = loungeRepository.getById(loungeId);
-    if (lounge.getLoungeMemberList().size() >= lounge.getLimitMember()) {
-      throw new CommonException("인원이 다 찼습니다.");
+    if(lounge.getLimitMember() != 0){
+      if (lounge.getLoungeMemberList().size() >= lounge.getLimitMember()) {
+        throw new CommonException("인원이 다 찼습니다.");
+      }
     }
+
 
     if (loungeMemberRepository.findByLounge_IdAndUserId(loungeId, persona.getUser().getId())
         .isPresent()) {
