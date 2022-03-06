@@ -2,7 +2,6 @@ package com.eureka.ationserver.controller;
 
 
 import com.eureka.ationserver.dto.lounge.LoungeRequest;
-import com.eureka.ationserver.dto.whiteboard.WhiteboardRequest;
 import com.eureka.ationserver.service.LoungeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -121,40 +120,38 @@ public class LoungeController {
 
   @GetMapping("/lounge/wait")
   @ApiOperation("유저 대기 라운지 조회")
-  public ResponseEntity getWait(@AuthenticationPrincipal UserDetails userDetails) {
-    return new ResponseEntity(loungeService.getWait(userDetails), null, HttpStatus.OK);
+  public ResponseEntity getWait() {
+    return new ResponseEntity(loungeService.getWait(), null, HttpStatus.OK);
   }
 
   @GetMapping("/lounge/current")
   @ApiOperation("유저 실시간 라운지 조회")
-  public ResponseEntity getCurrent(@AuthenticationPrincipal UserDetails userDetails) {
-    return new ResponseEntity(loungeService.getCurrent(userDetails), null, HttpStatus.OK);
+  public ResponseEntity getCurrent() {
+    return new ResponseEntity(loungeService.getCurrent(), null, HttpStatus.OK);
   }
 
   @GetMapping("/lounge/history")
   @ApiOperation("유저 라운지 참여 이력 조회")
-  public ResponseEntity getHistory(@AuthenticationPrincipal UserDetails userDetails) {
-    return new ResponseEntity(loungeService.getHistory(userDetails), null, HttpStatus.OK);
+  public ResponseEntity getHistory() {
+    return new ResponseEntity(loungeService.getHistory(), null, HttpStatus.OK);
   }
 
   @PostMapping("/lounge/pin/{loungeId}")
   @ApiOperation("라운지 핀")
-  public ResponseEntity pin(@AuthenticationPrincipal UserDetails userDetails,
-      @PathVariable Long loungeId) {
-    return new ResponseEntity(loungeService.pin(userDetails, loungeId), null, HttpStatus.CREATED);
+  public ResponseEntity pin(@PathVariable Long loungeId) {
+    return new ResponseEntity(loungeService.pin(loungeId), null, HttpStatus.CREATED);
   }
 
   @DeleteMapping("/lounge/pin/{loungeId}")
   @ApiOperation("라운지 핀 삭제")
-  public ResponseEntity deletePin(@AuthenticationPrincipal UserDetails userDetails,
-      @PathVariable Long loungeId) {
-    return new ResponseEntity(loungeService.deletePin(userDetails, loungeId), null, HttpStatus.OK);
+  public ResponseEntity deletePin(@PathVariable Long loungeId) {
+    return new ResponseEntity(loungeService.deletePin(loungeId), null, HttpStatus.OK);
   }
 
   @GetMapping("/lounge/pin")
   @ApiOperation("유저 라운지 핀 목록 조회")
-  public ResponseEntity getPin(@AuthenticationPrincipal UserDetails userDetails) {
-    return new ResponseEntity(loungeService.getPin(userDetails), null, HttpStatus.OK);
+  public ResponseEntity getPin() {
+    return new ResponseEntity(loungeService.getPin(), null, HttpStatus.OK);
   }
 
 

@@ -59,6 +59,7 @@ public class LoungeService {
   private final SimpMessageSendingOperations messageSendingOperations;
   private final LoungePinRepository loungePinRepository;
   private final LoungeImageRepository loungeImageRepository;
+  private final AuthService authService;
 
   @Transactional
   public Long save(LoungeRequest loungeRequest) {
@@ -295,8 +296,8 @@ public class LoungeService {
   }
 
   @Transactional
-  public List<LoungeMemberStatusResponse> getWait(UserDetails userDetails) {
-    User user = userRepository.findByEmail(userDetails.getUsername()).get();
+  public List<LoungeMemberStatusResponse> getWait() {
+    User user = authService.auth();
     return loungeMemberRepository.findByUserIdAndLounge_StatusAndReady(user.getId(),
             ELoungeStatus.OPEN,
             Boolean.TRUE).stream().map(
@@ -306,8 +307,8 @@ public class LoungeService {
   }
 
   @Transactional
-  public List<LoungeMemberStatusResponse> getCurrent(UserDetails userDetails) {
-    User user = userRepository.findByEmail(userDetails.getUsername()).get();
+  public List<LoungeMemberStatusResponse> getCurrent() {
+    User user = authService.auth();
     return loungeMemberRepository.findByUserIdAndLounge_Status(user.getId(), ELoungeStatus.START)
         .stream().map(
             LoungeMemberStatusResponse::new)
@@ -316,9 +317,8 @@ public class LoungeService {
   }
 
   @Transactional
-  public List<LoungeMemberStatusResponse> getHistory(UserDetails userDetails) {
-    User user = userRepository.findByEmail(userDetails.getUsername()).get();
-
+  public List<LoungeMemberStatusResponse> getHistory() {
+    User user = authService.auth();
     return loungeMemberRepository.findByUserIdAndLounge_Status(user.getId(), ELoungeStatus.END)
         .stream().map(
             LoungeMemberStatusResponse::new)
@@ -327,9 +327,8 @@ public class LoungeService {
   }
 
   @Transactional
-  public Long pin(UserDetails userDetails, Long loungeId) {
-    User user = userRepository.findByEmail(userDetails.getUsername()).get();
-
+  public Long pin(Long loungeId) {
+    User user = authService.auth();
     if (loungePinRepository.findByLounge_IdAndUserId(loungeId, user.getId()).isPresent()) {
       throw new CommonException("이미 핀 한 라운지 입니다.");
     }
@@ -343,17 +342,15 @@ public class LoungeService {
   }
 
   @Transactional
-  public Long deletePin(UserDetails userDetails, Long lougeId) {
-    User user = userRepository.findByEmail(userDetails.getUsername()).get();
-
+  public Long deletePin(Long lougeId) {
+    User user = authService.auth();
     loungePinRepository.deleteByLounge_IdAndUserId(lougeId, user.getId());
     return lougeId;
   }
 
   @Transactional(readOnly = true)
-  public List<LoungePinResponse> getPin(UserDetails userDetails) {
-    User user = userRepository.findByEmail(userDetails.getUsername()).get();
-
+  public List<LoungePinResponse> getPin() {
+    User user = authService.auth();
     return loungePinRepository.findByUserId(user.getId()).stream().map(LoungePinResponse::new)
         .collect(
             Collectors.toList());
