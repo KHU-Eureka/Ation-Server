@@ -3,6 +3,7 @@ package com.eureka.ationserver.service;
 import com.eureka.ationserver.advice.exception.ForbiddenException;
 import com.eureka.ationserver.dto.ideation.IdeationRequest;
 import com.eureka.ationserver.dto.ideation.IdeationResponse;
+import com.eureka.ationserver.dto.ideation.IdeationTitleRequest;
 import com.eureka.ationserver.dto.whiteboard.WhiteboardRequest;
 import com.eureka.ationserver.model.ideation.Ideation;
 import com.eureka.ationserver.model.persona.Persona;
@@ -70,9 +71,9 @@ public class IdeationService {
   }
 
   @Transactional
-  public Long update(Long ideationId, IdeationRequest ideationRequest){
+  public Long updateTitle(Long ideationId, IdeationTitleRequest ideationTitleRequest){
     Ideation ideation = ideationRepository.getById(ideationId);
-    ideation.update(ideationRequest);
+    ideation.setTitle(ideationTitleRequest.getTitle());
     return ideationId;
 
   }

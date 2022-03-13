@@ -1,6 +1,7 @@
 package com.eureka.ationserver.controller;
 
 import com.eureka.ationserver.dto.ideation.IdeationRequest;
+import com.eureka.ationserver.dto.ideation.IdeationTitleRequest;
 import com.eureka.ationserver.dto.whiteboard.WhiteboardRequest;
 import com.eureka.ationserver.service.IdeationService;
 import io.swagger.annotations.Api;
@@ -43,7 +44,7 @@ public class IdeationController {
 
   @GetMapping("/ideation/{ideationId}")
   @ApiOperation("아이데이션 조회")
-  public ResponseEntity find(Long ideationId) {
+  public ResponseEntity find(@PathVariable Long ideationId) {
     return new ResponseEntity(ideationService.find(ideationId), null, HttpStatus.OK);
   }
 
@@ -53,10 +54,10 @@ public class IdeationController {
     return new ResponseEntity(ideationService.saveImg(ideationId, ideationImg), null, HttpStatus.OK);
   }
 
-  @PutMapping("/ideation/{ideationId}")
-  @ApiOperation(value = "아이데이션 수정")
-  public ResponseEntity update(@PathVariable Long ideationId, @RequestBody IdeationRequest ideationRequest){
-    return new ResponseEntity(ideationService.update(ideationId, ideationRequest), null, HttpStatus.OK);
+  @PutMapping("/ideation/title/{ideationId}")
+  @ApiOperation(value = "아이데이션 제목 수정")
+  public ResponseEntity update(@PathVariable Long ideationId, @RequestBody IdeationTitleRequest ideationTitleRequest){
+    return new ResponseEntity(ideationService.updateTitle(ideationId, ideationTitleRequest), null, HttpStatus.OK);
   }
 
   @PutMapping("/ideation/whiteboard/{ideationId}")

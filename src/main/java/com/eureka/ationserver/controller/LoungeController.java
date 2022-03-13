@@ -136,6 +136,12 @@ public class LoungeController {
     return new ResponseEntity(loungeService.getHistory(), null, HttpStatus.OK);
   }
 
+  @DeleteMapping("/lounge/history/{loungeId}")
+  @ApiOperation("유저 라운지 참여 이력 삭제")
+  public ResponseEntity deleteHistory(@PathVariable Long loungeId) {
+    return new ResponseEntity(loungeService.deleteHistory(loungeId), null, HttpStatus.OK);
+  }
+
   @PostMapping("/lounge/pin/{loungeId}")
   @ApiOperation("라운지 핀")
   public ResponseEntity pin(@PathVariable Long loungeId) {
