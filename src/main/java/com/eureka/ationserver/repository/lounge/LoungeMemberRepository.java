@@ -17,6 +17,8 @@ public interface LoungeMemberRepository extends JpaRepository<LoungeMember, Long
   List<LoungeMember> findByUserIdAndLounge_StatusAndReady(Long userId, ELoungeStatus status,
       Boolean ready);
 
+  void deleteByLounge_IdAndUserId(Long loungeId, Long userId);
+
   void deleteByLounge_IdAndPersona_Id(Long loungeId, Long personaId);
 
   void deleteByLounge_IdAndReady(Long loungeId, Boolean ready);

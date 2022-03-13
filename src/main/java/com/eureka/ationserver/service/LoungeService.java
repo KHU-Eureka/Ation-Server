@@ -38,8 +38,10 @@ import com.eureka.ationserver.utils.image.ImageUtil;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.Sort.Direction;
+import org.springframework.data.domain.Sort.Order;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -106,7 +108,7 @@ public class LoungeService {
 
   @Transactional(readOnly = true)
   public List<LoungeResponse> findAll() {
-    return loungeRepository.findAll().stream().map(LoungeResponse::new)
+    return loungeRepository.findAll(Sort.by(Direction.DESC, "createdAt")).stream().map(LoungeResponse::new)
         .collect(Collectors.toList());
   }
 
@@ -324,6 +326,13 @@ public class LoungeService {
             LoungeMemberStatusResponse::new)
         .collect(
             Collectors.toList());
+  }
+
+  @Transactional
+  public Long deleteHistory(Long loungeId){
+    User user = authService.auth();
+    loungeMemberRepository.deleteByLounge_IdAndUserId(loungeId, user.getId());
+    return loungeId;
   }
 
   @Transactional
