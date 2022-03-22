@@ -42,7 +42,6 @@ public class InsightController {
     return new ResponseEntity(insightService.saveImg(insightId, insightImg), null, HttpStatus.OK);
   }
 
-
   @GetMapping("/insight")
   @ApiOperation(value = "인사이트 전체 조회")
   public ResponseEntity findPublicAll() {
@@ -68,5 +67,18 @@ public class InsightController {
     return new ResponseEntity(insightService.search(keyword), null, HttpStatus.OK);
   }
 
+  @GetMapping("/insight/recommend")
+  @ApiOperation(value="추천 인사이트 조회")
+  public ResponseEntity getRecommend() throws Exception{
+    return new ResponseEntity(insightService.getRecommend(), null, HttpStatus.OK
+    );
+  }
+
+  @GetMapping("/insight/random")
+  @ApiOperation(value="랜덤 인사이트 조회")
+  public ResponseEntity getRandom() throws Exception{
+    return new ResponseEntity(insightService.getRandom(), null, HttpStatus.OK
+    );
+  }
 
 }

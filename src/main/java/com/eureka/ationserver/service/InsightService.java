@@ -18,14 +18,24 @@ import com.eureka.ationserver.repository.insight.InsightViewRepository;
 import com.eureka.ationserver.utils.image.ImageUtil;
 import com.eureka.ationserver.utils.parse.Parse;
 import com.eureka.ationserver.utils.parse.ParseUtil;
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.http.HttpClient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
+import org.codehaus.jackson.JsonParser;
+import org.json.simple.JSONObject;
+import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.multipart.MultipartFile;
@@ -144,7 +154,55 @@ public class InsightService {
         return insightResponseList;
     }
 
+    @Transactional(readOnly = true)
+    public List<InsightResponse> getRecommend() throws Exception {
+        User user = authService.auth();
+        String recommendApiUrl = "http://16.170.173.74:5000";
+        URL url = new URL(String.format("%s/%d", recommendApiUrl, user.getId()));
 
+        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+        connection.setRequestMethod("GET");
+
+        BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        StringBuffer stringBuffer = new StringBuffer();
+        String inputLine;
+        while ((inputLine = br.readLine()) != null)  {
+            stringBuffer.append(inputLine);
+        }
+        br.close();
+        String response = stringBuffer.toString();
+
+        JSONParser jsonParser = new JSONParser();
+        JSONObject jsonObject = (JSONObject) jsonParser.parse(response);
+
+        List<Long> idList = (List<Long>) jsonObject.get("recommend-list");
+
+        List<InsightResponse> insightResponseList = new ArrayList<>();
+        for(Long e : idList){
+            insightResponseList.add(new InsightResponse(insightRepository.getById(e)));
+        }
+        return insightResponseList;
+    }
+
+    @Transactional(readOnly = true)
+    public List<InsightResponse> getRandom(){
+
+        List<Insight> insightList = insightRepository.findAll();
+        int len = insightList.size();
+        List<InsightResponse> insightResponseList = new ArrayList<>();
+        Random generator = new Random();
+        List<Integer> randomIdxList = new ArrayList<>();
+        for(int i=0;i<4;i++){
+            int randomIdx = generator.nextInt(len);
+            if(randomIdxList.contains(randomIdx)){
+                i--;
+                continue;
+            }
+            randomIdxList.add(randomIdx);
+            insightResponseList.add(new InsightResponse(insightList.get(randomIdx)));
+        }
+        return insightResponseList;
+    }
 
 
 }
