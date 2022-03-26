@@ -12,5 +12,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class SocketLoungeStatusResponse {
 
+  private Long loungeId;
+
   private ELoungeStatus status;
 }

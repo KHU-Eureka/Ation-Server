@@ -34,7 +34,7 @@ public class SocketLoungeController {
 
   @MessageMapping("/lounge/{loungeId}/notice/receive")
   @SendTo("/lounge/{loungeId}/notice/send")
-  public SimpleValueResponse<String> statusHandler(@DestinationVariable Long loungeId,
+  public SimpleValueResponse<String> noticesHandler(@DestinationVariable Long loungeId,
       SimpleValueResponse<String> notice) {
     return notice;
   }

@@ -176,7 +176,7 @@ public class LoungeService {
     Lounge lounge = loungeRepository.getById(loungeId);
     lounge.end();
     messageSendingOperations.convertAndSend(String.format("/lounge/%d/status/send", loungeId),
-        SocketLoungeStatusResponse.builder().status(ELoungeStatus.END).build());
+        SocketLoungeStatusResponse.builder().loungeId(loungeId).status(ELoungeStatus.END).build());
     return loungeId;
   }
 
@@ -189,7 +189,7 @@ public class LoungeService {
     loungeChatRepository.deleteByLounge_Id(loungeId);
 
     messageSendingOperations.convertAndSend(String.format("/lounge/%d/status/send", loungeId),
-        SocketLoungeStatusResponse.builder().status(ELoungeStatus.START).build());
+        SocketLoungeStatusResponse.builder().loungeId(loungeId).status(ELoungeStatus.START).build());
     return loungeId;
   }
 
