@@ -161,10 +161,5 @@ public class LoungeController {
     return new ResponseEntity(loungeService.getPin(), null, HttpStatus.OK);
   }
 
-  @PutMapping("/lounge/whiteboard/{loungId}")
-  @ApiOperation(value = "라운지 화이트보드 수정")
-  public ResponseEntity updateWhiteboard(@PathVariable Long loungId, @RequestBody WhiteboardRequest whiteboardRequest){
-    return new ResponseEntity(loungeService.updateWhiteboard(loungId, whiteboardRequest), null, HttpStatus.OK);
-  }
 
 }
