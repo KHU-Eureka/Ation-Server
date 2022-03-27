@@ -2,6 +2,7 @@ package com.eureka.ationserver.controller;
 
 
 import com.eureka.ationserver.dto.lounge.LoungeRequest;
+import com.eureka.ationserver.dto.whiteboard.WhiteboardRequest;
 import com.eureka.ationserver.service.LoungeService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
@@ -160,5 +161,10 @@ public class LoungeController {
     return new ResponseEntity(loungeService.getPin(), null, HttpStatus.OK);
   }
 
+  @PutMapping("/lounge/whiteboard/{loungId}")
+  @ApiOperation(value = "라운지 화이트보드 수정")
+  public ResponseEntity updateWhiteboard(@PathVariable Long loungId, @RequestBody WhiteboardRequest whiteboardRequest){
+    return new ResponseEntity(loungeService.updateWhiteboard(loungId, whiteboardRequest), null, HttpStatus.OK);
+  }
 
 }

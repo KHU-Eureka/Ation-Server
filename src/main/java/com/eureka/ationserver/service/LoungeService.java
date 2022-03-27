@@ -171,6 +171,10 @@ public class LoungeService {
     return whiteboardRequest.getWhiteboard();
   }
 
+  @Transactional(readOnly = true)
+  public String getWhiteboard(Long loungeId){
+    return loungeRepository.getById(loungeId).getWhiteboard();
+  }
   @Transactional
   public Long end(Long loungeId) {
     Lounge lounge = loungeRepository.getById(loungeId);
@@ -207,7 +211,7 @@ public class LoungeService {
 
     if (loungeMemberRepository.findByLounge_IdAndUserId(loungeId, persona.getUser().getId())
         .isPresent()) {
-      throw new CommonException("이미 입장 중인 유저 입니다.");
+      return loungeId;
     }
 
     LoungeMember loungeMember = LoungeMember.builder()
