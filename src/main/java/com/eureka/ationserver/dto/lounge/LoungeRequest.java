@@ -44,6 +44,7 @@ public class LoungeRequest {
         .loungeMainCategory(mainCategory)
         .sense(sense)
         .persona(persona)
+        .whiteboard("[]")
         .build();
   }
 
