@@ -42,7 +42,7 @@ public class PersonaService {
 
 
   @Transactional
-  public Long save(PersonaRequest.In in) {
+  public PersonaResponse.IdOut save(PersonaRequest.In in) {
 
     User user = authService.auth();
 
@@ -81,11 +81,12 @@ public class PersonaService {
     ));
     personaCharmRepository.saveAll(personaCharmList);
 
-    return persona.getId();
+    return PersonaResponse.toIdOut(persona.getId());
   }
 
   @Transactional
-  public Long saveImg(Long personaId, MultipartFile profileImg) throws IOException {
+  public PersonaResponse.IdOut saveImg(Long personaId, MultipartFile profileImg)
+      throws IOException {
     User user = authService.auth();
 
     Persona persona = personaRepository.getById(personaId);
@@ -97,7 +98,7 @@ public class PersonaService {
       profileImg.transferTo(file);
 
       persona.setProfileImgPath(pathList.get(0));
-      return personaId;
+      return PersonaResponse.toIdOut(personaId);
     }
   }
 
@@ -122,7 +123,7 @@ public class PersonaService {
 
 
   @Transactional
-  public Long update(Long personaId, PersonaRequest.In in) {
+  public PersonaResponse.IdOut update(Long personaId, PersonaRequest.In in) {
 
     User user = authService.auth();
 
@@ -166,12 +167,12 @@ public class PersonaService {
       ));
       personaCharmRepository.saveAll(personaCharmList);
 
-      return personaId;
+      return PersonaResponse.toIdOut(personaId);
     }
   }
 
   @Transactional
-  public Long delete(Long personaId) {
+  public PersonaResponse.IdOut delete(Long personaId) {
 
     User user = authService.auth();
 
@@ -180,12 +181,12 @@ public class PersonaService {
       throw new ForbiddenException();
     } else {
       personaRepository.deleteById(personaId);
-      return personaId;
+      return PersonaResponse.toIdOut(personaId);
     }
   }
 
   @Transactional
-  public Long setCurrentPersona(Long personaId) {
+  public PersonaResponse.IdOut setCurrentPersona(Long personaId) {
 
     User user = authService.auth();
 
@@ -194,7 +195,7 @@ public class PersonaService {
       throw new ForbiddenException();
     } else {
       user.setPersona(persona);
-      return personaId;
+      return PersonaResponse.toIdOut(personaId);
     }
   }
 
@@ -210,12 +211,12 @@ public class PersonaService {
 
   }
 
-  public Boolean duplicate(String nickname) {
+  public PersonaResponse.DuplicateOut duplicate(String nickname) {
     Optional<Persona> persona = personaRepository.findByNickname(nickname);
     if (persona.isPresent()) {
-      return true;
+      return PersonaResponse.toDuplicateOut(true);
     } else {
-      return false;
+      return PersonaResponse.toDuplicateOut(false);
     }
   }
 

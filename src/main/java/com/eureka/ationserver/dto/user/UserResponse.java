@@ -17,7 +17,7 @@ public class UserResponse {
     public static class LoggedIn {
 
         @ApiModelProperty(value = "유저 id", position = 0)
-        private Long userId;
+        private Long id;
 
         @ApiModelProperty(value = "유저 식별번호", position = 1)
         private String identifyId;
@@ -41,7 +41,7 @@ public class UserResponse {
         }
 
         LoggedIn loggedIn = new LoggedIn();
-        loggedIn.userId = user.getId();
+        loggedIn.id = user.getId();
         loggedIn.identifyId = user.getIdentifyId();
         loggedIn.name = user.getName();
         loggedIn.email = user.getEmail();
