@@ -6,7 +6,6 @@ import com.eureka.ationserver.advice.exception.ForbiddenException;
 import com.eureka.ationserver.advice.exception.ResourceNotFoundException;
 import com.eureka.ationserver.advice.exception.UnAuthorizedException;
 import com.eureka.ationserver.dto.common.MessageResponse;
-import com.eureka.ationserver.dto.common.Msg;
 import javax.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;

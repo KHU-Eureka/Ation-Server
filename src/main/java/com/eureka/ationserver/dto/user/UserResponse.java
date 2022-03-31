@@ -2,28 +2,46 @@ package com.eureka.ationserver.dto.user;
 
 import com.eureka.ationserver.model.user.User;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Getter
-@AllArgsConstructor
+
 public class UserResponse {
 
-    private Long id;
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class LoggedIn {
 
-    private String identifyId;
+        private Long id;
 
-    private String name;
+        private String identifyId;
 
-    private String email;
+        private String name;
 
-    private String myPageImgPath;
+        private String email;
 
-    public UserResponse(User user) {
-        this.id = user.getId();
-        this.identifyId = user.getIdentifyId();
-        this.name = user.getName();
-        this.email = user.getEmail();
-        this.myPageImgPath = user.getMyPageImgPath();
+        private String myPageImgPath;
+
+
+    }
+
+    public static LoggedIn toLoggedIn(User user) {
+
+        if (user == null) {
+            return null;
+        }
+
+        LoggedIn loggedIn = new LoggedIn();
+        loggedIn.id = user.getId();
+        loggedIn.identifyId = user.getIdentifyId();
+        loggedIn.name = user.getName();
+        loggedIn.email = user.getEmail();
+        loggedIn.myPageImgPath = user.getMyPageImgPath();
+
+        return loggedIn;
     }
 
 

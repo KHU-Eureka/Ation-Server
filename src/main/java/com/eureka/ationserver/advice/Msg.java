@@ -1,4 +1,4 @@
-package com.eureka.ationserver.dto.common;
+package com.eureka.ationserver.advice;
 
 public class Msg {
     public static final String NOTAUTHENTICATED = "Unathorized";

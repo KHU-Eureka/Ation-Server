@@ -4,13 +4,18 @@ import com.eureka.ationserver.model.persona.Persona;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Getter
-@AllArgsConstructor
-@NoArgsConstructor
+
 public class PersonaResponse {
+
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class Out {
 
     private Long id;
 
@@ -34,29 +39,38 @@ public class PersonaResponse {
 
     private List<Long> senseIdList;
 
-    public PersonaResponse(Persona persona){
 
-        List<String> charmList = new ArrayList<>();
-        persona.getPersonaCharmList().stream().forEach(x -> charmList.add(x.getName()));
+  }
 
-        List<Long> interestIdList = new ArrayList<>();
-        List<Long> senseIdList = new ArrayList<>();
-        persona.getPersonaSenseList().stream().forEach(x->senseIdList.add(x.getSense().getId()));
-        persona.getPersonaInterestList().stream().forEach(x->interestIdList.add(x.getInterest().getId()));
+  public static PersonaResponse.Out toOut(Persona persona) {
 
-        this.id = persona.getId();
-        this.nickname = persona.getNickname();
-        this.age = persona.getAge();
-        this.mbti = persona.getMbti();
-        this.gender = persona.getGender();
-        this.job = persona.getJob();
-        this.introduction = persona.getIntroduction();
-        this.profileImgPath = persona.getProfileImgPath();
-        this.charmList = charmList;
-        this.senseIdList = senseIdList;
-        this.interestIdList = interestIdList;
-
-
+    if (persona == null) {
+      return null;
     }
+    Out out = new Out();
 
+    List<String> charmList = new ArrayList<>();
+    List<Long> interestIdList = new ArrayList<>();
+    List<Long> senseIdList = new ArrayList<>();
+
+    persona.getPersonaCharmList().forEach(x -> charmList.add(x.getName()));
+    persona.getPersonaSenseList().forEach(x -> senseIdList.add(x.getSense().getId()));
+    persona.getPersonaInterestList().forEach(x -> interestIdList.add(x.getInterest().getId()));
+
+    out.id = persona.getId();
+    out.nickname = persona.getNickname();
+    out.age = persona.getAge();
+    out.mbti = persona.getMbti();
+    out.gender = persona.getGender();
+    out.job = persona.getJob();
+    out.introduction = persona.getIntroduction();
+    out.profileImgPath = persona.getProfileImgPath();
+    out.charmList = charmList;
+    out.senseIdList = senseIdList;
+    out.interestIdList = interestIdList;
+
+    return out;
+
+  }
 }
+

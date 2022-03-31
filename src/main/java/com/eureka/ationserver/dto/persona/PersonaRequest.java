@@ -1,41 +1,44 @@
 package com.eureka.ationserver.dto.persona;
 
-import com.eureka.ationserver.model.user.User;
 import com.eureka.ationserver.model.persona.Persona;
+import com.eureka.ationserver.model.user.User;
+import java.util.List;
+import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.validation.constraints.NotEmpty;
-import java.util.List;
 
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
 public class PersonaRequest {
 
-    @NotEmpty
-    private String nickname;
+    @Data
+    @Builder
+    @NoArgsConstructor
+    @AllArgsConstructor
+    public static class In {
 
-    private Integer age;
+        @NotEmpty
+        private String nickname;
 
-    private Integer gender;
+        private Integer age;
 
-    private String mbti;
+        private Integer gender;
 
-    private String job;
+        private String mbti;
 
-    private String introduction;
+        private String job;
 
-    private List<String> charmList;
+        private String introduction;
 
-    private List<Long> senseIdList;
+        private List<String> charmList;
 
-    private List<Long> interestIdList;
+        private List<Long> senseIdList;
 
+        private List<Long> interestIdList;
 
-    public Persona toEntity(User user, String defaultPath){
-        return Persona.builder()
+        public Persona toPersona(User user, String defaultPath) {
+            return Persona.builder()
                 .user(user)
                 .nickname(nickname)
                 .age(age)
@@ -45,6 +48,7 @@ public class PersonaRequest {
                 .introduction(introduction)
                 .profileImgPath(defaultPath)
                 .build();
+        }
     }
 
 

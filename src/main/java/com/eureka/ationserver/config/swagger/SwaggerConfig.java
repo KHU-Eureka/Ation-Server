@@ -1,7 +1,10 @@
-package com.eureka.ationserver.config;
+package com.eureka.ationserver.config.swagger;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Data;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import springfox.documentation.builders.ApiInfoBuilder;
@@ -14,6 +17,12 @@ import springfox.documentation.service.Parameter;
 import springfox.documentation.service.Tag;
 import springfox.documentation.spi.DocumentationType;
 import springfox.documentation.spring.web.plugins.Docket;
+import springfox.documentation.swagger.web.DocExpansion;
+import springfox.documentation.swagger.web.ModelRendering;
+import springfox.documentation.swagger.web.OperationsSorter;
+import springfox.documentation.swagger.web.TagsSorter;
+import springfox.documentation.swagger.web.UiConfiguration;
+import springfox.documentation.swagger.web.UiConfigurationBuilder;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @Configuration
@@ -72,5 +81,43 @@ public class SwaggerConfig {
         .version(INFO_VERSION)
         .description(INFO_DESC)
         .build();
+  }
+
+  @Bean
+  public UiConfiguration uiConfiguration() {
+    return UiConfigurationBuilder.builder()
+        .deepLinking(false)
+        .displayOperationId(false)
+        .defaultModelsExpandDepth(0)
+        .defaultModelExpandDepth(5)
+        .defaultModelRendering(ModelRendering.MODEL)
+        .displayRequestDuration(false)
+        .docExpansion(DocExpansion.LIST)
+        .filter(false)
+        .maxDisplayedTags(null)
+        .operationsSorter(OperationsSorter.ALPHA)
+        .showExtensions(false)
+        .tagsSorter(TagsSorter.ALPHA)
+        .validatorUrl(null)
+        .build();
+  }
+
+  @Bean
+  public SwaggerDefaultTypeNameProvider swaggerDefaultTypeNameProvider() {
+    return new SwaggerDefaultTypeNameProvider();
+  }
+
+  @Data
+  @ApiModel
+  static class Page {
+
+    @ApiModelProperty(value = "페이지 번호")
+    private Integer page;
+
+    @ApiModelProperty(value = "페이지 크기")
+    private Integer size;
+
+    @ApiModelProperty(value = "정렬")
+    private List<String> sort;
   }
 }

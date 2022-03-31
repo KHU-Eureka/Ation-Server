@@ -15,12 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 @Api(tags = {"Auth"})
 @RequiredArgsConstructor
 public class AuthController {
-    private final AuthService authService;
 
+    private final AuthService authService;
 
     @GetMapping("/auth/user")
     @ApiOperation(value = "로그인 유저 조회")
-    public ResponseEntity<?> loggedIn(){
+    public ResponseEntity loggedIn() {
         return new ResponseEntity(authService.getLoggedInUser(), null, HttpStatus.OK);
     }
 

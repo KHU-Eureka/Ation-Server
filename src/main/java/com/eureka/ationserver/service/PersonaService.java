@@ -30,188 +30,188 @@ import org.springframework.web.multipart.MultipartFile;
 @Service
 @RequiredArgsConstructor
 public class PersonaService {
-    private final PersonaRepository personaRepository;
-    private final SenseRepository senseRepository;
-    private final PersonaSenseReposotiry personaSenseReposotiry;
-    private final InterestRepository interestRepository;
-    private final PersonaInterestRepository personaInterestRepository;
-    private final PersonaCharmRepository personaCharmRepository;
-    private final AuthService authService;
+
+  private final PersonaRepository personaRepository;
+  private final SenseRepository senseRepository;
+  private final PersonaSenseReposotiry personaSenseReposotiry;
+  private final InterestRepository interestRepository;
+  private final PersonaInterestRepository personaInterestRepository;
+  private final PersonaCharmRepository personaCharmRepository;
+  private final AuthService authService;
 
 
-    @Transactional
-    public Long save(PersonaRequest personaRequest) {
+  @Transactional
+  public Long save(PersonaRequest.In in) {
 
-        User user = authService.auth();
+    User user = authService.auth();
 
-        String defaultPath = ImageUtil.getDefaultImagePath(Persona.PERSONA_PREFIX);
+    String defaultPath = ImageUtil.getDefaultImagePath(Persona.PERSONA_PREFIX);
 
-        Persona persona = personaRepository.save(personaRequest.toEntity(user, defaultPath));
+    Persona persona = personaRepository.save(in.toPersona(user, defaultPath));
 
-        // sense
-        List<Sense> senseList = senseRepository.findAllByIdIn(personaRequest.getSenseIdList());
-        for (Sense sense : senseList) {
-            PersonaSense personaSense = PersonaSense.builder()
+    // sense
+    List<PersonaSense> personaSenseList = new ArrayList<>();
+    senseRepository.findAllByIdIn(in.getSenseIdList()).forEach(sense -> personaSenseList.add(
+        PersonaSense.builder()
+            .persona(persona)
+            .sense(sense)
+            .build())
+    );
+    personaSenseReposotiry.saveAll(personaSenseList);
+
+    // interest
+    List<PersonaInterest> personaInterestList = new ArrayList<>();
+    interestRepository.findAllByIdIn(in.getInterestIdList())
+        .forEach(interest -> personaInterestList.add(
+            PersonaInterest.builder()
                 .persona(persona)
-                                            .sense(sense)
-                                            .build();
-            personaSenseReposotiry.save(personaSense);
-        }
+                .interest(interest)
+                .build()
+        ));
+    personaInterestRepository.saveAll(personaInterestList);
+
+    // charm
+    List<PersonaCharm> personaCharmList = new ArrayList<>();
+    in.getCharmList().forEach(charm -> personaCharmList.add(
+        PersonaCharm.builder()
+            .persona(persona)
+            .name(charm)
+            .build()
+    ));
+    personaCharmRepository.saveAll(personaCharmList);
+
+    return persona.getId();
+  }
+
+  public Boolean duplicate(String nickname) {
+    Optional<Persona> persona = personaRepository.findByNickname(nickname);
+    if (persona.isPresent()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
 
 
-        // interest
-        List<Interest> interestList = interestRepository.findAllByIdIn(personaRequest.getInterestIdList());
-        for(Interest interest : interestList){
-            PersonaInterest personaInterest = PersonaInterest.builder()
-                                                .persona(persona)
-                                                .interest(interest)
-                                                .build();
-            personaInterestRepository.save(personaInterest);
-        }
+  @Transactional
+  public Long saveImg(Long personaId, MultipartFile profileImg) throws IOException {
+    User user = authService.auth();
 
-        // charm
-        for(String charm : personaRequest.getCharmList()){
-            PersonaCharm personaCharm = PersonaCharm.builder()
-                                            .persona(persona)
-                                            .name(charm)
-                                            .build();
-            personaCharmRepository.save(personaCharm);
-        }
+    Persona persona = personaRepository.getById(personaId);
+    if (user.getId() != persona.getUser().getId()) {
+      throw new ForbiddenException();
+    } else {
+      List<String> pathList = ImageUtil.getImagePath(Persona.PERSONA_PREFIX, personaId);
+      File file = new File(pathList.get(1));
+      profileImg.transferTo(file);
+
+      persona.setProfileImgPath(pathList.get(0));
+      return personaId;
+    }
+  }
 
 
-        return persona.getId();
+  @Transactional(readOnly = true)
+  public PersonaResponse.Out find(Long personaId) {
+    Persona persona = personaRepository.getById(personaId);
+    return PersonaResponse.toOut(persona);
+
+  }
+
+  public List<PersonaResponse.Out> findAll() {
+
+    User user = authService.auth();
+
+    List<Persona> personaList = personaRepository.findByUserId(user.getId());
+    List<PersonaResponse.Out> outList = new ArrayList<>();
+    personaList.stream().forEach(x -> outList.add(PersonaResponse.toOut(x)));
+
+    return outList;
+
+  }
+
+
+  @Transactional
+  public Long update(Long personaId, PersonaRequest.In in) {
+
+    User user = authService.auth();
+
+    Persona persona = personaRepository.getById(personaId);
+    if (user.getId() != persona.getUser().getId()) {
+      throw new ForbiddenException();
+    } else {
+      persona.update(in);
+
+      personaSenseReposotiry.deleteByPersona_Id(personaId);
+      List<Sense> senseList = senseRepository.findAllByIdIn(in.getSenseIdList());
+      for (Sense sense : senseList) {
+        PersonaSense personaSense = PersonaSense.builder()
+            .persona(persona)
+            .sense(sense)
+            .build();
+        personaSenseReposotiry.save(personaSense);
+      }
+
+      personaInterestRepository.deleteByPersona_Id(personaId);
+      List<Interest> interestList = interestRepository.findAllByIdIn(in.getInterestIdList());
+      for (Interest interest : interestList) {
+        PersonaInterest personaInterest = PersonaInterest.builder()
+            .persona(persona)
+            .interest(interest)
+            .build();
+        personaInterestRepository.save(personaInterest);
+      }
+
+      personaCharmRepository.deleteByPersona_Id(personaId);
+      for (String charm : in.getCharmList()) {
+        PersonaCharm personaCharm = PersonaCharm.builder()
+            .persona(persona)
+            .name(charm)
+            .build();
+        personaCharmRepository.save(personaCharm);
+      }
+
+      return personaId;
+    }
+  }
+
+  @Transactional
+  public Long delete(Long personaId) {
+
+    User user = authService.auth();
+
+    Persona persona = personaRepository.getById(personaId);
+    if (user.getId() != persona.getUser().getId()) {
+      throw new ForbiddenException();
+    } else {
+      personaRepository.deleteById(personaId);
+      return personaId;
+    }
+  }
+
+  @Transactional
+  public Long setCurrentPersona(Long personaId) {
+
+    User user = authService.auth();
+
+    Persona persona = personaRepository.getById(personaId);
+    if (user.getId() != persona.getUser().getId()) {
+      throw new ForbiddenException();
+    } else {
+      user.setPersona(persona);
+      return personaId;
+    }
+  }
+
+  @Transactional(readOnly = true)
+  public PersonaResponse.Out getCurrentPersona() {
+    User user = authService.auth();
+    Persona persona = user.getPersona();
+    if (persona == null) {
+      return null;
+    } else {
+      return PersonaResponse.toOut(persona);
     }
 
-    public Boolean duplicate(String nickname){
-        Optional<Persona> persona = personaRepository.findByNickname(nickname);
-        if(persona.isPresent()) {
-            return true;
-        }else{
-            return false;
-        }
-    }
-
-
-    @Transactional
-    public Long saveImg(Long personaId, MultipartFile profileImg) throws IOException {
-        User user = authService.auth();
-
-        Persona persona = personaRepository.getById(personaId);
-        if (user.getId() != persona.getUser().getId()) {
-            throw new ForbiddenException();
-        } else {
-            List<String> pathList = ImageUtil.getImagePath(Persona.PERSONA_PREFIX, personaId);
-            File file = new File(pathList.get(1));
-            profileImg.transferTo(file);
-
-            persona.setProfileImgPath(pathList.get(0));
-            return personaId;
-        }
-    }
-
-
-    @Transactional(readOnly = true)
-    public PersonaResponse find(Long personaId) {
-        Persona persona = personaRepository.getById(personaId);
-        return new PersonaResponse(persona);
-
-    }
-
-    public List<PersonaResponse> findAll() {
-        User user = authService.auth();
-        List<Persona> personaList = personaRepository.findByUserId(user.getId());
-        List<PersonaResponse> personaResponseList = new ArrayList<>();
-        for (Persona persona : personaList) {
-            personaResponseList.add(new PersonaResponse(persona));
-        }
-        return personaResponseList;
-
-
-    }
-
-
-    @Transactional
-    public Long update(Long personaId, PersonaRequest personaRequest) {
-
-        User user = authService.auth();
-
-        Persona persona = personaRepository.getById(personaId);
-        if (user.getId() != persona.getUser().getId()) {
-            throw new ForbiddenException();
-        } else {
-            persona.update(personaRequest);
-
-            personaSenseReposotiry.deleteByPersona_Id(personaId);
-            List<Sense> senseList = senseRepository.findAllByIdIn(personaRequest.getSenseIdList());
-            for (Sense sense : senseList) {
-                PersonaSense personaSense = PersonaSense.builder()
-                        .persona(persona)
-                        .sense(sense)
-                        .build();
-                personaSenseReposotiry.save(personaSense);
-            }
-
-
-            personaInterestRepository.deleteByPersona_Id(personaId);
-            List<Interest> interestList = interestRepository.findAllByIdIn(personaRequest.getInterestIdList());
-            for (Interest interest : interestList) {
-                PersonaInterest personaInterest = PersonaInterest.builder()
-                        .persona(persona)
-                        .interest(interest)
-                        .build();
-                personaInterestRepository.save(personaInterest);
-            }
-
-            personaCharmRepository.deleteByPersona_Id(personaId);
-            for (String charm : personaRequest.getCharmList()) {
-                PersonaCharm personaCharm = PersonaCharm.builder()
-                        .persona(persona)
-                        .name(charm)
-                        .build();
-                personaCharmRepository.save(personaCharm);
-            }
-
-            return personaId;
-        }
-    }
-
-    @Transactional
-    public Long delete(Long personaId) {
-
-        User user = authService.auth();
-
-        Persona persona = personaRepository.getById(personaId);
-        if (user.getId() != persona.getUser().getId()) {
-            throw new ForbiddenException();
-        } else {
-            personaRepository.deleteById(personaId);
-            return personaId;
-        }
-    }
-
-    @Transactional
-    public Long setCurrentPersona(Long personaId) {
-
-        User user = authService.auth();
-
-        Persona persona = personaRepository.getById(personaId);
-        if (user.getId() != persona.getUser().getId()) {
-            throw new ForbiddenException();
-        } else {
-            user.setPersona(persona);
-            return personaId;
-        }
-    }
-
-    @Transactional(readOnly = true)
-    public PersonaResponse getCurrentPersona() {
-        User user = authService.auth();
-        Persona persona = user.getPersona();
-        if (persona == null) {
-            return null;
-        } else {
-            return new PersonaResponse(persona);
-        }
-
-    }
+  }
 }

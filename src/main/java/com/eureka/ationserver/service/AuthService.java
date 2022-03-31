@@ -16,9 +16,9 @@ public class AuthService {
 
     private final UserRepository userRepository;
 
-    public UserResponse getLoggedInUser() {
+    public UserResponse.LoggedIn getLoggedInUser() {
         User user = this.auth();
-        return new UserResponse(user);
+        return UserResponse.toLoggedIn(user);
     }
 
     public User auth() {

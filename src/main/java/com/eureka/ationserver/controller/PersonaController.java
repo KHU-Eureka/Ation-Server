@@ -66,8 +66,8 @@ public class PersonaController {
 
   @PostMapping("/persona")
   @ApiOperation(value = "페르소나 생성")
-  public ResponseEntity save(@RequestBody PersonaRequest personaRequest) {
-    return new ResponseEntity(personaService.save(personaRequest), null, HttpStatus.CREATED);
+  public ResponseEntity save(@RequestBody PersonaRequest.In in) {
+    return new ResponseEntity(personaService.save(in), null, HttpStatus.CREATED);
   }
 
   @PostMapping("/persona/image/{personaId}")
@@ -82,8 +82,8 @@ public class PersonaController {
   @PutMapping("/persona/{personaId}")
   @ApiOperation(value = "페르소나 수정")
   public ResponseEntity update(@PathVariable Long personaId,
-      @RequestBody PersonaRequest personaRequest) {
-    return new ResponseEntity(personaService.update(personaId, personaRequest), null,
+      @RequestBody PersonaRequest.In in) {
+    return new ResponseEntity(personaService.update(personaId, in), null,
         HttpStatus.OK);
 
   }
