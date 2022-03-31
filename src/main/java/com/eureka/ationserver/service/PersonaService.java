@@ -38,13 +38,13 @@ public class PersonaService {
   private final InterestRepository interestRepository;
   private final PersonaInterestRepository personaInterestRepository;
   private final PersonaCharmRepository personaCharmRepository;
-  private final AuthService authService;
+  private final UserService userService;
 
 
   @Transactional
   public PersonaResponse.IdOut save(PersonaRequest.In in) {
 
-    User user = authService.auth();
+    User user = userService.auth();
 
     String defaultPath = ImageUtil.getDefaultImagePath(Persona.PERSONA_PREFIX);
 
@@ -87,7 +87,7 @@ public class PersonaService {
   @Transactional
   public PersonaResponse.IdOut saveImg(Long personaId, MultipartFile profileImg)
       throws IOException {
-    User user = authService.auth();
+    User user = userService.auth();
 
     Persona persona = personaRepository.getById(personaId);
     if (user.getId() != persona.getUser().getId()) {
@@ -111,7 +111,7 @@ public class PersonaService {
 
   public List<PersonaResponse.Out> findAll() {
 
-    User user = authService.auth();
+    User user = userService.auth();
 
     List<Persona> personaList = personaRepository.findByUserId(user.getId());
     List<PersonaResponse.Out> outList = new ArrayList<>();
@@ -125,7 +125,7 @@ public class PersonaService {
   @Transactional
   public PersonaResponse.IdOut update(Long personaId, PersonaRequest.In in) {
 
-    User user = authService.auth();
+    User user = userService.auth();
 
     Persona persona = personaRepository.getById(personaId);
     if (user.getId() != persona.getUser().getId()) {
@@ -174,7 +174,7 @@ public class PersonaService {
   @Transactional
   public PersonaResponse.IdOut delete(Long personaId) {
 
-    User user = authService.auth();
+    User user = userService.auth();
 
     Persona persona = personaRepository.getById(personaId);
     if (user.getId() != persona.getUser().getId()) {
@@ -188,7 +188,7 @@ public class PersonaService {
   @Transactional
   public PersonaResponse.IdOut setCurrentPersona(Long personaId) {
 
-    User user = authService.auth();
+    User user = userService.auth();
 
     Persona persona = personaRepository.getById(personaId);
     if (user.getId() != persona.getUser().getId()) {
@@ -201,7 +201,7 @@ public class PersonaService {
 
   @Transactional(readOnly = true)
   public PersonaResponse.Out getCurrentPersona() {
-    User user = authService.auth();
+    User user = userService.auth();
     Persona persona = user.getPersona();
     if (persona == null) {
       return null;

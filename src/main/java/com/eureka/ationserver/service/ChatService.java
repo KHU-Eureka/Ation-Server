@@ -1,7 +1,6 @@
 package com.eureka.ationserver.service;
 
-import com.eureka.ationserver.dto.chat.SocketChatRequest;
-import com.eureka.ationserver.dto.chat.SocketChatResponse;
+import com.eureka.ationserver.dto.socket.LoungeSocketDto;
 import com.eureka.ationserver.model.lounge.Lounge;
 import com.eureka.ationserver.model.lounge.LoungeChat;
 import com.eureka.ationserver.model.persona.Persona;
@@ -21,17 +20,17 @@ public class ChatService {
   private final LoungeRepository loungeRepository;
 
   @Transactional
-  public SocketChatResponse sendChat(Long loungeId, SocketChatRequest socketChatRequest){
-    Persona persona = personaRepository.getById(socketChatRequest.getPersonaId());
+  public LoungeSocketDto.ChatOut sendChat(Long loungeId, LoungeSocketDto.ChatIn in) {
+    Persona persona = personaRepository.getById(in.getPersonaId());
     Lounge lounge = loungeRepository.getById(loungeId);
     LoungeChat loungeChat = loungeChatRepository.save(
         LoungeChat.builder()
             .lounge(lounge)
             .persona(persona)
-            .content(socketChatRequest.getContent())
+            .content(in.getContent())
             .build()
     );
-    return new SocketChatResponse(loungeChat);
+    return LoungeSocketDto.toChatOut(loungeChat);
   }
 
 }

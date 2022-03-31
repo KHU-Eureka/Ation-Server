@@ -1,14 +1,12 @@
 package com.eureka.ationserver.dto.ideation;
 
 import com.eureka.ationserver.dto.persona.PersonaResponse;
-import com.eureka.ationserver.dto.persona.PersonaResponse.IdOut;
 import com.eureka.ationserver.model.ideation.Ideation;
 import io.swagger.annotations.ApiModelProperty;
 import java.time.LocalDateTime;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 
 
@@ -35,7 +33,7 @@ public class IdeationResponse {
     @ApiModelProperty(value = "아이데이션 화이트보드", position = 4)
     private String whiteboard;
 
-    @ApiModelProperty(value = "아이데이션 생성일자", position = 5)
+    @ApiModelProperty(value = "아이데이션 생성일시", position = 5)
     private LocalDateTime createdAt;
 
   }

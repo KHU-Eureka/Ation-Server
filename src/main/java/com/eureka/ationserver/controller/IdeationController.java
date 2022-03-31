@@ -6,9 +6,8 @@ import com.eureka.ationserver.service.IdeationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -36,9 +35,9 @@ public class IdeationController {
 
   @GetMapping("/ideation")
   @ApiOperation("아이데이션 전체 조회")
-  public ResponseEntity findAll(
+  public List<IdeationResponse.Out> findAll(
       @RequestParam(value = "personaId", required = true) Long personaId) {
-    return new ResponseEntity(ideationService.findAll(personaId), null, HttpStatus.OK);
+    return ideationService.findAll(personaId);
   }
 
   @GetMapping("/ideation/{ideationId}")

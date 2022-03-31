@@ -5,56 +5,61 @@ import com.eureka.ationserver.advice.exception.DuplicateException;
 import com.eureka.ationserver.advice.exception.ForbiddenException;
 import com.eureka.ationserver.advice.exception.ResourceNotFoundException;
 import com.eureka.ationserver.advice.exception.UnAuthorizedException;
-import com.eureka.ationserver.dto.common.MessageResponse;
+import com.eureka.ationserver.dto.error.ErrorResponse;
 import javax.persistence.EntityNotFoundException;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 @RestControllerAdvice
 public class ExceptionAdvice {
 
   @ExceptionHandler(Exception.class)
-  public ResponseEntity defaultException(Exception e) {
-    return new ResponseEntity<>(new MessageResponse(e.toString()), null, HttpStatus.BAD_REQUEST);
+  public ErrorResponse.Out defaultException(Exception e) {
+    return ErrorResponse.toOut(e.getMessage());
   }
 
   @ExceptionHandler(UnAuthorizedException.class)
-  public ResponseEntity UnAuthorizedException(UnAuthorizedException e) {
-    return new ResponseEntity(new MessageResponse(Msg.NOTAUTHENTICATED), null,
-        HttpStatus.UNAUTHORIZED);
+  @ResponseStatus(HttpStatus.UNAUTHORIZED)
+  public ErrorResponse.Out UnAuthorizedException(UnAuthorizedException e) {
+    return ErrorResponse.toOut(e.getMessage());
   }
 
   @ExceptionHandler(DuplicateException.class)
-  public ResponseEntity duplicationException(DuplicateException e) {
-    return new ResponseEntity(new MessageResponse(Msg.DUPLICATION), null, HttpStatus.BAD_REQUEST);
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ErrorResponse.Out duplicationException(DuplicateException e) {
+    return ErrorResponse.toOut(e.getMessage());
   }
 
   @ExceptionHandler(BadCredentialsException.class)
-  public ResponseEntity badCredentialsException(BadCredentialsException e) {
-    return new ResponseEntity(new MessageResponse(Msg.BADCREDENTIALS), null,
-        HttpStatus.BAD_REQUEST);
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ErrorResponse.Out badCredentialsException(BadCredentialsException e) {
+    return ErrorResponse.toOut(e.getMessage());
   }
 
   @ExceptionHandler(EntityNotFoundException.class)
-  public ResponseEntity entityNotFoundException(EntityNotFoundException e) {
-    return new ResponseEntity(new MessageResponse(Msg.DATANOTFOUND), null, HttpStatus.BAD_REQUEST);
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ErrorResponse.Out entityNotFoundException(EntityNotFoundException e) {
+    return ErrorResponse.toOut(e.getMessage());
   }
 
   @ExceptionHandler(ForbiddenException.class)
-  public ResponseEntity forbiddenException(ForbiddenException e) {
-    return new ResponseEntity(new MessageResponse(Msg.FORBIDDEN), null, HttpStatus.FORBIDDEN);
+  @ResponseStatus(HttpStatus.FORBIDDEN)
+  public ErrorResponse.Out forbiddenException(ForbiddenException e) {
+    return ErrorResponse.toOut(e.getMessage());
   }
 
   @ExceptionHandler(CommonException.class)
-  public ResponseEntity commonException(CommonException e) {
-    return new ResponseEntity(new MessageResponse(e.getMessage()), null, HttpStatus.BAD_REQUEST);
+  @ResponseStatus(HttpStatus.BAD_REQUEST)
+  public ErrorResponse.Out commonException(CommonException e) {
+    return ErrorResponse.toOut(e.getMessage());
   }
 
   @ExceptionHandler(ResourceNotFoundException.class)
-  public ResponseEntity resourceNotFoundException(ResourceNotFoundException e) {
-    return new ResponseEntity(new MessageResponse(e.getMessage()), null, HttpStatus.NOT_FOUND);
+  @ResponseStatus(HttpStatus.NOT_FOUND)
+  public ErrorResponse.Out resourceNotFoundException(ResourceNotFoundException e) {
+    return ErrorResponse.toOut(e.getMessage());
   }
 }
