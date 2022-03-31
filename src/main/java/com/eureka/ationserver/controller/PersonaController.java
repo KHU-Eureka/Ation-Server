@@ -95,5 +95,17 @@ public class PersonaController {
 
   }
 
+  @GetMapping("/persona-category/sense")
+  @ApiOperation(value = "페르소나 카테고리 - 발달감각 조회")
+  public ResponseEntity findSense() {
+    return new ResponseEntity(personaService.findSense(), null, HttpStatus.OK);
+  }
+
+  @GetMapping("/persona-category/interest")
+  @ApiOperation(value = "페르소나 카테고리 - 분야태그 조회")
+  public ResponseEntity findInterest() {
+    return new ResponseEntity(personaService.findInterest(), null, HttpStatus.OK);
+  }
+
 
 }

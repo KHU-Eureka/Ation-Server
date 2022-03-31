@@ -11,7 +11,7 @@ import com.eureka.ationserver.dto.lounge.LoungeRequest;
 import com.eureka.ationserver.dto.lounge.LoungeResponse;
 import com.eureka.ationserver.dto.lounge.SocketLoungeStatusResponse;
 import com.eureka.ationserver.dto.lounge.SocketMemberResponse;
-import com.eureka.ationserver.dto.persona.PersonaSimpleResponse;
+import com.eureka.ationserver.dto.persona.PersonaResponse;
 import com.eureka.ationserver.dto.whiteboard.WhiteboardRequest;
 import com.eureka.ationserver.model.category.MainCategory;
 import com.eureka.ationserver.model.category.SubCategory;
@@ -40,7 +40,6 @@ import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -224,7 +223,7 @@ public class LoungeService {
     loungeMemberRepository.save(loungeMember);
 
     SocketMemberResponse socketMemberResponse = SocketMemberResponse.builder()
-        .persona(new PersonaSimpleResponse(personaRepository.getById(personaId)))
+        .persona(PersonaResponse.toSimpleOut(personaRepository.getById(personaId)))
         .status(EMemberStatus.ENTER)
         .build();
 
@@ -239,7 +238,7 @@ public class LoungeService {
     loungeMemberRepository.deleteByLounge_IdAndPersona_Id(loungeId, personaId);
 
     SocketMemberResponse socketMemberResponse = SocketMemberResponse.builder()
-        .persona(new PersonaSimpleResponse(personaRepository.getById(personaId)))
+        .persona(PersonaResponse.toSimpleOut(personaRepository.getById(personaId)))
         .status(EMemberStatus.EXIT)
         .build();
 
@@ -264,7 +263,7 @@ public class LoungeService {
     loungeMember.setReady(Boolean.TRUE);
 
     SocketMemberResponse socketMemberResponse = SocketMemberResponse.builder()
-        .persona(new PersonaSimpleResponse(personaRepository.getById(personaId)))
+        .persona(PersonaResponse.toSimpleOut(personaRepository.getById(personaId)))
         .status(EMemberStatus.READY)
         .build();
 
@@ -284,7 +283,7 @@ public class LoungeService {
     loungeMember.setReady(Boolean.FALSE);
 
     SocketMemberResponse socketMemberResponse = SocketMemberResponse.builder()
-        .persona(new PersonaSimpleResponse(personaRepository.getById(personaId)))
+        .persona(PersonaResponse.toSimpleOut(personaRepository.getById(personaId)))
         .status(EMemberStatus.UNREADY)
         .build();
 

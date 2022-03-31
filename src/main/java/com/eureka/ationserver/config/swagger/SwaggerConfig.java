@@ -62,7 +62,6 @@ public class SwaggerConfig {
         new Tag("PinBoard", "핀보드 API", ++tagOrd),
         new Tag("Lounge", "라운지 API", ++tagOrd),
         new Tag("Image", "이미지 API", ++tagOrd),
-        new Tag("PersonaCategory", "페르소나 카테고리 API", ++tagOrd),
         new Tag("Category", "카테고리 API", ++tagOrd),
         new Tag("Recommend", "추천 기반 데이터 API", ++tagOrd)
     );

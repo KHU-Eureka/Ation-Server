@@ -1,5 +1,6 @@
 package com.eureka.ationserver.dto.persona;
 
+import com.eureka.ationserver.dto.persona.category.SenseResponse;
 import com.eureka.ationserver.model.persona.Persona;
 import java.util.ArrayList;
 import java.util.List;
@@ -42,6 +43,24 @@ public class PersonaResponse {
 
   }
 
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class SimpleOut {
+
+    private Long id;
+
+    private String nickname;
+
+    private String profileImgPath;
+
+    private List<SenseResponse.Out> senseList;
+
+    private String job;
+
+  }
+
   public static PersonaResponse.Out toOut(Persona persona) {
 
     if (persona == null) {
@@ -72,5 +91,27 @@ public class PersonaResponse {
     return out;
 
   }
+
+  public static PersonaResponse.SimpleOut toSimpleOut(Persona persona) {
+
+    if (persona == null) {
+      return null;
+    }
+
+    SimpleOut simpleOut = new SimpleOut();
+
+    List<SenseResponse.Out> senseList = new ArrayList<>();
+    persona.getPersonaSenseList().forEach(x -> senseList.add(SenseResponse.toOut(x)));
+
+    simpleOut.id = persona.getId();
+    simpleOut.nickname = persona.getNickname();
+    simpleOut.profileImgPath = persona.getProfileImgPath();
+    simpleOut.senseList = senseList;
+    simpleOut.job = persona.getJob();
+
+    return simpleOut;
+  }
+
+
 }
 

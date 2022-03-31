@@ -2,8 +2,8 @@ package com.eureka.ationserver.dto.lounge;
 
 import com.eureka.ationserver.dto.category.MainCategoryResponse;
 import com.eureka.ationserver.dto.category.SubCategoryResponse;
-import com.eureka.ationserver.dto.persona.PersonaSimpleResponse;
-import com.eureka.ationserver.dto.sense.SenseResponse;
+import com.eureka.ationserver.dto.persona.PersonaResponse;
+import com.eureka.ationserver.dto.persona.category.SenseResponse;
 import com.eureka.ationserver.model.lounge.ELoungeStatus;
 import com.eureka.ationserver.model.lounge.Lounge;
 import java.time.LocalDateTime;
@@ -38,9 +38,9 @@ public class LoungeResponse {
 
   private LocalDateTime createdAt;
 
-  private PersonaSimpleResponse persona;
+  private PersonaResponse.SimpleOut persona;
 
-  private SenseResponse sense;
+  private SenseResponse.Out sense;
 
   private MainCategoryResponse mainCategory;
 
@@ -56,7 +56,6 @@ public class LoungeResponse {
     List<SubCategoryResponse> subCategoryResponseList = new ArrayList<>();
     lounge.getLoungeSubCategoryList().stream()
         .forEach(x -> subCategoryResponseList.add(new SubCategoryResponse(x)));
-    PersonaSimpleResponse personaSimpleResponse = new PersonaSimpleResponse(lounge.getPersona());
     List<LoungeMemberResponse> memberList = new ArrayList<>();
     lounge.getLoungeMemberList().stream()
         .forEach(x -> memberList.add(new LoungeMemberResponse(x)));
@@ -70,8 +69,8 @@ public class LoungeResponse {
     this.createdAt = lounge.getCreatedAt();
     this.imgPath = lounge.getImgPath();
     this.whiteboard = lounge.getWhiteboard();
-    this.sense = new SenseResponse(lounge.getSense());
-    this.persona = personaSimpleResponse;
+    this.sense = SenseResponse.toOut(lounge.getSense());
+    this.persona = PersonaResponse.toSimpleOut(lounge.getPersona());
     this.mainCategory = mainCategoryResponse;
     this.subCategoryList = subCategoryResponseList;
     this.memberList = memberList;

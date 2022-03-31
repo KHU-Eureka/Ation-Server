@@ -1,7 +1,7 @@
 package com.eureka.ationserver.dto.pinBoard;
 
+import com.eureka.ationserver.dto.persona.PersonaResponse;
 import com.eureka.ationserver.model.insight.PinBoard;
-import com.eureka.ationserver.dto.persona.PersonaSimpleResponse;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -13,7 +13,7 @@ public class PinBoardResponse {
 
     private Long id;
 
-    private PersonaSimpleResponse persona;
+    private PersonaResponse.SimpleOut persona;
 
     private String name;
 
@@ -25,7 +25,7 @@ public class PinBoardResponse {
     public PinBoardResponse(PinBoard pinBoard, Long totalPinNumber){
 
         this.id = pinBoard.getId();
-        this.persona = new PersonaSimpleResponse(pinBoard.getPersona());
+        this.persona = PersonaResponse.toSimpleOut(pinBoard.getPersona());
         this.name = pinBoard.getName();
         this.imgPath = pinBoard.getImgPath();
         this.totalPinNumber = totalPinNumber;

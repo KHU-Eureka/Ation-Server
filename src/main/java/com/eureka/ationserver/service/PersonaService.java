@@ -3,12 +3,12 @@ package com.eureka.ationserver.service;
 import com.eureka.ationserver.advice.exception.ForbiddenException;
 import com.eureka.ationserver.dto.persona.PersonaRequest;
 import com.eureka.ationserver.dto.persona.PersonaResponse;
-import com.eureka.ationserver.model.persona.Interest;
+import com.eureka.ationserver.dto.persona.category.InterestResponse;
+import com.eureka.ationserver.dto.persona.category.SenseResponse;
 import com.eureka.ationserver.model.persona.Persona;
 import com.eureka.ationserver.model.persona.PersonaCharm;
 import com.eureka.ationserver.model.persona.PersonaInterest;
 import com.eureka.ationserver.model.persona.PersonaSense;
-import com.eureka.ationserver.model.persona.Sense;
 import com.eureka.ationserver.model.user.User;
 import com.eureka.ationserver.repository.persona.InterestRepository;
 import com.eureka.ationserver.repository.persona.PersonaCharmRepository;
@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -83,16 +84,6 @@ public class PersonaService {
     return persona.getId();
   }
 
-  public Boolean duplicate(String nickname) {
-    Optional<Persona> persona = personaRepository.findByNickname(nickname);
-    if (persona.isPresent()) {
-      return true;
-    } else {
-      return false;
-    }
-  }
-
-
   @Transactional
   public Long saveImg(Long personaId, MultipartFile profileImg) throws IOException {
     User user = authService.auth();
@@ -115,7 +106,6 @@ public class PersonaService {
   public PersonaResponse.Out find(Long personaId) {
     Persona persona = personaRepository.getById(personaId);
     return PersonaResponse.toOut(persona);
-
   }
 
   public List<PersonaResponse.Out> findAll() {
@@ -124,7 +114,7 @@ public class PersonaService {
 
     List<Persona> personaList = personaRepository.findByUserId(user.getId());
     List<PersonaResponse.Out> outList = new ArrayList<>();
-    personaList.stream().forEach(x -> outList.add(PersonaResponse.toOut(x)));
+    personaList.forEach(x -> outList.add(PersonaResponse.toOut(x)));
 
     return outList;
 
@@ -142,34 +132,39 @@ public class PersonaService {
     } else {
       persona.update(in);
 
+      // sense
       personaSenseReposotiry.deleteByPersona_Id(personaId);
-      List<Sense> senseList = senseRepository.findAllByIdIn(in.getSenseIdList());
-      for (Sense sense : senseList) {
-        PersonaSense personaSense = PersonaSense.builder()
-            .persona(persona)
-            .sense(sense)
-            .build();
-        personaSenseReposotiry.save(personaSense);
-      }
+      List<PersonaSense> personaSenseList = new ArrayList<>();
+      senseRepository.findAllByIdIn(in.getSenseIdList()).forEach(sense -> personaSenseList.add(
+          PersonaSense.builder()
+              .persona(persona)
+              .sense(sense)
+              .build())
+      );
+      personaSenseReposotiry.saveAll(personaSenseList);
 
+      // interest
       personaInterestRepository.deleteByPersona_Id(personaId);
-      List<Interest> interestList = interestRepository.findAllByIdIn(in.getInterestIdList());
-      for (Interest interest : interestList) {
-        PersonaInterest personaInterest = PersonaInterest.builder()
-            .persona(persona)
-            .interest(interest)
-            .build();
-        personaInterestRepository.save(personaInterest);
-      }
+      List<PersonaInterest> personaInterestList = new ArrayList<>();
+      interestRepository.findAllByIdIn(in.getInterestIdList())
+          .forEach(interest -> personaInterestList.add(
+              PersonaInterest.builder()
+                  .persona(persona)
+                  .interest(interest)
+                  .build()
+          ));
+      personaInterestRepository.saveAll(personaInterestList);
 
+      // charm
       personaCharmRepository.deleteByPersona_Id(personaId);
-      for (String charm : in.getCharmList()) {
-        PersonaCharm personaCharm = PersonaCharm.builder()
-            .persona(persona)
-            .name(charm)
-            .build();
-        personaCharmRepository.save(personaCharm);
-      }
+      List<PersonaCharm> personaCharmList = new ArrayList<>();
+      in.getCharmList().forEach(charm -> personaCharmList.add(
+          PersonaCharm.builder()
+              .persona(persona)
+              .name(charm)
+              .build()
+      ));
+      personaCharmRepository.saveAll(personaCharmList);
 
       return personaId;
     }
@@ -214,4 +209,29 @@ public class PersonaService {
     }
 
   }
+
+  public Boolean duplicate(String nickname) {
+    Optional<Persona> persona = personaRepository.findByNickname(nickname);
+    if (persona.isPresent()) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
+  public List<SenseResponse.Out> findSense() {
+    List<SenseResponse.Out> outList = senseRepository.findAll().stream().map(SenseResponse::toOut)
+        .collect(
+            Collectors.toList());
+    return outList;
+  }
+
+
+  public List<InterestResponse.Out> findInterest() {
+    List<InterestResponse.Out> outList = interestRepository.findAll().stream()
+        .map(InterestResponse::toOut).collect(Collectors.toList());
+    return outList;
+  }
+
+
 }

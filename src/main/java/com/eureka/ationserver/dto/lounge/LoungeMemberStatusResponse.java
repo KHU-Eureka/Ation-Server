@@ -1,19 +1,19 @@
 package com.eureka.ationserver.dto.lounge;
 
-import com.eureka.ationserver.dto.persona.PersonaSimpleResponse;
+import com.eureka.ationserver.dto.persona.PersonaResponse;
 import com.eureka.ationserver.model.lounge.LoungeMember;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Getter
+@Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class LoungeMemberStatusResponse {
 
   private LoungeResponse lounge;
 
-  private PersonaSimpleResponse persona;
+  private PersonaResponse.SimpleOut persona;
 
   private Boolean ready;
 
@@ -21,7 +21,7 @@ public class LoungeMemberStatusResponse {
 
   public LoungeMemberStatusResponse(LoungeMember loungeMember){
     this.lounge = new LoungeResponse(loungeMember.getLounge());
-    this.persona = new PersonaSimpleResponse(loungeMember.getPersona());
+    this.persona = PersonaResponse.toSimpleOut(loungeMember.getPersona());
     this.ready = loungeMember.getReady();
     this.admin = loungeMember.getAdmin();
   }
