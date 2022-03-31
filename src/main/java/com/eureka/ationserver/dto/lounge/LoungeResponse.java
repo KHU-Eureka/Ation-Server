@@ -1,7 +1,5 @@
 package com.eureka.ationserver.dto.lounge;
 
-import com.eureka.ationserver.dto.category.MainCategoryResponse;
-import com.eureka.ationserver.dto.category.SubCategoryResponse;
 import com.eureka.ationserver.dto.persona.PersonaResponse;
 import com.eureka.ationserver.dto.persona.category.SenseResponse;
 import com.eureka.ationserver.model.lounge.ELoungeStatus;

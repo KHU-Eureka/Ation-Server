@@ -12,7 +12,6 @@ import com.eureka.ationserver.dto.lounge.LoungeResponse;
 import com.eureka.ationserver.dto.lounge.SocketLoungeStatusResponse;
 import com.eureka.ationserver.dto.lounge.SocketMemberResponse;
 import com.eureka.ationserver.dto.persona.PersonaResponse;
-import com.eureka.ationserver.dto.whiteboard.WhiteboardRequest;
 import com.eureka.ationserver.model.category.MainCategory;
 import com.eureka.ationserver.model.category.SubCategory;
 import com.eureka.ationserver.model.lounge.ELoungeStatus;

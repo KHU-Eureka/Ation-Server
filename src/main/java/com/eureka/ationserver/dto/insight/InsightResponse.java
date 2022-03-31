@@ -1,11 +1,11 @@
 package com.eureka.ationserver.dto.insight;
 
-import com.eureka.ationserver.dto.category.MainCategoryResponse;
-import com.eureka.ationserver.dto.category.SubCategoryResponse;
+import com.eureka.ationserver.dto.category.CategoryResponse;
 import com.eureka.ationserver.model.insight.Insight;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -14,48 +14,50 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 public class InsightResponse {
-    private Long id;
 
-    private String url;
+  private Long id;
 
-    private String title;
+  private String url;
 
-    private String imgPath;
+  private String title;
 
-    private String description;
+  private String imgPath;
 
-    private String siteName;
+  private String description;
 
-    private String icon;
+  private String siteName;
 
-    private LocalDateTime createdAt;
+  private String icon;
 
-    private MainCategoryResponse mainCategory;
+  private LocalDateTime createdAt;
 
-    private List<SubCategoryResponse> subCategoryList;
+  private CategoryResponse.Main mainCategory;
 
-    private List<String> tagList;
+  private List<CategoryResponse.Sub> subCategoryList;
+
+  private List<String> tagList;
 
 
-    public InsightResponse(Insight insight){
+  public InsightResponse(Insight insight) {
 
-        MainCategoryResponse mainCategoryResponse = new MainCategoryResponse(insight.getInsightMainCategory());
-        List<SubCategoryResponse> subCategoryResponseList = new ArrayList<>();
-        insight.getInsightSubCategoryList().stream().forEach(x-> subCategoryResponseList.add(new SubCategoryResponse(x)));
-        List<String> tagList = new ArrayList<>();
-        insight.getInsightTagList().stream().forEach(x -> tagList.add(x.getName()));
+    CategoryResponse.Main mainCategoryResponse = CategoryResponse.toMain(
+        insight.getInsightMainCategory());
+    List<CategoryResponse.Sub> subCategoryResponseList = insight.getInsightSubCategoryList()
+        .stream().map(CategoryResponse::toSub).collect(Collectors.toList());
+    List<String> tagList = new ArrayList<>();
+    insight.getInsightTagList().forEach(x -> tagList.add(x.getName()));
 
-        this.id = insight.getId();
-        this.url = insight.getUrl();
-        this.title = insight.getTitle();
-        this.imgPath = insight.getImgPath();
-        this.description = insight.getDescription();
-        this.siteName = insight.getSiteName();
-        this.createdAt = insight.getCreatedAt();
-        this.mainCategory = mainCategoryResponse;
-        this.subCategoryList = subCategoryResponseList;
-        this.tagList = tagList;
-        this.icon = insight.getIcon();
-    }
+    this.id = insight.getId();
+    this.url = insight.getUrl();
+    this.title = insight.getTitle();
+    this.imgPath = insight.getImgPath();
+    this.description = insight.getDescription();
+    this.siteName = insight.getSiteName();
+    this.createdAt = insight.getCreatedAt();
+    this.mainCategory = mainCategoryResponse;
+    this.subCategoryList = subCategoryResponseList;
+    this.tagList = tagList;
+    this.icon = insight.getIcon();
+  }
 
 }

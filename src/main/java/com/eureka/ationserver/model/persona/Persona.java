@@ -67,6 +67,12 @@ public class Persona {
   @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL)
   private List<PersonaInterest> personaInterestList;
 
+  @OneToMany(mappedBy = "persona", cascade = CascadeType.REMOVE)
+  private List<PinBoard> pinBoardList;
+
+  @OneToMany(mappedBy = "persona", cascade = CascadeType.REMOVE)
+  private List<Ideation> ideationList;
+
   public Persona update(PersonaRequest.In in) {
     this.nickname = in.getNickname();
     this.age = in.getAge();
@@ -76,12 +82,6 @@ public class Persona {
     this.introduction = in.getIntroduction();
     return this;
   }
-
-  @OneToMany(mappedBy = "persona", cascade = CascadeType.REMOVE)
-  private List<PinBoard> pinBoardList;
-
-  @OneToMany(mappedBy = "persona", cascade = CascadeType.REMOVE)
-  private List<Ideation> ideationList;
 
   public void setProfileImgPath(String personaImgPath) {
     this.profileImgPath = personaImgPath;
