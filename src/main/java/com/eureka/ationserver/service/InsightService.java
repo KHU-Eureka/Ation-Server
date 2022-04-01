@@ -187,7 +187,7 @@ public class InsightService {
     @Transactional(readOnly = true)
     public List<InsightResponse> getRandom(){
 
-        List<Insight> insightList = insightRepository.findAll();
+        List<Insight> insightList = insightRepository.findByOpen(true);
         int len = insightList.size();
         List<InsightResponse> insightResponseList = new ArrayList<>();
         Random generator = new Random();
