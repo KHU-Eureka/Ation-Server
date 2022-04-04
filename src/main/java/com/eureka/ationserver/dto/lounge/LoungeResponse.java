@@ -30,8 +30,6 @@ public class LoungeResponse {
 
   private String notice;
 
-  private Long totalMember;
-
   private String imgPath;
 
   private String whiteboard;
