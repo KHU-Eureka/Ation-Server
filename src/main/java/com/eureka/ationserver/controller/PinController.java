@@ -55,7 +55,7 @@ public class PinController {
     return pinService.delete(pinId);
   }
 
-  @PostMapping("/pin/image/{pinId}")
+  @PostMapping("/pin/{pinId}/image")
   @ApiOperation(value = "핀 썸네일 이미지 변경")
   public PinResponse.Out saveImg(@PathVariable Long pinId,
       @RequestParam(value = "pinImg", required = true) MultipartFile pinImg) throws IOException {

@@ -55,7 +55,7 @@ public class PersonaController {
     return personaService.delete(personaId);
   }
 
-  @PutMapping("/persona/user/{personaId}")
+  @PutMapping("/persona/{personaId}/user")
   @ApiOperation(value = "활동 페르소나 설정")
   public PersonaResponse.IdOut setCurrentPersona(@PathVariable Long personaId) {
     return personaService.setCurrentPersona(personaId);
@@ -80,7 +80,7 @@ public class PersonaController {
   }
 
 
-  @PostMapping("/persona/image/{personaId}")
+  @PostMapping("/persona/{personaId}/image")
   @ApiOperation(value = "페르소나 프로필이미지 수정")
   public PersonaResponse.IdOut saveImg(@PathVariable Long personaId,
       @RequestParam(value = "profileImg", required = true) MultipartFile profileImg)

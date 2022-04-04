@@ -34,7 +34,7 @@ public class PinBoardController {
 
     }
 
-    @PostMapping("/pin-board/image/{pinBoardId}")
+    @PostMapping("/pin-board/{pinBoardId}/image")
     @ApiOperation(value = "핀보드 이미지 설정")
     public PinBoardResponse.Out saveImg(@PathVariable Long pinBoardId,
         @RequestParam(value = "pinBoardImg", required = true) MultipartFile pinBoardImg)

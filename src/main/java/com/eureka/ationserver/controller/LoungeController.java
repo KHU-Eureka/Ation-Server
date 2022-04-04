@@ -51,7 +51,7 @@ public class LoungeController {
 
   }
 
-  @PutMapping("/lounge/notice/{loungeId}")
+  @PutMapping("/lounge/{loungeId}/notice")
   @ApiOperation("라운지 공지 수정")
   public LoungeResponse.IdOut updateNotice(@PathVariable Long loungeId,
       @RequestBody LoungeRequest.NoticeIn in) {
@@ -134,19 +134,19 @@ public class LoungeController {
     return loungeService.getHistory();
   }
 
-  @DeleteMapping("/lounge/history/{loungeId}")
+  @DeleteMapping("/lounge/{loungeId}/history")
   @ApiOperation("유저 라운지 참여 이력 삭제")
   public LoungeResponse.IdOut deleteHistory(@PathVariable Long loungeId) {
     return loungeService.deleteHistory(loungeId);
   }
 
-  @PostMapping("/lounge/pin/{loungeId}")
+  @PostMapping("/lounge/{loungeId}/pin")
   @ApiOperation("라운지 핀")
   public LoungeResponse.IdOut pin(@PathVariable Long loungeId) {
     return loungeService.pin(loungeId);
   }
 
-  @DeleteMapping("/lounge/pin/{loungeId}")
+  @DeleteMapping("/lounge/{loungeId}/pin")
   @ApiOperation("라운지 핀 삭제")
   public LoungeResponse.IdOut deletePin(@PathVariable Long loungeId) {
     return loungeService.deletePin(loungeId);

@@ -36,7 +36,7 @@ public class InsightController {
   }
 
   @SneakyThrows
-  @PostMapping("/insight/image/{insightId}")
+  @PostMapping("/insight/{insightId}/image")
   @ApiOperation(value = "인사이트 썸네일 이미지 변경")
   public InsightResponse.Out saveImg(@PathVariable Long insightId,
       @RequestParam(value = "insightImg", required = true) MultipartFile insightImg) {
@@ -55,7 +55,7 @@ public class InsightController {
     return insightService.findPublic(insightId);
   }
 
-  @GetMapping("/insight/main-category/{mainCategoryId}")
+  @GetMapping("/insight/{mainCategoryId}/main-category")
   @ApiOperation(value = "인사이트 카테고리별 조회")
   public List<InsightResponse.Out> findByMainCategory(@PathVariable Long mainCategoryId) {
     return insightService.findByMainCategory(mainCategoryId);
