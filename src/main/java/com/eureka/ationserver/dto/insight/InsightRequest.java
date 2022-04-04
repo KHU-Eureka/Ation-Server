@@ -19,14 +19,13 @@ public class InsightRequest {
     @ApiModelProperty(value = "인사이트 url", required = true, position = 0)
     private String url;
 
-    @ApiModelProperty(value = "인사이트 메인 카테고리", required = true, position = 2)
+    @ApiModelProperty(value = "인사이트 메인 카테고리", required = true, position = 1)
     private Long mainCategoryId;
 
-
-    @ApiModelProperty(value = "인사이트 서브 카테고리", required = true, position = 3)
+    @ApiModelProperty(value = "인사이트 서브 카테고리", required = true, position = 2)
     private List<Long> subCategoryIdList;
 
-    @ApiModelProperty(value = "인사이트 태그", position = 4)
+    @ApiModelProperty(value = "인사이트 태그", position = 3)
     private List<String> tagList;
 
   }
