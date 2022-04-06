@@ -36,7 +36,7 @@ public class Ideation {
   @Column
   private String imgPath;
 
-  @Column
+  @Column(columnDefinition = "TEXT")
   private String whiteboard;
 
   @Column

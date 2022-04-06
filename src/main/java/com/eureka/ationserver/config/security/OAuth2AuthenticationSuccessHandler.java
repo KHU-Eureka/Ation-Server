@@ -17,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
   private final JwtAuthProvider jwtAuthProvider;
+  private final OAuthConsts oAuthConsts;
 
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
@@ -24,7 +25,7 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
 
     String token = jwtAuthProvider.generateJwtToken(authentication);
 
-    String targetUrl = UriComponentsBuilder.fromUriString(OAuthConsts.REDIRECT_URL)
+    String targetUrl = UriComponentsBuilder.fromUriString(oAuthConsts.getRedirectUrl())
         .queryParam("token", token).build().toUriString();
     getRedirectStrategy().sendRedirect(request, response, targetUrl);
     this.clearAuthenticationAttributes(request);

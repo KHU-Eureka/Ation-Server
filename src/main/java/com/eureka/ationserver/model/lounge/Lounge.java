@@ -75,7 +75,7 @@ public class Lounge {
   @Column
   private String imgPath;
 
-  @Column
+  @Column(columnDefinition = "TEXT")
   private String whiteboard;
 
   @Column
