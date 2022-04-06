@@ -1,7 +1,7 @@
-package com.eureka.ationserver.controller.socket;
+package com.eureka.ationserver.socket;
 
-import com.eureka.ationserver.dto.chat.SocketChatRequest;
-import com.eureka.ationserver.dto.chat.SocketChatResponse;
+import com.eureka.ationserver.dto.socket.LoungeSocketDto;
+import com.eureka.ationserver.dto.socket.LoungeSocketDto.ChatOut;
 import com.eureka.ationserver.service.ChatService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.DestinationVariable;
@@ -17,7 +17,7 @@ public class SocketChatController {
 
   @MessageMapping("/lounge/{loungeId}/chat/receive")
   @SendTo("/lounge/{loungeId}/chat/send")
-  public SocketChatResponse chatHandler(@DestinationVariable Long loungeId, SocketChatRequest socketChatRequest){
-    return chatService.sendChat(loungeId, socketChatRequest);
+  public ChatOut chatHandler(@DestinationVariable Long loungeId, LoungeSocketDto.ChatIn in) {
+    return chatService.sendChat(loungeId, in);
   }
 }

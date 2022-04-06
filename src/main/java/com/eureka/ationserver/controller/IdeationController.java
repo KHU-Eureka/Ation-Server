@@ -1,15 +1,13 @@
 package com.eureka.ationserver.controller;
 
 import com.eureka.ationserver.dto.ideation.IdeationRequest;
-import com.eureka.ationserver.dto.ideation.IdeationTitleRequest;
-import com.eureka.ationserver.dto.whiteboard.WhiteboardRequest;
+import com.eureka.ationserver.dto.ideation.IdeationResponse;
 import com.eureka.ationserver.service.IdeationService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -31,45 +29,48 @@ public class IdeationController {
 
   @PostMapping("/ideation")
   @ApiOperation(value = "아이데이션 생성")
-  public ResponseEntity save(@RequestBody IdeationRequest ideationRequest) {
-    return new ResponseEntity(ideationService.save(ideationRequest), null,
-        HttpStatus.CREATED);
+  public IdeationResponse.IdOut save(@RequestBody IdeationRequest.In in) {
+    return ideationService.save(in);
   }
 
   @GetMapping("/ideation")
   @ApiOperation("아이데이션 전체 조회")
-  public ResponseEntity findAll(@RequestParam(value="personaId", required = true) Long personaId) {
-    return new ResponseEntity(ideationService.findAll(personaId), null, HttpStatus.OK);
+  public List<IdeationResponse.Out> findAll(
+      @RequestParam(value = "personaId", required = true) Long personaId) {
+    return ideationService.findAll(personaId);
   }
 
   @GetMapping("/ideation/{ideationId}")
   @ApiOperation("아이데이션 조회")
-  public ResponseEntity find(@PathVariable Long ideationId) {
-    return new ResponseEntity(ideationService.find(ideationId), null, HttpStatus.OK);
+  public IdeationResponse.Out find(@PathVariable Long ideationId) {
+    return ideationService.find(ideationId);
   }
 
-  @PostMapping("/ideation/image/{ideationId}")
+  @PostMapping("/ideation/{ideationId}/image")
   @ApiOperation(value = "아이데이션 이미지 설정")
-  public ResponseEntity saveImg( @PathVariable Long ideationId, @RequestParam(value = "ideationImg") MultipartFile ideationImg) throws IOException {
-    return new ResponseEntity(ideationService.saveImg(ideationId, ideationImg), null, HttpStatus.OK);
+  public IdeationResponse.IdOut saveImg(@PathVariable Long ideationId,
+      @RequestParam(value = "ideationImg") MultipartFile ideationImg) throws IOException {
+    return ideationService.saveImg(ideationId, ideationImg);
   }
 
-  @PutMapping("/ideation/title/{ideationId}")
+  @PutMapping("/ideation/{ideationId}/title")
   @ApiOperation(value = "아이데이션 제목 수정")
-  public ResponseEntity update(@PathVariable Long ideationId, @RequestBody IdeationTitleRequest ideationTitleRequest){
-    return new ResponseEntity(ideationService.updateTitle(ideationId, ideationTitleRequest), null, HttpStatus.OK);
+  public IdeationResponse.IdOut update(@PathVariable Long ideationId,
+      @RequestBody IdeationRequest.TitleIn in) {
+    return ideationService.updateTitle(ideationId, in);
   }
 
-  @PutMapping("/ideation/whiteboard/{ideationId}")
+  @PutMapping("/ideation/{ideationId}/whiteboard")
   @ApiOperation(value = "아이데이션 화이트보드 수정")
-  public ResponseEntity updateWhiteboard(@PathVariable Long ideationId, @RequestBody WhiteboardRequest whiteboardRequest){
-    return new ResponseEntity(ideationService.updateWhiteboard(ideationId, whiteboardRequest), null, HttpStatus.OK);
+  public IdeationResponse.IdOut updateWhiteboard(@PathVariable Long ideationId,
+      @RequestBody IdeationRequest.WhiteboardIn in) {
+    return ideationService.updateWhiteboard(ideationId, in);
   }
 
   @DeleteMapping("/ideation/{ideationId}")
   @ApiOperation(value = "아이데이션 삭제")
-  public ResponseEntity delete(@PathVariable Long ideationId){
-    return new ResponseEntity(ideationService.delete(ideationId), null, HttpStatus.OK);
+  public IdeationResponse.IdOut delete(@PathVariable Long ideationId) {
+    return ideationService.delete(ideationId);
   }
 
 }

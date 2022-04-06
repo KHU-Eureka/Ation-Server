@@ -17,6 +17,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationSuccessHandler {
 
   private final JwtAuthProvider jwtAuthProvider;
+  private final OAuthConsts oAuthConsts;
 
   private final OAuthConsts oAuthConsts;
 

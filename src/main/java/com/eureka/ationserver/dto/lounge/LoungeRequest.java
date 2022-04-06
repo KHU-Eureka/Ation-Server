@@ -4,48 +4,84 @@ import com.eureka.ationserver.model.category.MainCategory;
 import com.eureka.ationserver.model.lounge.Lounge;
 import com.eureka.ationserver.model.persona.Persona;
 import com.eureka.ationserver.model.persona.Sense;
+import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
-import javax.validation.constraints.NotEmpty;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
+import lombok.Builder;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 
-@Getter
-@NoArgsConstructor
-@AllArgsConstructor
+
 public class LoungeRequest {
 
-  @NotEmpty
-  private String title;
+  @Data
+  @Builder
+  @NoArgsConstructor
+  @AllArgsConstructor
+  public static class In {
 
-  @NotEmpty
-  private Long personaId;
+    @ApiModelProperty(value = "라운지 제목", required = true, position = 0)
+    private String title;
 
-  private Integer limitMember;
+    @ApiModelProperty(value = "페르소나 id", required = true, position = 1)
+    private Long personaId;
 
-  private String introduction;
+    @ApiModelProperty(value = "라운지 멤버제한", required = true, position = 2)
+    private Integer limitMember;
 
-  private Long imageId;
+    @ApiModelProperty(value = "라운지 소개", required = true, position = 3)
+    private String introduction;
 
-  private Long senseId;
+    @ApiModelProperty(value = "라운지 이미지", required = true, position = 4)
+    private Long imageId;
 
-  private List<String> tagList;
+    @ApiModelProperty(value = "라운지 발달감각", required = true, position = 5)
+    private Long senseId;
 
-  private Long mainCategoryId;
+    @ApiModelProperty(value = "라운지 태그", required = true, position = 6)
+    private List<String> tagList;
 
-  private List<Long> subCategoryIdList;
+    @ApiModelProperty(value = "라운지 메인 카테고리", required = true, position = 7)
+    private Long mainCategoryId;
 
-  public Lounge toEntity(Persona persona, MainCategory mainCategory, Sense sense, String imgPath) {
-    return Lounge.builder()
-        .title(this.title)
-        .limitMember(this.limitMember)
-        .introduction(this.introduction)
-        .imgPath(imgPath)
-        .loungeMainCategory(mainCategory)
-        .sense(sense)
-        .persona(persona)
-        .whiteboard("[]")
-        .build();
+    @ApiModelProperty(value = "라운지 서브 카테고리", required = true, position = 8)
+    private List<Long> subCategoryIdList;
+
+    public Lounge toLounge(Persona persona, MainCategory mainCategory, Sense sense,
+        String imgPath) {
+      return Lounge.builder()
+          .title(this.title)
+          .limitMember(this.limitMember)
+          .introduction(this.introduction)
+          .imgPath(imgPath)
+          .loungeMainCategory(mainCategory)
+          .sense(sense)
+          .persona(persona)
+          .build();
+    }
   }
+
+  @Data
+  @Builder
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class WhiteboardIn {
+
+    @ApiModelProperty(value = "라운지 화이트보드", position = 0)
+    private String whiteboard;
+
+  }
+
+  @Data
+  @Builder
+  @AllArgsConstructor
+  @NoArgsConstructor
+  public static class NoticeIn {
+
+    @ApiModelProperty(value = "라운지 공지", position = 0)
+    private String notice;
+
+  }
+
 
 }

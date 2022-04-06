@@ -1,25 +1,18 @@
 package com.eureka.ationserver.service;
 
 import com.eureka.ationserver.advice.exception.CommonException;
-import com.eureka.ationserver.dto.common.SimpleValueResponse;
-import com.eureka.ationserver.dto.lounge.EMemberStatus;
-import com.eureka.ationserver.dto.lounge.LoungeChatResponse;
-import com.eureka.ationserver.dto.lounge.LoungeImageResponse;
-import com.eureka.ationserver.dto.lounge.LoungeMemberStatusResponse;
-import com.eureka.ationserver.dto.lounge.LoungePinResponse;
 import com.eureka.ationserver.dto.lounge.LoungeRequest;
 import com.eureka.ationserver.dto.lounge.LoungeResponse;
-import com.eureka.ationserver.dto.lounge.SocketLoungeStatusResponse;
-import com.eureka.ationserver.dto.lounge.SocketMemberResponse;
-import com.eureka.ationserver.dto.persona.PersonaSimpleResponse;
-import com.eureka.ationserver.dto.whiteboard.WhiteboardRequest;
+import com.eureka.ationserver.dto.lounge.status.LoungeMemberStatus;
+import com.eureka.ationserver.dto.persona.PersonaResponse;
+import com.eureka.ationserver.dto.socket.LoungeSocketDto;
 import com.eureka.ationserver.model.category.MainCategory;
 import com.eureka.ationserver.model.category.SubCategory;
-import com.eureka.ationserver.model.lounge.ELoungeStatus;
 import com.eureka.ationserver.model.lounge.Lounge;
 import com.eureka.ationserver.model.lounge.LoungeMember;
 import com.eureka.ationserver.model.lounge.LoungePin;
 import com.eureka.ationserver.model.lounge.LoungeSubCategory;
+import com.eureka.ationserver.model.lounge.status.LoungeStatus;
 import com.eureka.ationserver.model.persona.Persona;
 import com.eureka.ationserver.model.persona.Sense;
 import com.eureka.ationserver.model.user.User;
@@ -33,14 +26,12 @@ import com.eureka.ationserver.repository.lounge.LoungeRepository;
 import com.eureka.ationserver.repository.lounge.LoungeSubCategoryRepository;
 import com.eureka.ationserver.repository.persona.PersonaRepository;
 import com.eureka.ationserver.repository.persona.SenseRepository;
-import com.eureka.ationserver.repository.user.UserRepository;
 import com.eureka.ationserver.utils.image.ImageUtil;
 import java.util.List;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
-import org.springframework.data.domain.Sort.Order;
 import org.springframework.messaging.simp.SimpMessageSendingOperations;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -57,32 +48,31 @@ public class LoungeService {
   private final LoungeSubCategoryRepository loungeSubCategoryRepository;
   private final LoungeMemberRepository loungeMemberRepository;
   private final LoungeChatRepository loungeChatRepository;
-  private final UserRepository userRepository;
   private final SimpMessageSendingOperations messageSendingOperations;
   private final LoungePinRepository loungePinRepository;
   private final LoungeImageRepository loungeImageRepository;
-  private final AuthService authService;
+  private final UserService userService;
 
   @Transactional
-  public Long save(LoungeRequest loungeRequest) {
+  public LoungeResponse.IdOut save(LoungeRequest.In in) {
 
-    Persona persona = personaRepository.getById(loungeRequest.getPersonaId());
+    Persona persona = personaRepository.getById(in.getPersonaId());
 
     MainCategory mainCategory = mainCategoryRepository.getById(
-        loungeRequest.getMainCategoryId());
+        in.getMainCategoryId());
 
-    Sense sense = senseRepository.getById(loungeRequest.getSenseId());
+    Sense sense = senseRepository.getById(in.getSenseId());
 
-    String imgPath = ImageUtil.getImagePath(Lounge.Lounge_PREFIX, loungeRequest.getImageId())
+    String imgPath = ImageUtil.getImagePath(Lounge.Lounge_PREFIX, in.getImageId())
         .get(0);
 
     Lounge saved = loungeRepository.save(
-        loungeRequest.toEntity(persona, mainCategory, sense, imgPath));
+        in.toLounge(persona, mainCategory, sense, imgPath));
 
     saved.open();
 
     List<SubCategory> subCategoryList = subCategoryRepository.findAllByIdIn(
-        loungeRequest.getSubCategoryIdList());
+        in.getSubCategoryIdList());
 
     subCategoryList.stream().forEach(x -> loungeSubCategoryRepository.save(
         LoungeSubCategory.builder()
@@ -101,33 +91,34 @@ public class LoungeService {
             .build()
     );
 
-    return saved.getId();
+    return LoungeResponse.toIdOut(saved.getId());
 
   }
 
 
   @Transactional(readOnly = true)
-  public List<LoungeResponse> findAll() {
-    return loungeRepository.findAll(Sort.by(Direction.DESC, "createdAt")).stream().map(LoungeResponse::new)
+  public List<LoungeResponse.Out> findAll() {
+    return loungeRepository.findAll(Sort.by(Direction.DESC, "createdAt")).stream()
+        .map(LoungeResponse::toOut)
         .collect(Collectors.toList());
   }
 
   @Transactional(readOnly = true)
-  public LoungeResponse find(Long loungeId) {
-    return new LoungeResponse(loungeRepository.getById(loungeId));
+  public LoungeResponse.Out find(Long loungeId) {
+    return LoungeResponse.toOut(loungeRepository.getById(loungeId));
   }
 
   @Transactional
-  public Long update(Long loungeId, LoungeRequest loungeRequest) {
+  public LoungeResponse.IdOut update(Long loungeId, LoungeRequest.In in) {
 
     Lounge lounge = loungeRepository.getById(loungeId);
 
     loungeSubCategoryRepository.deleteByLounge_Id(loungeId);
 
     List<SubCategory> subCategoryList = subCategoryRepository.findAllByIdIn(
-        loungeRequest.getSubCategoryIdList());
+        in.getSubCategoryIdList());
 
-    String imgPath = ImageUtil.getImagePath(Lounge.Lounge_PREFIX, loungeRequest.getImageId())
+    String imgPath = ImageUtil.getImagePath(Lounge.Lounge_PREFIX, in.getImageId())
         .get(0);
 
     subCategoryList.stream().forEach(x -> loungeSubCategoryRepository.save(
@@ -137,55 +128,53 @@ public class LoungeService {
             .build()
     ));
 
-    Persona persona = personaRepository.getById(loungeRequest.getPersonaId());
+    Persona persona = personaRepository.getById(in.getPersonaId());
 
     MainCategory mainCategory = mainCategoryRepository.getById(
-        loungeRequest.getMainCategoryId());
+        in.getMainCategoryId());
 
-    Sense sense = senseRepository.getById(loungeRequest.getSenseId());
+    Sense sense = senseRepository.getById(in.getSenseId());
 
-    lounge.update(loungeRequest, persona, mainCategory, sense, imgPath);
+    lounge.update(in, persona, mainCategory, sense, imgPath);
 
-    return loungeId;
+    return LoungeResponse.toIdOut(loungeId);
   }
 
   @Transactional
-  public Long delete(Long loungeId) {
+  public LoungeResponse.IdOut delete(Long loungeId) {
     loungeRepository.deleteById(loungeId);
-    return loungeId;
+    return LoungeResponse.toIdOut(loungeId);
   }
 
   @Transactional
-  public Long updateNotice(Long loungeId, String notice) {
+  public LoungeResponse.IdOut updateNotice(Long loungeId, LoungeRequest.NoticeIn in) {
     Lounge lounge = loungeRepository.getById(loungeId);
-    lounge.setNotice(notice);
+    lounge.setNotice(in.getNotice());
     messageSendingOperations.convertAndSend(String.format("/lounge/%d/notice/send", loungeId),
-        new SimpleValueResponse<String>(notice));
-    return loungeId;
+        LoungeResponse.toNoticeOut(in.getNotice()));
+    return LoungeResponse.toIdOut(loungeId);
   }
 
   @Transactional
-  public String updateWhiteboard(Long loungeId, WhiteboardRequest whiteboardRequest){
+  public LoungeResponse.WhiteboardOut updateWhiteboard(Long loungeId,
+      LoungeRequest.WhiteboardIn in) {
     Lounge lounge = loungeRepository.getById(loungeId);
-    lounge.setWhiteboard(whiteboardRequest.getWhiteboard());
-    return whiteboardRequest.getWhiteboard();
+    lounge.setWhiteboard(in.getWhiteboard());
+    return LoungeResponse.toWhiteboardOut(in.getWhiteboard());
   }
 
-  @Transactional(readOnly = true)
-  public String getWhiteboard(Long loungeId){
-    return loungeRepository.getById(loungeId).getWhiteboard();
-  }
   @Transactional
-  public Long end(Long loungeId) {
+  public LoungeResponse.IdOut end(Long loungeId) {
     Lounge lounge = loungeRepository.getById(loungeId);
     lounge.end();
     messageSendingOperations.convertAndSend(String.format("/lounge/%d/status/send", loungeId),
-        SocketLoungeStatusResponse.builder().loungeId(loungeId).status(ELoungeStatus.END).build());
-    return loungeId;
+        LoungeSocketDto.Status.builder().loungeId(loungeId).status(LoungeStatus.END)
+            .build());
+    return LoungeResponse.toIdOut(loungeId);
   }
 
   @Transactional
-  public Long start(Long loungeId) {
+  public LoungeResponse.IdOut start(Long loungeId) {
     Lounge lounge = loungeRepository.getById(loungeId);
     lounge.start();
 
@@ -193,19 +182,20 @@ public class LoungeService {
     loungeChatRepository.deleteByLounge_Id(loungeId);
 
     messageSendingOperations.convertAndSend(String.format("/lounge/%d/status/send", loungeId),
-        SocketLoungeStatusResponse.builder().loungeId(loungeId).status(ELoungeStatus.START).build());
-    return loungeId;
+        LoungeSocketDto.Status.builder().loungeId(loungeId).status(LoungeStatus.START)
+            .build());
+    return LoungeResponse.toIdOut(loungeId);
   }
 
   @Transactional
-  public Long enter(Long loungeId, Long personaId) {
+  public LoungeResponse.IdOut enter(Long loungeId, Long personaId) {
 
     Persona persona = personaRepository.getById(personaId);
     Lounge lounge = loungeRepository.getById(loungeId);
 
     if (loungeMemberRepository.findByLounge_IdAndUserId(loungeId, persona.getUser().getId())
         .isPresent()) {
-      return loungeId;
+      return LoungeResponse.toIdOut(loungeId);
     }
 
     if(lounge.getLimitMember() != 0){
@@ -223,38 +213,38 @@ public class LoungeService {
         .build();
     loungeMemberRepository.save(loungeMember);
 
-    SocketMemberResponse socketMemberResponse = SocketMemberResponse.builder()
-        .persona(new PersonaSimpleResponse(personaRepository.getById(personaId)))
-        .status(EMemberStatus.ENTER)
+    LoungeSocketDto.Member memberOut = LoungeSocketDto.Member.builder()
+        .persona(PersonaResponse.toSimpleOut(personaRepository.getById(personaId)))
+        .status(LoungeMemberStatus.ENTER)
         .build();
 
     messageSendingOperations.convertAndSend(String.format("/lounge/%d/member/send", loungeId),
-        socketMemberResponse);
+        memberOut);
 
-    return loungeId;
+    return LoungeResponse.toIdOut(loungeId);
   }
 
   @Transactional
-  public Long exit(Long loungeId, Long personaId) {
+  public LoungeResponse.IdOut exit(Long loungeId, Long personaId) {
     loungeMemberRepository.deleteByLounge_IdAndPersona_Id(loungeId, personaId);
 
-    SocketMemberResponse socketMemberResponse = SocketMemberResponse.builder()
-        .persona(new PersonaSimpleResponse(personaRepository.getById(personaId)))
-        .status(EMemberStatus.EXIT)
+    LoungeSocketDto.Member memberOut = LoungeSocketDto.Member.builder()
+        .persona(PersonaResponse.toSimpleOut(personaRepository.getById(personaId)))
+        .status(LoungeMemberStatus.EXIT)
         .build();
 
     messageSendingOperations.convertAndSend(String.format("/lounge/%d/member/send", loungeId),
-        socketMemberResponse);
+        memberOut);
 
-    return loungeId;
+    return LoungeResponse.toIdOut(loungeId);
   }
 
   @Transactional
-  public Long ready(Long loungeId, Long personaId) {
+  public LoungeResponse.IdOut ready(Long loungeId, Long personaId) {
     Persona persona = personaRepository.getById(personaId);
 
     if (loungeMemberRepository.findByUserIdAndLounge_StatusAndReady(persona.getUser().getId(),
-        ELoungeStatus.OPEN, Boolean.TRUE).size() >= 3) {
+        LoungeStatus.OPEN, Boolean.TRUE).size() >= 3) {
       throw new CommonException("대기 중인 라운지가 3개 입니다.");
     }
 
@@ -263,19 +253,19 @@ public class LoungeService {
 
     loungeMember.setReady(Boolean.TRUE);
 
-    SocketMemberResponse socketMemberResponse = SocketMemberResponse.builder()
-        .persona(new PersonaSimpleResponse(personaRepository.getById(personaId)))
-        .status(EMemberStatus.READY)
+    LoungeSocketDto.Member memberOut = LoungeSocketDto.Member.builder()
+        .persona(PersonaResponse.toSimpleOut(personaRepository.getById(personaId)))
+        .status(LoungeMemberStatus.READY)
         .build();
 
     messageSendingOperations.convertAndSend(String.format("/lounge/%d/member/send", loungeId),
-        socketMemberResponse);
+        memberOut);
 
-    return loungeId;
+    return LoungeResponse.toIdOut(loungeId);
   }
 
   @Transactional
-  public Long unready(Long loungeId, Long personaId) {
+  public LoungeResponse.IdOut unready(Long loungeId, Long personaId) {
     Persona persona = personaRepository.getById(personaId);
 
     LoungeMember loungeMember = loungeMemberRepository.findByLounge_IdAndUserId(loungeId,
@@ -283,65 +273,56 @@ public class LoungeService {
 
     loungeMember.setReady(Boolean.FALSE);
 
-    SocketMemberResponse socketMemberResponse = SocketMemberResponse.builder()
-        .persona(new PersonaSimpleResponse(personaRepository.getById(personaId)))
-        .status(EMemberStatus.UNREADY)
+    LoungeSocketDto.Member memberOut = LoungeSocketDto.Member.builder()
+        .persona(PersonaResponse.toSimpleOut(personaRepository.getById(personaId)))
+        .status(LoungeMemberStatus.UNREADY)
         .build();
 
     messageSendingOperations.convertAndSend(String.format("/lounge/%d/member/send", loungeId),
-        socketMemberResponse);
+        memberOut);
 
-    return loungeId;
+    return LoungeResponse.toIdOut(loungeId);
   }
 
   @Transactional
-  public List<LoungeChatResponse> getChat(Long loungeId) {
-    return loungeChatRepository.findByLounge_Id(loungeId).stream().map(LoungeChatResponse::new)
-        .collect(
-            Collectors.toList());
+  public List<LoungeResponse.ChatOut> getChat(Long loungeId) {
+    return loungeChatRepository.findByLounge_Id(loungeId).stream().map(LoungeResponse::toChatOut)
+        .collect(Collectors.toList());
   }
 
   @Transactional
-  public List<LoungeMemberStatusResponse> getWait() {
-    User user = authService.auth();
+  public List<LoungeResponse.MemberStatusOut> getWait() {
+    User user = userService.auth();
     return loungeMemberRepository.findByUserIdAndLounge_StatusAndReady(user.getId(),
-            ELoungeStatus.OPEN,
-            Boolean.TRUE).stream().map(
-            LoungeMemberStatusResponse::new)
-        .collect(
-            Collectors.toList());
+        LoungeStatus.OPEN,
+        Boolean.TRUE).stream().map(
+        LoungeResponse::toMemberStatusOut).collect(Collectors.toList());
   }
 
   @Transactional
-  public List<LoungeMemberStatusResponse> getCurrent() {
-    User user = authService.auth();
-    return loungeMemberRepository.findByUserIdAndLounge_Status(user.getId(), ELoungeStatus.START)
-        .stream().map(
-            LoungeMemberStatusResponse::new)
-        .collect(
-            Collectors.toList());
+  public List<LoungeResponse.MemberStatusOut> getCurrent() {
+    User user = userService.auth();
+    return loungeMemberRepository.findByUserIdAndLounge_Status(user.getId(), LoungeStatus.START)
+        .stream().map(LoungeResponse::toMemberStatusOut).collect(Collectors.toList());
   }
 
   @Transactional
-  public List<LoungeMemberStatusResponse> getHistory() {
-    User user = authService.auth();
-    return loungeMemberRepository.findByUserIdAndLounge_Status(user.getId(), ELoungeStatus.END)
-        .stream().map(
-            LoungeMemberStatusResponse::new)
-        .collect(
-            Collectors.toList());
+  public List<LoungeResponse.MemberStatusOut> getHistory() {
+    User user = userService.auth();
+    return loungeMemberRepository.findByUserIdAndLounge_Status(user.getId(), LoungeStatus.END)
+        .stream().map(LoungeResponse::toMemberStatusOut).collect(Collectors.toList());
   }
 
   @Transactional
-  public Long deleteHistory(Long loungeId){
-    User user = authService.auth();
+  public LoungeResponse.IdOut deleteHistory(Long loungeId) {
+    User user = userService.auth();
     loungeMemberRepository.deleteByLounge_IdAndUserId(loungeId, user.getId());
-    return loungeId;
+    return LoungeResponse.toIdOut(loungeId);
   }
 
   @Transactional
-  public Long pin(Long loungeId) {
-    User user = authService.auth();
+  public LoungeResponse.IdOut pin(Long loungeId) {
+    User user = userService.auth();
     if (loungePinRepository.findByLounge_IdAndUserId(loungeId, user.getId()).isPresent()) {
       throw new CommonException("이미 핀 한 라운지 입니다.");
     }
@@ -351,27 +332,26 @@ public class LoungeService {
         .userId(user.getId())
         .build());
 
-    return loungeId;
+    return LoungeResponse.toIdOut(loungeId);
   }
 
   @Transactional
-  public Long deletePin(Long lougeId) {
-    User user = authService.auth();
-    loungePinRepository.deleteByLounge_IdAndUserId(lougeId, user.getId());
-    return lougeId;
+  public LoungeResponse.IdOut deletePin(Long loungeId) {
+    User user = userService.auth();
+    loungePinRepository.deleteByLounge_IdAndUserId(loungeId, user.getId());
+    return LoungeResponse.toIdOut(loungeId);
   }
 
   @Transactional(readOnly = true)
-  public List<LoungePinResponse> getPin() {
-    User user = authService.auth();
-    return loungePinRepository.findByUserId(user.getId()).stream().map(LoungePinResponse::new)
-        .collect(
-            Collectors.toList());
+  public List<LoungeResponse.PinOut> getPin() {
+    User user = userService.auth();
+    return loungePinRepository.findByUserId(user.getId()).stream().map(LoungeResponse::toPinOut)
+        .collect(Collectors.toList());
   }
 
   @Transactional(readOnly = true)
-  public List<LoungeImageResponse> getImage() {
-    return loungeImageRepository.findAll().stream().map(LoungeImageResponse::new)
+  public List<LoungeResponse.ImageOut> getImage() {
+    return loungeImageRepository.findAll().stream().map(LoungeResponse::toImageOut)
         .collect(Collectors.toList());
   }
 

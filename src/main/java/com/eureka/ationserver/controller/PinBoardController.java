@@ -1,14 +1,13 @@
 package com.eureka.ationserver.controller;
 
 import com.eureka.ationserver.dto.pinBoard.PinBoardRequest;
-import com.eureka.ationserver.dto.pinBoard.PinBoardUpdateRequest;
+import com.eureka.ationserver.dto.pinBoard.PinBoardResponse;
 import com.eureka.ationserver.service.PinBoardService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -30,40 +29,37 @@ public class PinBoardController {
 
     @PostMapping("/pin-board")
     @ApiOperation(value = "핀보드 생성")
-    public ResponseEntity save(@RequestBody PinBoardRequest pinBoardRequest) {
-        return new ResponseEntity(pinBoardService.save(pinBoardRequest), null, HttpStatus.CREATED);
+    public PinBoardResponse.IdOut save(@RequestBody PinBoardRequest.In in) {
+        return pinBoardService.save(in);
 
     }
 
-    @PostMapping("/pin-board/image/{pinBoardId}")
+    @PostMapping("/pin-board/{pinBoardId}/image")
     @ApiOperation(value = "핀보드 이미지 설정")
-    public ResponseEntity saveImg(@PathVariable Long pinBoardId,
+    public PinBoardResponse.Out saveImg(@PathVariable Long pinBoardId,
         @RequestParam(value = "pinBoardImg", required = true) MultipartFile pinBoardImg)
         throws IOException {
-        return new ResponseEntity(pinBoardService.saveImg(pinBoardId, pinBoardImg), null,
-            HttpStatus.OK);
+        return pinBoardService.saveImg(pinBoardId, pinBoardImg);
+
     }
 
     @GetMapping("/pin-board")
     @ApiOperation(value = "유저의 페르소나별 핀보드 조회")
-    public ResponseEntity findAll(@RequestParam(value = "personaId") Long personaId) {
-        return new ResponseEntity(pinBoardService.findAll(personaId), null, HttpStatus.OK);
+    public List<PinBoardResponse.Out> findAll(@RequestParam(value = "personaId") Long personaId) {
+        return pinBoardService.findAll(personaId);
 
     }
 
     @PutMapping("/pin-board/{pinBoardId}")
     @ApiOperation(value = "핀보드 수정")
-    public ResponseEntity update(@PathVariable Long pinBoardId,
-        @RequestBody PinBoardUpdateRequest pinBoardRequest) {
-        return new ResponseEntity(pinBoardService.update(pinBoardId, pinBoardRequest), null,
-            HttpStatus.OK);
+    public PinBoardResponse.IdOut update(@PathVariable Long pinBoardId,
+        @RequestBody PinBoardRequest.UpdateIn in) {
+        return pinBoardService.update(pinBoardId, in);
     }
 
     @DeleteMapping("/pin-board/{pinBoardId}")
     @ApiOperation(value = "핀보드 삭제")
-    public ResponseEntity delete(@PathVariable Long pinBoardId) {
-        return new ResponseEntity(pinBoardService.delete(pinBoardId), null, HttpStatus.OK);
-
-
+    public PinBoardResponse.IdOut delete(@PathVariable Long pinBoardId) {
+        return pinBoardService.delete(pinBoardId);
     }
 }

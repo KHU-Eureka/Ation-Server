@@ -24,7 +24,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class Ideation {
 
-  public static final String IDEATION_PREFIX= "ideation";
+  public static final String IDEATION_PREFIX = "ideation";
 
   @Id
   @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,17 +43,17 @@ public class Ideation {
   private LocalDateTime createdAt;
 
   @PrePersist
-  public void createdAt(){
+  public void createdAt() {
     this.createdAt = LocalDateTime.now();
   }
 
   @ManyToOne(targetEntity = Persona.class, fetch = FetchType.LAZY)
-  @JoinColumn(name="persona_id")
+  @JoinColumn(name = "persona_id")
   private Persona persona;
 
-  public Ideation update(IdeationRequest ideationRequest) {
-    this.title = ideationRequest.getTitle();
-    this.whiteboard = ideationRequest.getWhiteboard();
+  public Ideation update(IdeationRequest.In in) {
+    this.title = in.getTitle();
+    this.whiteboard = in.getWhiteboard();
     return this;
   }
 
