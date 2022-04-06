@@ -19,6 +19,8 @@ public class OAuth2AuthenticationSuccessHandler extends SimpleUrlAuthenticationS
   private final JwtAuthProvider jwtAuthProvider;
   private final OAuthConsts oAuthConsts;
 
+  private final OAuthConsts oAuthConsts;
+
   @Override
   public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response,
       Authentication authentication) throws IOException, ServletException {

@@ -196,6 +196,7 @@ public class InsightService {
       }
       randomIdxList.add(randomIdx);
       outList.add(InsightResponse.toOut(insightList.get(randomIdx)));
+ 
     }
     return outList;
   }

@@ -14,7 +14,7 @@ import org.springframework.stereotype.Component;
 @RequiredArgsConstructor
 public class OAuth2AuthenticationFailureHandler extends SimpleUrlAuthenticationFailureHandler {
 
-  private static OAuthConsts oAuthConsts;
+  private final OAuthConsts oAuthConsts;
 
   @Override
   public void onAuthenticationFailure(HttpServletRequest request, HttpServletResponse response,
