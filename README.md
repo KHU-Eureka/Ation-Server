@@ -4,6 +4,8 @@
 
 ### 창작가들을 위한 아이데이션 서비스, 에이션
 
+<hr>
+
 ## backend 기술스택
 
 ![Java](https://img.shields.io/badge/JAVA-007396?style=for-the-badge&logo=java&logoColor=white)
@@ -14,7 +16,7 @@
 ## ERD
 
 <p align="center">
-    <img src="./images/ation-erd.png" width=90%>
+    <img src="images/erd.png" width=90%>
 </p>
 
 ## Swagger
