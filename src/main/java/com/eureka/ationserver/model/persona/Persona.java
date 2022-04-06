@@ -1,14 +1,24 @@
 package com.eureka.ationserver.model.persona;
 
-import com.eureka.ationserver.model.category.MainCategory;
+import com.eureka.ationserver.dto.persona.PersonaRequest;
 import com.eureka.ationserver.model.ideation.Ideation;
 import com.eureka.ationserver.model.insight.PinBoard;
 import com.eureka.ationserver.model.user.User;
-import com.eureka.ationserver.dto.persona.PersonaRequest;
-import lombok.*;
-
-import javax.persistence.*;
 import java.util.List;
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Data
@@ -57,21 +67,21 @@ public class Persona {
   @OneToMany(mappedBy = "persona", cascade = CascadeType.ALL)
   private List<PersonaInterest> personaInterestList;
 
-  public Persona update(PersonaRequest personaRequest) {
-    this.nickname = personaRequest.getNickname();
-    this.age = personaRequest.getAge();
-    this.gender = personaRequest.getGender();
-    this.mbti = personaRequest.getMbti();
-    this.job = personaRequest.getJob();
-    this.introduction = personaRequest.getIntroduction();
-    return this;
-  }
-
   @OneToMany(mappedBy = "persona", cascade = CascadeType.REMOVE)
   private List<PinBoard> pinBoardList;
 
   @OneToMany(mappedBy = "persona", cascade = CascadeType.REMOVE)
   private List<Ideation> ideationList;
+
+  public Persona update(PersonaRequest.In in) {
+    this.nickname = in.getNickname();
+    this.age = in.getAge();
+    this.gender = in.getGender();
+    this.mbti = in.getMbti();
+    this.job = in.getJob();
+    this.introduction = in.getIntroduction();
+    return this;
+  }
 
   public void setProfileImgPath(String personaImgPath) {
     this.profileImgPath = personaImgPath;

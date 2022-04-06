@@ -1,13 +1,15 @@
 package com.eureka.ationserver.controller;
 
 import com.eureka.ationserver.dto.persona.PersonaRequest;
+import com.eureka.ationserver.dto.persona.PersonaResponse;
+import com.eureka.ationserver.dto.persona.category.InterestResponse;
+import com.eureka.ationserver.dto.persona.category.SenseResponse;
 import com.eureka.ationserver.service.PersonaService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import java.io.IOException;
+import java.util.List;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -27,72 +29,76 @@ public class PersonaController {
 
   private final PersonaService personaService;
 
-  @PutMapping("/persona/user/{personaId}")
-  @ApiOperation(value = "활동 페르소나 설정")
-  public ResponseEntity setCurrentPersona(@PathVariable Long personaId) {
-    return new ResponseEntity(personaService.setCurrentPersona(personaId), null, HttpStatus.OK);
-
-  }
-
-  @GetMapping("/persona/user")
-  @ApiOperation(value = "활동 페르소나 조회")
-  public ResponseEntity getCurrentPersona() {
-    return new ResponseEntity(personaService.getCurrentPersona(), null, HttpStatus.OK);
-
-  }
-
-  @GetMapping("/persona")
-  @ApiOperation(value = "유저의 전체 페르소나 조회")
-  public ResponseEntity findAll() {
-
-    return new ResponseEntity(personaService.findAll(), null, HttpStatus.OK);
-
+  @PostMapping("/persona")
+  @ApiOperation(value = "페르소나 생성")
+  public PersonaResponse.IdOut save(@RequestBody PersonaRequest.In in) {
+    return personaService.save(in);
   }
 
   @GetMapping("/persona/{personaId}")
-  @ApiOperation(value = "특정 페르소나 조회")
-  public ResponseEntity find(@PathVariable Long personaId) {
+  @ApiOperation(value = "페르소나 조회")
+  public PersonaResponse.Out find(@PathVariable Long personaId) {
+    return personaService.find(personaId);
 
-    return new ResponseEntity(personaService.find(personaId), null, HttpStatus.OK);
-
-  }
-
-  @GetMapping("/persona/duplicate")
-  @ApiOperation(value = "페르소나 닉네임 중복확인")
-  public ResponseEntity duplicate(@RequestParam(value = "nickname") String nickname) {
-    return new ResponseEntity(personaService.duplicate(nickname), null, HttpStatus.OK);
-  }
-
-
-  @PostMapping("/persona")
-  @ApiOperation(value = "페르소나 생성")
-  public ResponseEntity save(@RequestBody PersonaRequest personaRequest) {
-    return new ResponseEntity(personaService.save(personaRequest), null, HttpStatus.CREATED);
-  }
-
-  @PostMapping("/persona/image/{personaId}")
-  @ApiOperation(value = "페르소나 대표이미지")
-  public ResponseEntity saveImg(@PathVariable Long personaId,
-      @RequestParam(value = "profileImg", required = true) MultipartFile profileImg)
-      throws IOException {
-
-    return new ResponseEntity(personaService.saveImg(personaId, profileImg), null, HttpStatus.OK);
   }
 
   @PutMapping("/persona/{personaId}")
   @ApiOperation(value = "페르소나 수정")
-  public ResponseEntity update(@PathVariable Long personaId,
-      @RequestBody PersonaRequest personaRequest) {
-    return new ResponseEntity(personaService.update(personaId, personaRequest), null,
-        HttpStatus.OK);
-
+  public PersonaResponse.IdOut update(@PathVariable Long personaId,
+      @RequestBody PersonaRequest.In in) {
+    return personaService.update(personaId, in);
   }
 
   @DeleteMapping("/persona/{personaId}")
   @ApiOperation(value = "페르소나 삭제")
-  public ResponseEntity delete(@PathVariable Long personaId) {
-    return new ResponseEntity(personaService.delete(personaId), null, HttpStatus.OK);
+  public PersonaResponse.IdOut delete(@PathVariable Long personaId) {
+    return personaService.delete(personaId);
+  }
 
+  @PutMapping("/persona/{personaId}/user")
+  @ApiOperation(value = "활동 페르소나 설정")
+  public PersonaResponse.IdOut setCurrentPersona(@PathVariable Long personaId) {
+    return personaService.setCurrentPersona(personaId);
+  }
+
+  @GetMapping("/persona/user")
+  @ApiOperation(value = "활동 페르소나 조회")
+  public PersonaResponse.Out getCurrentPersona() {
+    return personaService.getCurrentPersona();
+  }
+
+  @GetMapping("/persona")
+  @ApiOperation(value = "유저의 전체 페르소나 조회")
+  public List<PersonaResponse.Out> findAll() {
+    return personaService.findAll();
+  }
+
+  @GetMapping("/persona/duplicate")
+  @ApiOperation(value = "페르소나 닉네임 중복확인")
+  public PersonaResponse.DuplicateOut duplicate(@RequestParam(value = "nickname") String nickname) {
+    return personaService.duplicate(nickname);
+  }
+
+
+  @PostMapping("/persona/{personaId}/image")
+  @ApiOperation(value = "페르소나 프로필이미지 수정")
+  public PersonaResponse.IdOut saveImg(@PathVariable Long personaId,
+      @RequestParam(value = "profileImg", required = true) MultipartFile profileImg)
+      throws IOException {
+
+    return personaService.saveImg(personaId, profileImg);
+  }
+
+  @GetMapping("/persona-category/sense")
+  @ApiOperation(value = "페르소나 카테고리 - 발달감각 조회")
+  public List<SenseResponse.Out> findSense() {
+    return personaService.findSense();
+  }
+
+  @GetMapping("/persona-category/interest")
+  @ApiOperation(value = "페르소나 카테고리 - 분야태그 조회")
+  public List<InterestResponse.Out> findInterest() {
+    return personaService.findInterest();
   }
 
 

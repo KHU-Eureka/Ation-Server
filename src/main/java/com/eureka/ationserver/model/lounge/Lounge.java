@@ -2,6 +2,7 @@ package com.eureka.ationserver.model.lounge;
 
 import com.eureka.ationserver.dto.lounge.LoungeRequest;
 import com.eureka.ationserver.model.category.MainCategory;
+import com.eureka.ationserver.model.lounge.status.LoungeStatus;
 import com.eureka.ationserver.model.persona.Persona;
 import com.eureka.ationserver.model.persona.Sense;
 import java.time.LocalDateTime;
@@ -63,7 +64,7 @@ public class Lounge {
   private Integer limitMember;
 
   @Column
-  private ELoungeStatus status; // 0 : 모집 중, 1 : 종료, 2: 진행 중
+  private LoungeStatus status; // 0 : 모집 중, 1 : 종료, 2: 진행 중
 
   @Column
   private String introduction;
@@ -74,7 +75,7 @@ public class Lounge {
   @Column
   private String imgPath;
 
-  @Column
+  @Column(columnDefinition = "TEXT")
   private String whiteboard;
 
   @Column
@@ -87,11 +88,11 @@ public class Lounge {
   }
 
 
-  public Lounge update(LoungeRequest loungeRequest, Persona persona, MainCategory mainCategory,
+  public Lounge update(LoungeRequest.In in, Persona persona, MainCategory mainCategory,
       Sense sense, String imgPath) {
-    this.title = loungeRequest.getTitle();
-    this.limitMember = loungeRequest.getLimitMember();
-    this.introduction = loungeRequest.getIntroduction();
+    this.title = in.getTitle();
+    this.limitMember = in.getLimitMember();
+    this.introduction = in.getIntroduction();
     this.sense = sense;
     this.loungeMainCategory = mainCategory;
     this.persona = persona;
@@ -100,15 +101,15 @@ public class Lounge {
   }
 
   public void open() {
-    this.status = ELoungeStatus.OPEN;
+    this.status = LoungeStatus.OPEN;
   }
 
   public void start() {
-    this.status = ELoungeStatus.START;
+    this.status = LoungeStatus.START;
   }
 
   public void end() {
-    this.status = ELoungeStatus.END;
+    this.status = LoungeStatus.END;
   }
 
 }

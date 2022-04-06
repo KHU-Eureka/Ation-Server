@@ -1,10 +1,8 @@
 package com.eureka.ationserver.service;
 
 import com.eureka.ationserver.advice.exception.ForbiddenException;
-import com.eureka.ationserver.dto.pin.InsightPinRequest;
 import com.eureka.ationserver.dto.pin.PinRequest;
 import com.eureka.ationserver.dto.pin.PinResponse;
-import com.eureka.ationserver.dto.pin.PinUpdateRequest;
 import com.eureka.ationserver.model.insight.Insight;
 import com.eureka.ationserver.model.insight.InsightSubCategory;
 import com.eureka.ationserver.model.insight.Pin;
@@ -40,17 +38,17 @@ public class PinService {
   private final PinTagRepository pinTagRepository;
   private final PinRepository pinRepository;
   private final PersonaRepository personaRepository;
-  private final AuthService authService;
+  private final UserService userService;
 
   @Transactional
-  public Long saveNewPin(InsightPinRequest insightPinRequest) throws Exception {
+  public PinResponse.IdOut saveNewPin(PinRequest.CreateInsightIn in) throws Exception {
 
-    PinBoard pinBoard = pinBoardRepository.getById(insightPinRequest.getPinBoardId());
+    PinBoard pinBoard = pinBoardRepository.getById(in.getPinBoardId());
 
-    Parse parse = ParseUtil.parse(Pin.PIN_PREFIX, insightPinRequest.getUrl());
+    Parse parse = ParseUtil.parse(Pin.PIN_PREFIX, in.getUrl());
 
     Insight insight = Insight.builder()
-        .url(insightPinRequest.getUrl())
+        .url(in.getUrl())
         .title(parse.getTitle())
         .description(parse.getDescription())
         .imgPath(parse.getImageUrl())
@@ -73,7 +71,7 @@ public class PinService {
     Pin saved = pinRepository.save(pin);
 
     // save Pin tag
-    for (String name : insightPinRequest.getTagList()) {
+    for (String name : in.getTagList()) {
       PinTag pinTag = PinTag.builder()
           .pin(pin)
           .name(name)
@@ -81,21 +79,21 @@ public class PinService {
       pinTagRepository.save(pinTag);
     }
 
-    return saved.getId();
+    return PinResponse.toIdOut(saved.getId());
 
 
   }
 
 
   @Transactional
-  public Long pinUp(PinRequest pinRequest) {
-    User user = authService.auth();
-    PinBoard pinBoard = pinBoardRepository.getById(pinRequest.getPinBoardId());
+  public PinResponse.IdOut pinUp(PinRequest.FromInsightIn in) {
+    User user = userService.auth();
+    PinBoard pinBoard = pinBoardRepository.getById(in.getPinBoardId());
     if (user.getId() != pinBoard.getPersona().getUser().getId()) {
       throw new ForbiddenException();
     } else {
-      Insight insight = insightRepository.getById(pinRequest.getInsightId());
-      Pin pin = pinRequest.toEnitity(pinBoard, insight);
+      Insight insight = insightRepository.getById(in.getInsightId());
+      Pin pin = in.toPin(pinBoard, insight);
       Pin saved = pinRepository.save(pin);
       // Copy Tags
       PinTag pinTag = PinTag.builder()
@@ -112,27 +110,27 @@ public class PinService {
 
       }
       pinBoard.setImgPath(insight.getImgPath());
-      return saved.getId();
+      return PinResponse.toIdOut(saved.getId());
     }
 
   }
 
   @Transactional
-  public Long update(PinUpdateRequest pinUpdateRequest, Long pinId) {
-    User user = authService.auth();
+  public PinResponse.IdOut update(PinRequest.UpdateIn in, Long pinId) {
+    User user = userService.auth();
     Pin pin = pinRepository.getById(pinId);
     PinBoard orgPinBoard = pin.getPinBoard();
     if (user.getId() != pin.getPinBoard().getPersona().getUser().getId()) {
       throw new ForbiddenException();
     } else {
-      PinBoard pinBoard = pinBoardRepository.getById(pinUpdateRequest.getPinBoardId());
+      PinBoard pinBoard = pinBoardRepository.getById(in.getPinBoardId());
       if (user.getId() != pinBoard.getPersona().getUser().getId()) {
         throw new ForbiddenException();
       } else {
 
         if (orgPinBoard.getId() != pinBoard.getId()) {
           pinTagRepository.deleteByPin_Id(pinId);
-          for (String name : pinUpdateRequest.getTagList()) {
+          for (String name : in.getTagList()) {
             PinTag pinTag = PinTag.builder()
                 .pin(pin)
                 .name(name)
@@ -150,15 +148,15 @@ public class PinService {
           orgPinBoard.setImgPath(orgList.get(0).getPinImgPath());
         }
         pinBoard.setImgPath(pin.getPinImgPath());
-        return pinId;
+        return PinResponse.toIdOut(pinId);
 
       }
     }
   }
 
   @Transactional
-  public Long delete(Long pinId) {
-    User user = authService.auth();
+  public PinResponse.IdOut delete(Long pinId) {
+    User user = userService.auth();
     Pin pin = pinRepository.getById(pinId);
     if (user.getId() != pin.getPinBoard().getPersona().getUser().getId()) {
       throw new ForbiddenException();
@@ -173,40 +171,40 @@ public class PinService {
       } else {
         orgPinBoard.setImgPath(orgList.get(0).getPinImgPath());
       }
-      return pinId;
+      return PinResponse.toIdOut(pinId);
     }
   }
 
   @Transactional(readOnly = true)
-  public List<PinResponse> findAll(Long personaId) {
-    User user = authService.auth();
+  public List<PinResponse.Out> findAll(Long personaId) {
+    User user = userService.auth();
 
     Persona persona = personaRepository.getById(personaId);
     if (persona.getUser().getId() != user.getId()) {
       throw new ForbiddenException();
     } else {
-      List<PinResponse> pinResponseList = pinRepository.findByPinBoard_Persona(persona).stream()
-          .map(PinResponse::new).collect(Collectors.toList());
-      return pinResponseList;
+      List<PinResponse.Out> outList = pinRepository.findByPinBoard_Persona(persona).stream()
+          .map(PinResponse::toOut).collect(Collectors.toList());
+      return outList;
     }
 
   }
 
   @Transactional(readOnly = true)
-  public PinResponse find(Long pinId) {
-    User user = authService.auth();
+  public PinResponse.Out find(Long pinId) {
+    User user = userService.auth();
 
     Pin pin = pinRepository.getById(pinId);
     if (user.getId() != pin.getPinBoard().getPersona().getUser().getId()) {
       throw new ForbiddenException();
     } else {
-      return new PinResponse(pin);
+      return PinResponse.toOut(pin);
     }
   }
 
   @Transactional(readOnly = true)
-  public Set<PinResponse> search(Long personaId, String keyword) {
-    User user = authService.auth();
+  public Set<PinResponse.Out> search(Long personaId, String keyword) {
+    User user = userService.auth();
 
     Persona persona = personaRepository.getById(personaId);
     if (persona.getUser().getId() != user.getId()) {
@@ -220,29 +218,29 @@ public class PinService {
         pins1.add(pin);
       }
     }
-    Set<PinResponse> pinResponseList = new HashSet<>();
+    Set<PinResponse.Out> outSet = new HashSet<>();
     for (Pin pin : pins1) {
-      pinResponseList.add(new PinResponse(pin));
+      outSet.add(PinResponse.toOut(pin));
     }
 
-    return pinResponseList;
+    return outSet;
   }
 
   @Transactional(readOnly = true)
-  public List<PinResponse> findByPinBoard(Long pinBoardId) {
-    User user = authService.auth();
+  public List<PinResponse.Out> findByPinBoard(Long pinBoardId) {
+    User user = userService.auth();
 
     PinBoard pinBoard = pinBoardRepository.getById(pinBoardId);
     if (pinBoard.getPersona().getUser().getId() != user.getId()) {
       throw new ForbiddenException();
     }
-    List<PinResponse> pinResponseList = pinRepository.findByPinBoard(pinBoard).stream()
-        .map(PinResponse::new).collect(Collectors.toList());
-    return pinResponseList;
+    List<PinResponse.Out> outList = pinRepository.findByPinBoard(pinBoard).stream()
+        .map(PinResponse::toOut).collect(Collectors.toList());
+    return outList;
   }
 
   @Transactional
-  public PinResponse saveImg(Long pinId, MultipartFile pinImg) throws IOException {
+  public PinResponse.Out saveImg(Long pinId, MultipartFile pinImg) throws IOException {
     Pin pin = pinRepository.getById(pinId);
     List<String> pathList = ImageUtil.getImagePath(Pin.PIN_PREFIX, pinId);
     File file = new File(pathList.get(1));
@@ -254,6 +252,6 @@ public class PinService {
 
     pinBoard.setImgPath(pin.getPinImgPath());
 
-    return new PinResponse(pin);
+    return PinResponse.toOut(pin);
   }
 }

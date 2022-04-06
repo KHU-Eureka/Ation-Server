@@ -1,6 +1,14 @@
 package com.eureka.ationserver.security;
 
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.stereotype.Component;
+
+@Component
+@Data
 public class OAuthConsts {
 
-  public static final String REDIRECT_URL = "http://ation.seohyuni.com/oauth2/redirect";
+  @Value("${eureka.app.oauth.redirectURL}")
+  private String redirectUrl;
+
 }

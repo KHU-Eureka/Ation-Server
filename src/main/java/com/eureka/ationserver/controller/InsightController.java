@@ -2,13 +2,14 @@ package com.eureka.ationserver.controller;
 
 
 import com.eureka.ationserver.dto.insight.InsightRequest;
+import com.eureka.ationserver.dto.insight.InsightResponse;
 import com.eureka.ationserver.service.InsightService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
+import java.util.List;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -30,55 +31,52 @@ public class InsightController {
   @SneakyThrows
   @PostMapping("/insight")
   @ApiOperation(value = "인사이트 생성")
-  public ResponseEntity savePublic(@RequestBody InsightRequest insightRequest) {
-    return new ResponseEntity(insightService.savePublic(insightRequest), null, HttpStatus.CREATED);
+  public InsightResponse.IdOut savePublic(@RequestBody InsightRequest.In in) {
+    return insightService.savePublic(in);
   }
 
   @SneakyThrows
-  @PostMapping("/insight/image/{insightId}")
+  @PostMapping("/insight/{insightId}/image")
   @ApiOperation(value = "인사이트 썸네일 이미지 변경")
-  public ResponseEntity saveImg(@PathVariable Long insightId,
+  public InsightResponse.Out saveImg(@PathVariable Long insightId,
       @RequestParam(value = "insightImg", required = true) MultipartFile insightImg) {
-    return new ResponseEntity(insightService.saveImg(insightId, insightImg), null, HttpStatus.OK);
+    return insightService.saveImg(insightId, insightImg);
   }
 
   @GetMapping("/insight")
   @ApiOperation(value = "인사이트 전체 조회")
-  public ResponseEntity findPublicAll() {
-    return new ResponseEntity(insightService.findPublicAll(), null, HttpStatus.CREATED);
+  public List<InsightResponse.Out> findPublicAll() {
+    return insightService.findPublicAll();
   }
 
   @GetMapping("/insight/{insightId}")
   @ApiOperation(value = "인사이트 조회")
-  public ResponseEntity findPublic(@PathVariable Long insightId) {
-    return new ResponseEntity(insightService.findPublic(insightId), null, HttpStatus.CREATED);
+  public InsightResponse.Out findPublic(@PathVariable Long insightId) {
+    return insightService.findPublic(insightId);
   }
 
-  @GetMapping("/insight/main-category/{mainCategoryId}")
+  @GetMapping("/insight/{mainCategoryId}/main-category")
   @ApiOperation(value = "인사이트 카테고리별 조회")
-  public ResponseEntity findByMainCategory(@PathVariable Long mainCategoryId) {
-    return new ResponseEntity(insightService.findByMainCategory(mainCategoryId), null,
-        HttpStatus.CREATED);
+  public List<InsightResponse.Out> findByMainCategory(@PathVariable Long mainCategoryId) {
+    return insightService.findByMainCategory(mainCategoryId);
   }
 
   @GetMapping("/insight/search")
   @ApiOperation(value = "인사이트 검색")
-  public ResponseEntity search(@RequestParam String keyword) {
-    return new ResponseEntity(insightService.search(keyword), null, HttpStatus.OK);
+  public Set<InsightResponse.Out> search(@RequestParam String keyword) {
+    return insightService.search(keyword);
   }
 
   @GetMapping("/insight/recommend")
-  @ApiOperation(value="추천 인사이트 조회")
-  public ResponseEntity getRecommend() throws Exception{
-    return new ResponseEntity(insightService.getRecommend(), null, HttpStatus.OK
-    );
+  @ApiOperation(value = "추천 인사이트 조회")
+  public List<InsightResponse.Out> getRecommend() throws Exception {
+    return insightService.getRecommend();
   }
 
   @GetMapping("/insight/random")
-  @ApiOperation(value="랜덤 인사이트 조회")
-  public ResponseEntity getRandom() throws Exception{
-    return new ResponseEntity(insightService.getRandom(), null, HttpStatus.OK
-    );
+  @ApiOperation(value = "랜덤 인사이트 조회")
+  public List<InsightResponse.Out> getRandom() throws Exception {
+    return insightService.getRandom();
   }
 
 }

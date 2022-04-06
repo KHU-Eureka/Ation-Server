@@ -23,9 +23,7 @@ import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.http.HttpClient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -33,7 +31,6 @@ import java.util.Random;
 import java.util.Set;
 import java.util.stream.Collectors;
 import lombok.RequiredArgsConstructor;
-import org.codehaus.jackson.JsonParser;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.springframework.stereotype.Service;
@@ -44,165 +41,165 @@ import org.springframework.web.multipart.MultipartFile;
 @RequiredArgsConstructor
 public class InsightService {
 
-    private final InsightRepository insightRepository;
-    private final MainCategoryRepository mainCategoryRepository;
-    private final SubCategoryRepository subCategoryRepository;
-    private final InsightTagRepository insightTagRepository;
-    private final InsightSubCategoryRepository insightSubCategoryRepository;
-    private final InsightViewRepository insightViewRepository;
-    private final AuthService authService;
+  private final InsightRepository insightRepository;
+  private final MainCategoryRepository mainCategoryRepository;
+  private final SubCategoryRepository subCategoryRepository;
+  private final InsightTagRepository insightTagRepository;
+  private final InsightSubCategoryRepository insightSubCategoryRepository;
+  private final InsightViewRepository insightViewRepository;
+  private final UserService userService;
 
-    @Transactional
-    public Long savePublic(InsightRequest insightRequest) throws Exception {
+  @Transactional
+  public InsightResponse.IdOut savePublic(InsightRequest.In in) throws Exception {
 
-        Parse parse = ParseUtil.parse(Insight.INSIGHT_PREFIX, insightRequest.getUrl());
+    Parse parse = ParseUtil.parse(Insight.INSIGHT_PREFIX, in.getUrl());
 
-        // public
-        MainCategory mainCategory = mainCategoryRepository.findById(
-            insightRequest.getMainCategoryId()).get();
-        List<SubCategory> subCategoryList = subCategoryRepository.findAllByIdIn(
-            insightRequest.getSubCategoryIdList());
+    // public
+    MainCategory mainCategory = mainCategoryRepository.findById(
+        in.getMainCategoryId()).get();
+    List<SubCategory> subCategoryList = subCategoryRepository.findAllByIdIn(
+        in.getSubCategoryIdList());
 
-        Insight insight = Insight.builder()
-            .url(insightRequest.getUrl())
-            .title(parse.getTitle())
-            .description(parse.getDescription())
-            .imgPath(parse.getImageUrl())
-            .siteName(parse.getSiteName())
-            .icon(parse.getIcon())
-            .insightMainCategory(mainCategory)
-            .open(true)
-            .build();
+    Insight insight = Insight.builder()
+        .url(in.getUrl())
+        .title(parse.getTitle())
+        .description(parse.getDescription())
+        .imgPath(parse.getImageUrl())
+        .siteName(parse.getSiteName())
+        .icon(parse.getIcon())
+        .insightMainCategory(mainCategory)
+        .open(true)
+        .build();
 
-        Insight saved = insightRepository.save(insight);
+    Insight saved = insightRepository.save(insight);
 
-        for(SubCategory subCategory : subCategoryList){
-            InsightSubCategory insightSubCategory = InsightSubCategory.builder()
-                .insight(insight)
-                .subCategory(subCategory)
-                .build();
-            insightSubCategoryRepository.save(insightSubCategory);
-        }
-
-
-        for(String tag : insightRequest.getTagList()){
-            InsightTag insightTag = InsightTag.builder()
-                .insight(insight)
-                .name(tag)
-                .build();
-            insightTagRepository.save(insightTag);
-        }
-
-        return saved.getId();
-
-
+    for (SubCategory subCategory : subCategoryList) {
+      InsightSubCategory insightSubCategory = InsightSubCategory.builder()
+          .insight(insight)
+          .subCategory(subCategory)
+          .build();
+      insightSubCategoryRepository.save(insightSubCategory);
     }
 
-    @Transactional(readOnly = true)
-    public List<InsightResponse> findPublicAll(){
-        List<Insight> insightList = insightRepository.findByOpenOrderByCreatedAtDesc(true);
-        List<InsightResponse> insightResponseList = new ArrayList<>();
-        for(Insight insight : insightList){
-            insightResponseList.add(new InsightResponse(insight));
-        }
-        return insightResponseList;
+    for (String tag : in.getTagList()) {
+      InsightTag insightTag = InsightTag.builder()
+          .insight(insight)
+          .name(tag)
+          .build();
+      insightTagRepository.save(insightTag);
     }
 
-    @Transactional
-    public InsightResponse saveImg(Long insightId, MultipartFile insightImg) throws IOException{
-        Insight insight = insightRepository.getById(insightId);
-
-        List<String> pathList = ImageUtil.getImagePath(Insight.INSIGHT_PREFIX, insightId);
-        File file = new File(pathList.get(1));
-        insightImg.transferTo(file);
-        insight.setImgPath(pathList.get(0));
+    return InsightResponse.toIdOut(saved.getId());
 
 
-       return new InsightResponse(insight);
+  }
+
+  @Transactional(readOnly = true)
+  public List<InsightResponse.Out> findPublicAll() {
+    List<InsightResponse.Out> outList = insightRepository.findByOpenOrderByCreatedAtDesc(
+        true).stream().map(InsightResponse::toOut).collect(
+        Collectors.toList());
+
+    return outList;
+  }
+
+  @Transactional
+  public InsightResponse.Out saveImg(Long insightId, MultipartFile insightImg) throws IOException {
+    Insight insight = insightRepository.getById(insightId);
+
+    List<String> pathList = ImageUtil.getImagePath(Insight.INSIGHT_PREFIX, insightId);
+    File file = new File(pathList.get(1));
+    insightImg.transferTo(file);
+    insight.setImgPath(pathList.get(0));
+
+    return InsightResponse.toOut(insight);
+  }
+
+  @Transactional
+  public InsightResponse.Out findPublic(Long insightId) {
+    User user = userService.auth();
+    Insight insight = insightRepository.getById(insightId);
+
+    Optional<InsightView> insightView = insightViewRepository.findByUserAndInsight(user,
+        insight);
+    if (!insightView.isPresent()) {
+      InsightView newInsightView = InsightView.builder()
+          .insight(insight)
+          .user(user)
+          .build();
+      insightViewRepository.save(newInsightView);
     }
+    return InsightResponse.toOut(insight);
+  }
 
-    @Transactional
-    public InsightResponse findPublic(Long insightId) {
-        User user = authService.auth();
-        Insight insight = insightRepository.getById(insightId);
+  @Transactional(readOnly = true)
+  public List<InsightResponse.Out> findByMainCategory(Long mainCategoryId) {
+    List<Insight> insightList = insightRepository.findByInsightMainCategoryIdOrderByCreatedAtDesc(
+        mainCategoryId);
+    List<InsightResponse.Out> outList = insightList.stream().map(InsightResponse::toOut).collect(
+        Collectors.toList());
 
-        Optional<InsightView> insightView = insightViewRepository.findByUserAndInsight(user,
-            insight);
-        if (!insightView.isPresent()) {
-            InsightView newInsightView = InsightView.builder()
-                .insight(insight)
-                .user(user)
-                .build();
-            insightViewRepository.save(newInsightView);
-        }
-        return new InsightResponse(insight);
+    return outList;
+  }
+
+  @Transactional(readOnly = true)
+  public Set<InsightResponse.Out> search(String keyword) {
+    Set<InsightResponse.Out> outSet = insightRepository.findByOpenAndTitleContainingOrInsightMainCategoryNameContainingOrInsightSubCategoryList_SubCategoryNameContainingOrInsightTagList_NameContainingOrderByCreatedAtDesc(
+            true, keyword, keyword, keyword, keyword).stream().map(InsightResponse::toOut)
+        .collect(Collectors.toSet());
+    return outSet;
+  }
+
+  @Transactional(readOnly = true)
+  public List<InsightResponse.Out> getRecommend() throws Exception {
+    User user = userService.auth();
+    String recommendApiUrl = "http://16.170.173.74:5000";
+    URL url = new URL(String.format("%s/%d", recommendApiUrl, user.getId()));
+
+    HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+    connection.setRequestMethod("GET");
+
+    BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+    StringBuffer stringBuffer = new StringBuffer();
+    String inputLine;
+    while ((inputLine = br.readLine()) != null) {
+      stringBuffer.append(inputLine);
     }
+    br.close();
+    String response = stringBuffer.toString();
 
-    @Transactional(readOnly = true)
-    public List<InsightResponse> findByMainCategory(Long mainCategoryId){
-        List<Insight> insightList = insightRepository.findByInsightMainCategoryIdOrderByCreatedAtDesc(mainCategoryId);
-        List<InsightResponse> insightResponseList = new ArrayList<>();
-        for(Insight insight : insightList){
-            insightResponseList.add(new InsightResponse(insight));
-        }
-        return insightResponseList;
+    JSONParser jsonParser = new JSONParser();
+    JSONObject jsonObject = (JSONObject) jsonParser.parse(response);
+
+    List<Long> idList = (List<Long>) jsonObject.get("recommend-list");
+
+    List<InsightResponse.Out> outList = new ArrayList<>();
+    for (Long e : idList) {
+      outList.add(InsightResponse.toOut(insightRepository.getById(e)));
     }
+    return outList;
+  }
 
-    @Transactional(readOnly = true)
-    public Set<InsightResponse> search(String keyword){
-        Set<InsightResponse> insightResponseList = insightRepository.findByOpenAndTitleContainingOrInsightMainCategoryNameContainingOrInsightSubCategoryList_SubCategoryNameContainingOrInsightTagList_NameContainingOrderByCreatedAtDesc(true, keyword, keyword, keyword, keyword).stream().map(InsightResponse::new).collect(Collectors.toSet());
-        return insightResponseList;
+  @Transactional(readOnly = true)
+  public List<InsightResponse.Out> getRandom() {
+
+    List<Insight> insightList = insightRepository.findAll();
+    int len = insightList.size();
+    List<InsightResponse.Out> outList = new ArrayList<>();
+    Random generator = new Random();
+    List<Integer> randomIdxList = new ArrayList<>();
+    for (int i = 0; i < 4; i++) {
+      int randomIdx = generator.nextInt(len);
+      if (randomIdxList.contains(randomIdx)) {
+        i--;
+        continue;
+      }
+      randomIdxList.add(randomIdx);
+      outList.add(InsightResponse.toOut(insightList.get(randomIdx)));
+ 
     }
-
-    @Transactional(readOnly = true)
-    public List<InsightResponse> getRecommend() throws Exception {
-        User user = authService.auth();
-        String recommendApiUrl = "http://16.170.173.74:5000";
-        URL url = new URL(String.format("%s/%d", recommendApiUrl, user.getId()));
-
-        HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-        connection.setRequestMethod("GET");
-
-        BufferedReader br = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-        StringBuffer stringBuffer = new StringBuffer();
-        String inputLine;
-        while ((inputLine = br.readLine()) != null)  {
-            stringBuffer.append(inputLine);
-        }
-        br.close();
-        String response = stringBuffer.toString();
-
-        JSONParser jsonParser = new JSONParser();
-        JSONObject jsonObject = (JSONObject) jsonParser.parse(response);
-
-        List<Long> idList = (List<Long>) jsonObject.get("recommend-list");
-
-        List<InsightResponse> insightResponseList = new ArrayList<>();
-        for(Long e : idList){
-            insightResponseList.add(new InsightResponse(insightRepository.getById(e)));
-        }
-        return insightResponseList;
-    }
-
-    @Transactional(readOnly = true)
-    public List<InsightResponse> getRandom(){
-
-        List<Insight> insightList = insightRepository.findByOpen(true);
-        int len = insightList.size();
-        List<InsightResponse> insightResponseList = new ArrayList<>();
-        Random generator = new Random();
-        List<Integer> randomIdxList = new ArrayList<>();
-        for(int i=0;i<4;i++){
-            int randomIdx = generator.nextInt(len);
-            if(randomIdxList.contains(randomIdx)){
-                i--;
-                continue;
-            }
-            randomIdxList.add(randomIdx);
-            insightResponseList.add(new InsightResponse(insightList.get(randomIdx)));
-        }
-        return insightResponseList;
-    }
+    return outList;
+  }
 
 
 }
