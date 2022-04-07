@@ -16,7 +16,7 @@
 ## ERD
 
 <p align="center">
-    <img src="images/erd.png" width=90%>
+    <img src="images/ation-erd.png" width=90%>
 </p>
 
 ## Swagger
